@@ -2,6 +2,7 @@
 #define XSTRING_H
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -12,7 +13,7 @@
 namespace TOOLS {
 
 /**
- * @brief the exception to be thrown if a convertion error occurs
+ * @brief the exception to be thrown if a conversion error occurs
  */
 class ConvertValueError : public BaseException {
   public:
@@ -24,9 +25,12 @@ class ConvertValueError : public BaseException {
  * @return the converted string
  */
 template <class T>
-std::string str(const T& val) {
+std::string str(const T& val, int precision=0) {
   std::stringstream out;
-  out << val;
+  if (precision == 0)
+    out << val;
+  else
+    out << std::setprecision(precision) << val;
   return out.str();
 }
 /**
