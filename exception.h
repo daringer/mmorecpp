@@ -5,8 +5,7 @@
 #include <iostream>
 
 namespace TOOLS {
-/**
- * @brief The global (abstract) exception-base-class for all
+/* @brief The global (abstract) exception-base-class for all
  *        thrown exceptions
  */
 class BaseException {
