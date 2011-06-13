@@ -56,8 +56,8 @@ namespace TOOLS {
       void set_flags(int value);
       
       std::string name, desc;
-      std::string item_type;
       std::string cmd_long, cmd_short;
+      std::string item_type;
       int flags;
   };
   

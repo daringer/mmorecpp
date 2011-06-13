@@ -29,7 +29,7 @@ ConfigItem::ConfigItem(const std::string& name, const std::string& desc,
 
 void ConfigItem::set_flags(int value) {
   // apply default CF_ONCE flag if not set
-  if(value & (CF_ONCE | CF_POSITIONAL | CF_MULTI) == 0)
+  if((value & (CF_ONCE | CF_POSITIONAL | CF_MULTI)) == 0)
     value |= CF_ONCE;
   flags = value;
 }

@@ -10,7 +10,8 @@ SOURCES.h = $(addsuffix .h,$(TOOLS))
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
-CCFLAGS += -w -I.. -g
+ORGCCFLAGS += -w -I.. -g
+CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall 
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)

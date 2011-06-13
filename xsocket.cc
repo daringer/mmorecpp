@@ -95,7 +95,7 @@ ClientSocket::ClientSocket(SOCKET_TYPE type, int port, const std::string& target
   addr.sin_family = AF_INET;
   addr.sin_addr.s_addr = inet_addr(target.c_str());
 
-  socklen_t addr_len = sizeof(addr);
+  //socklen_t addr_len = sizeof(addr);
   if(connect(fd, (struct sockaddr*) &addr, sizeof(addr))) {
     perror("connect:");
     throw SocketException("Could not connect to given target");
