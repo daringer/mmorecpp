@@ -9,12 +9,10 @@ namespace TOOLS {
  *        thrown exceptions
  */
 class BaseException {
-  protected:
-    std::string exception_name;
-    std::string message;
-
   public:
     std::string output;
+    std::string exception_name;
+    std::string message;
 
     BaseException(const std::string& msg, const std::string& exc_name);
     BaseException(const BaseException& obj);

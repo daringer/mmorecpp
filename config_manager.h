@@ -18,22 +18,33 @@ namespace TOOLS {
     CF_ONCE =       1,
     CF_MULTI =      2,
     CF_POSITIONAL = 4,
-    CF_REQUIRED =   8
+    CF_REQUIRED =   8,
   };
 
-  class NoSuchConfigItemException : public BaseException {
+  class ConfigManagerException : public BaseException {
+    public:
+      ConfigManagerException(const std::string& msg, const std::string& exc_name);
+      ConfigManagerException(const ConfigManagerException& obj);
+  };
+
+  class NoSuchConfigItemException : public ConfigManagerException {
     public:
       NoSuchConfigItemException(const std::string& msg);
   };
   
-  class ConfigItemAlreadyExists : public BaseException {
+  class ConfigItemAlreadyExists : public ConfigManagerException {
     public:
       ConfigItemAlreadyExists(const std::string& msg);
   };
 
-  class RequiredConfigItemNotSet : public BaseException {
+  class RequiredConfigItemNotSet : public ConfigManagerException {
     public:
       RequiredConfigItemNotSet(const std::string& msg);
+  };
+
+  class ParameterRequiresAValue : public ConfigManagerException {
+    public:
+      ParameterRequiresAValue(const std::string& msg);
   };
 
   class ConfigItem {
@@ -43,7 +54,7 @@ namespace TOOLS {
                  const std::string& itype);
 
       void set_flags(int value);
-
+      
       std::string name, desc;
       std::string item_type;
       std::string cmd_long, cmd_short;
@@ -59,7 +70,7 @@ namespace TOOLS {
       typedef std::map<ConfigItem*, tVoidVector> tConfigData;
 
       std::string command;
-
+      
       tConfigItemMap config;
       tConfigData data;
        
@@ -72,20 +83,18 @@ namespace TOOLS {
       tConfigData::size_type count_data_items(const std::string& name);
 
       template<class T>
-      void register_config_item(const std::string& name, 
+      void new_config(const std::string& name, 
           const std::string& desc, const std::string& lcmd, 
-          const std::string& scmd, const T& initial,
-          int flags=CF_ONCE) {
+          const std::string& scmd, const T& initial, int flags) {
 
-        register_config_item<T>(name, desc, lcmd, scmd, flags);
+        new_config<T>(name, desc, lcmd, scmd, flags);
         set<T>(name, initial);
       }
 
       template<class T>
-      void register_config_item(const std::string& name, 
+      void new_config(const std::string& name, 
           const std::string& desc, const std::string& lcmd, 
-          const std::string& scmd,
-          int flags=CF_ONCE) {
+          const std::string& scmd, int flags) {
   
         if(config.find(name) != config.end())
           throw ConfigItemAlreadyExists(
