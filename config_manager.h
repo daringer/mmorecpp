@@ -68,7 +68,7 @@ namespace TOOLS {
       ConfigManager(const std::string& name, const std::string& desc);
       virtual ~ConfigManager();
       
-      int parse_item(const std::string& key, const std::string& val);
+      int parse_item(const std::string& key, const std::string& val, bool cmdline=true);
       void parse_cmdline(int argc, char *argv[]);
       void load_config_file(const std::string& fn);
       void usage(std::ostream& ss);
