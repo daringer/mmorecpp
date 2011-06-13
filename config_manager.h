@@ -81,7 +81,7 @@ namespace TOOLS {
           int flags=OCCURE_ONCE) {
 
         register_config_item<T>(name, desc, lcmd, scmd, flags);
-        set_data<T>(name, initial);
+        set<T>(name, initial);
       }
 
       template<class T>
@@ -99,7 +99,7 @@ namespace TOOLS {
       }
       
       template<class T>
-      T get_data(const std::string& name, tConfigData::size_type idx=0) {
+      T get(const std::string& name, tConfigData::size_type idx=0) {
         if(config.find(name) == config.end())
           throw NoSuchConfigItemException("Your choosen name: '" + \
               name + "' is not available!");
@@ -112,7 +112,7 @@ namespace TOOLS {
       };
 
       template<class T>
-      void set_data(const std::string& name, const T& value) {
+      void set(const std::string& name, const T& value) {
         T* ptr = new T;
         *ptr = value;
 

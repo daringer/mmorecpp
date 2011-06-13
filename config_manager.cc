@@ -37,15 +37,15 @@ int ConfigManager::parse_item(const string& key, const string& val) {
       continue;
 
     if(i->second->item_type == typeid(string).name()) {
-      set_data<string>(i->second->name, str(val));
+      set<string>(i->second->name, str(val));
       return 2;
     } else if(i->second->item_type == typeid(int).name()) {
-      set_data<int>(i->second->name, integer(val));
+      set<int>(i->second->name, integer(val));
     } else if(i->second->item_type == typeid(double).name()) {
-      set_data<double>(i->second->name, real(val));
+      set<double>(i->second->name, real(val));
       return 2;
     } else if(i->second->item_type == typeid(bool).name()) {
-      set_data<bool>(i->second->name, bool(true));
+      set<bool>(i->second->name, bool(true));
       return 1;
     } else
       cout << "Looks like a bug!" << endl;
