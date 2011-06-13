@@ -3,7 +3,7 @@ include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
 
 LIB = libtools$(EXTENSION).a
 
-TOOLS = exception xstring xsocket fs template_parser xregex io testing_suite #threading
+TOOLS = exception xstring xsocket fs template_parser xregex io testing_suite config_manager #threading
 SOURCES.cc = $(addsuffix .cc,$(TOOLS))
 SOURCES.h = $(addsuffix .h,$(TOOLS))
 
