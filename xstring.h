@@ -27,7 +27,7 @@ class ConvertValueError : public BaseException {
 template <class T>
 std::string str(const T& val, int precision=0) {
   std::stringstream out;
-  if (precision == 0)
+  if(precision == 0)
     out << val;
   else
     out << std::setprecision(precision) << val;
