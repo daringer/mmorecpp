@@ -58,14 +58,11 @@ namespace TOOLS {
       typedef std::vector<void*> tVoidVector;
       typedef std::map<ConfigItem*, tVoidVector> tConfigData;
 
-      std::string meta_name;
-      std::string meta_desc;
       std::string command;
 
       tConfigItemMap config;
       tConfigData data;
        
-      ConfigManager(const std::string& name, const std::string& desc);
       virtual ~ConfigManager();
       
       int parse_item(const std::string& key, const std::string& val);

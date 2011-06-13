@@ -23,9 +23,6 @@ void ConfigItem::set_flags(int value) {
   flags = value;
 }
 
-ConfigManager::ConfigManager(const string& name, const string& desc) 
-  : meta_name(name), meta_desc(desc) {}
-
 ConfigManager::~ConfigManager() {
   for(tConfigItemIter i=config.begin(); i!=config.end(); ++i)
     delete i->second;
@@ -94,8 +91,6 @@ void ConfigManager::load_config_file(const string& fn) {
 }
 
 void ConfigManager::usage(ostream& ss) {
-  ss << meta_name << " - " << meta_desc << endl;
-  
   ss << "Usage: " << command << " <";
   string::size_type cmd_len = 0;
   for(tConfigItemIter i=config.begin(); i!=config.end(); ++i) {
