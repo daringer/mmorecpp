@@ -31,11 +31,9 @@ ConfigManager::~ConfigManager() {
     delete i->second;
 }
 
-int ConfigManager::parse_item(const string& key, const string& val, bool cmdline) {
+int ConfigManager::parse_item(const string& key, const string& val) {
   for(tConfigItemIter i=config.begin(); i!=config.end(); ++i) {
-    if(cmdline && (key != ("--" + i->second->cmd_long) && key != ("-" + i->second->cmd_short))) 
-      continue;
-    if(!cmdline && (key != i->second->name))
+    if(key != ("--" + i->second->cmd_long) && key != ("-" + i->second->cmd_short)) 
       continue;
 
     if(i->second->item_type == typeid(string).name()) {

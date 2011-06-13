@@ -68,7 +68,7 @@ namespace TOOLS {
       ConfigManager(const std::string& name, const std::string& desc);
       virtual ~ConfigManager();
       
-      int parse_item(const std::string& key, const std::string& val, bool cmdline=true);
+      int parse_item(const std::string& key, const std::string& val);
       void parse_cmdline(int argc, char *argv[]);
       void load_config_file(const std::string& fn);
       void usage(std::ostream& ss);
@@ -91,7 +91,8 @@ namespace TOOLS {
           int flags=OCCURE_ONCE) {
   
         if(config.find(name) != config.end())
-          throw ConfigItemAlreadyExists("The ConfigItem with name: " + name + " was already created");
+          throw ConfigItemAlreadyExists(
+              "The ConfigItem with name: " + name + " was already created");
 
         config[name] = new ConfigItem(name, desc, lcmd, scmd, typeid(T).name());
         config[name]->set_flags(flags);
