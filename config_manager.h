@@ -15,10 +15,10 @@
 
 namespace TOOLS {
   enum CONFIG_MANAGER_FLAGS {
-    OCCURE_ONCE =       1,
-    OCCURE_MULTI =      2,
-    OCCURE_POSITIONAL = 4,
-    REQUIRED =          8
+    CF_ONCE =       1,
+    CF_MULTI =      2,
+    CF_POSITIONAL = 4,
+    CF_REQUIRED =   8
   };
 
   class NoSuchConfigItemException : public BaseException {
@@ -75,7 +75,7 @@ namespace TOOLS {
       void register_config_item(const std::string& name, 
           const std::string& desc, const std::string& lcmd, 
           const std::string& scmd, const T& initial,
-          int flags=OCCURE_ONCE) {
+          int flags=CF_ONCE) {
 
         register_config_item<T>(name, desc, lcmd, scmd, flags);
         set<T>(name, initial);
@@ -85,7 +85,7 @@ namespace TOOLS {
       void register_config_item(const std::string& name, 
           const std::string& desc, const std::string& lcmd, 
           const std::string& scmd,
-          int flags=OCCURE_ONCE) {
+          int flags=CF_ONCE) {
   
         if(config.find(name) != config.end())
           throw ConfigItemAlreadyExists(
@@ -113,7 +113,7 @@ namespace TOOLS {
         T* ptr = new T;
         *ptr = value;
 
-        if(config[name]->flags & OCCURE_ONCE) 
+        if(config[name]->flags & CF_ONCE) 
           data[config[name]].clear();
 
         data[config[name]].push_back(ptr);

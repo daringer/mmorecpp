@@ -17,9 +17,9 @@ ConfigItem::ConfigItem(const std::string& name, const std::string& desc,
     : name(name), desc(desc), cmd_long(lcmd), cmd_short(scmd), item_type(itype) {}
 
 void ConfigItem::set_flags(int value) {
-  // apply default OCCURE_ONCE flag if not set
-  if(value & (OCCURE_ONCE | OCCURE_POSITIONAL | OCCURE_MULTI) == 0)
-    value |= OCCURE_ONCE;
+  // apply default CF_ONCE flag if not set
+  if(value & (CF_ONCE | CF_POSITIONAL | CF_MULTI) == 0)
+    value |= CF_ONCE;
   flags = value;
 }
 
@@ -61,6 +61,7 @@ void ConfigManager::parse_cmdline(int argc, char *argv[]) {
 
   while(tmp.size() != 0) {
     int to_remove = parse_item(tmp[0], (tmp.size() > 1) ? tmp[1] : tmp[0]);
+
     if(to_remove == 0)
       throw NoSuchConfigItemException("The param: '" + tmp[0] + "' is not valid!");
     else if(to_remove == 1)
@@ -72,7 +73,7 @@ void ConfigManager::parse_cmdline(int argc, char *argv[]) {
   }
 
   for(tConfigItemIter i=config.begin(); i!=config.end(); ++i) {
-    if((i->second->flags & REQUIRED) && (data[config[i->first]].size() == 0))
+    if((i->second->flags & CF_REQUIRED) && (data[config[i->first]].size() == 0))
       throw RequiredConfigItemNotSet(
           "The required config item: " + i->first + " was not set");
   }
@@ -108,8 +109,8 @@ void ConfigManager::usage(ostream& ss) {
     ss << setw(6)  << "-" + i->second->cmd_short << setiosflags(ios::right) \
        << setw(3) << "| " << setw(cmd_len+10) << "--" + i->second->cmd_long \
        << setw(10) << i->second->name << "    (" << i->second->desc << ")" \
-       << ((i->second->flags & OCCURE_MULTI) ? "(multiple possible)" : "") \
-       << ((i->second->flags & REQUIRED) ? " (required)" : "") \
+       << ((i->second->flags & CF_MULTI) ? "(multiple possible)" : "") \
+       << ((i->second->flags & CF_REQUIRED) ? " (required)" : "") \
        << endl;
   ss << endl;
 }
@@ -124,7 +125,7 @@ int main(int argc, char *argv[]) {
  
   ConfigManager m("Test", "Test foo");
   m.register_config_item<string>("p1", "tjodsifjiofds dqwdw ddqwd", "something", "sh");
-  m.register_config_item<double>("p2", "ihfsdauisdh", "was", "w", REQUIRED | OCCURE_ONCE);
+  m.register_config_item<double>("p2", "ihfsdauisdh", "was", "w", CF_REQUIRED | CF_ONCE);
   m.register_config_item<bool>("p3", "jojojo????", "jhdss", "j", false);
 
   try {
