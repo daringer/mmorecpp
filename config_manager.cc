@@ -105,9 +105,12 @@ void ConfigManager::usage(ostream& ss) {
   ss << ">" << endl << endl;
 
   for(tConfigItemIter i=config.begin(); i!=config.end(); ++i)
-    ss << setw(6)  << "-" + i->second->cmd_short << setiosflags(ios::right) << setw(3) << \
-      "| " << setw(cmd_len+10) << "--" + i->second->cmd_long << \
-      setw(10) << i->second->name << "    (" << i->second->desc << ")" << endl;
+    ss << setw(6)  << "-" + i->second->cmd_short << setiosflags(ios::right) \
+       << setw(3) << "| " << setw(cmd_len+10) << "--" + i->second->cmd_long \
+       << setw(10) << i->second->name << "    (" << i->second->desc << ")" \
+       << ((i->second->flags & OCCURE_MULTI) ? "(multiple possible)" : "") \
+       << ((i->second->flags & REQUIRED) ? " (required)" : "") \
+       << endl;
   ss << endl;
 }
 
