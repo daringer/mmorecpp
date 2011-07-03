@@ -26,6 +26,8 @@ XString& XString::strip() {
  * @return *this
  */
 XString& XString::strip(const string& s) {
+  if (length() == 0)
+    return *this;
   while(substr(0, s.length()) == s)
     erase(0, s.length());
   while(substr(length() - s.length(), s.length()) == s)
@@ -125,3 +127,14 @@ XString& XString::upper() {
       replace(i, i+1, 1, (char)((*i)-32));
   return *this;
 }
+
+bool XString::startswith(const string& what) {
+  return (find(what) == 0);
+}
+
+bool XString::endswith(const string& what) {
+  return (rfind(what) == length() - what.length());
+}
+
+
+

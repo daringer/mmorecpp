@@ -91,6 +91,9 @@ class XString : public std::string {
 
     XString& lower();
     XString& upper();
+
+    bool startswith(const std::string& what);
+    bool endswith(const std::string& what);
 };
 }
 

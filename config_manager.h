@@ -56,7 +56,12 @@ class ConfigNotFound : public ConfigManagerException {
 
 class IncompatibleDataTypes : public ConfigManagerException {
   public:
-    IncompatibleDataTypes(const std::string& msg);
+    IncompatibleDataTypes(const std::string& dtype, const std::string& found);
+};
+
+class ErrorParsingConfigFile : public ConfigManagerException {
+  public:
+    ErrorParsingConfigFile(const std::string& msg);
 };
 
 template<class T>
@@ -190,12 +195,12 @@ class ConfigManager {
     void build_maps();
     ConfigGroup* new_group(const std::string& name);
 
-    int parse(int pos, int max, char* argv[]);
+    void parse(Stringlist* args);
     void parse_cmdline(int argc, char* argv[]);
-/*    
-    void load_config_file(const std::string& fn);
-    */
+    void parse_config_file(const std::string& fn);
     void usage(std::ostream& ss);
+  
+    static std::string type2str(const std::string& dtype);
     
 };
 }
