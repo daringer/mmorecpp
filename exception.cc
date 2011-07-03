@@ -9,9 +9,13 @@ using namespace TOOLS;
 * @param exc_name the name of the exception to be shown to the user
 */
 BaseException::BaseException(const string& msg, const string& exc_name)
-  : exception_name(exc_name), message(msg) {
+  : exception(), exception_name(exc_name), message(msg){
   set_message(message);
 }
+/**
+*
+*/
+BaseException::~BaseException() throw () { }
 /**
 * @brief copy constructor
 * @param obj the instance of the class to be copied

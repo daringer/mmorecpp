@@ -8,7 +8,7 @@ namespace TOOLS {
 /* @brief The global (abstract) exception-base-class for all
  *        thrown exceptions
  */
-class BaseException {
+class BaseException : public std::exception {
   public:
     std::string output;
     std::string exception_name;
@@ -16,6 +16,7 @@ class BaseException {
 
     BaseException(const std::string& msg, const std::string& exc_name);
     BaseException(const BaseException& obj);
+    virtual ~BaseException() throw ();
 
     void set_message(const std::string& input);
     void show();
