@@ -42,28 +42,18 @@ ConfigGroup* ConfigManager::new_group(const std::string& name) {
 }
 
 void ConfigManager::build_maps() {
-  //cout << "build maps own ptr:  " << (int) 
-  //cout << "BUILD MAPS" << endl;
   cmdmap.clear();
   data_types.clear();
   usagemap.clear();
   for(tGroupIter g=groups.begin(); g!=groups.end(); ++g) {
-    //cout << "group pointer inside parse-loop: " << (int) *g << endl;
-    //cout << "GROUP: " << (*g)->name << endl;
-    //cout << "_cmdmap inside build maps?!: " << (*g)->_cmdmap.size() << endl;
-    for(tStringMapIter i=(*g)->_cmdmap.begin(); i!=(*g)->_cmdmap.end(); ++i) //{
+    for(tStringMapIter i=(*g)->_cmdmap.begin(); i!=(*g)->_cmdmap.end(); ++i)
       cmdmap[i->first] = i->second;
-      //cout << "cmdmap:  " << j->first << " -> " << j->second << endl;
-    //}
-    for(tStringMapIter i=(*g)->_data_types.begin(); i!=(*g)->_data_types.end(); ++i) //{
+    for(tStringMapIter i=(*g)->_data_types.begin(); i!=(*g)->_data_types.end(); ++i)
       data_types[i->first] = i->second;
-      //cout << "data_types:  " << i->first << " -> " << i->second << endl;
-    //}
     for(tStringMapIter i=(*g)->_usagemap.begin(); i!=(*g)->_usagemap.end(); ++i) 
       usagemap[i->first] = i->second;
   }
 }
-
 
 void ConfigManager::parse(Stringlist* args) {
   string cmd = args->at(0);
@@ -72,14 +62,15 @@ void ConfigManager::parse(Stringlist* args) {
     throw UnknownParameter(cmd);
 
   string id = cmdmap[cmd];
-  
+  // catch boolean value as this doesn't need an arg
   if(data_types[id] == typeid(bool).name()) {
     set<bool>(id, true);
     args->erase(args->begin());
     return;
   }
-
   string arg = args->at(1);
+  
+  // check for integer and double
   try {
     if (data_types[id] == typeid(int).name()) {
       set<int>(id, integer(arg));
@@ -94,12 +85,14 @@ void ConfigManager::parse(Stringlist* args) {
     IncompatibleDataTypes(data_types[id], arg);
   }
   
+  // get string 
   if(data_types[id] == typeid(string).name()) {
     set<string>(id, str(arg));
     args->erase(args->begin(), args->begin()+2);
     return;
   }
-  
+
+  // build Stringlist from "," separated input
   if(data_types[id] == typeid(Stringlist).name()) {
     set<Stringlist>(id, XString(arg).split(","));
     args->erase(args->begin(), args->begin()+2);
@@ -112,33 +105,14 @@ void ConfigManager::parse(Stringlist* args) {
 void ConfigManager::parse_cmdline(int argc, char* argv[]) {
   build_maps();
 
-  //cout << "global cmdmaps: " << cmdmap.size() << endl;
-  //cout << "global dt: " << data_types.size() << endl;
-
   command = argv[0];
 
   Stringlist args;
   for(int i=1; i<argc; ++i)
     args.push_back(argv[i]);
 
-  while (args.size() > 0) //{
+  while (args.size() > 0)
     parse(&args);
-    //cout << "args.size()" << args.size() << endl;
-  //}
-
-  //command = argv[0];
-  //int pos = 1;
-
-  //while(pos < argc) 
-  //  pos += parse(pos, argc, argv);
-    
-
-  // Validation //
-  /*for(tConfigItemIter i=config.begin(); i!=config.end(); ++i) {
-    if((i->second->flags & CF_REQUIRED) && (data[config[i->first]].size() == 0))
-      throw RequiredConfigItemNotSet(
-          "The required config item: " + i->first + " was not set");
-  }*/
 }
 
 void ConfigManager::parse_config_file(const string& fn) {
@@ -162,8 +136,6 @@ void ConfigManager::parse_config_file(const string& fn) {
     }
 
     Stringlist lr = line.split("=");
-    //cout << "DEBUG XSTRING: '" << lr[0] << "' '" << lr[1] << "'" << endl;
-    //cout << "DEBUG XSTRING: '" << lr[0].length() << "' '" << lr[1].length() << "'" << endl;
     XString left(lr[0]), right(lr[1]);
     left.strip();
     right.strip();
@@ -173,7 +145,6 @@ void ConfigManager::parse_config_file(const string& fn) {
   }
   fd.close();
   
-  //int orig_size = tokens.size();
   try {
     while(tokens.size() > 0)
       parse(&tokens);

@@ -14,14 +14,6 @@
 #include "general.h"
 
 namespace TOOLS {
-/*enum CONFIG_MANAGER_FLAGS {
-  CF_ONCE =       1,
-  CF_MULTI =      2,
-  CF_POSITIONAL = 4,
-  CF_REQUIRED =   8,
-  CF_EXCLUSIVE = 16,
-  CF_ONEOF =     32,
-};*/
 
 class ConfigManagerException : public BaseException {
   public:
@@ -69,14 +61,9 @@ class ConfigItem {
   public:
     ConfigItem(const std::string& id, 
                const std::string& desc, const std::string& scmd="") 
-      : id(id), cmd_short(scmd), desc(desc), //flags(CF_ONCE), 
+      : id(id), cmd_short(scmd), desc(desc), 
       data_type(typeid(T).name()), empty(true)  {}
 
-    /*ConfigItem<T>& set_flags(const int value) {
-      flags = value;
-      return *this;
-    }*/
-    
     ConfigItem<T>& set_default(const T& value) {
       initial = value;
       if(empty)
@@ -94,7 +81,6 @@ class ConfigItem {
     std::string id; 
     std::string cmd_short;
     std::string desc;
-    //int flags;
     T data;
   private:
     T initial;
@@ -137,8 +123,6 @@ class ConfigGroup {
         _cmdmap["-" + scmd] = new_id;
       _data_types[new_id] = typeid(T).name();
       _usagemap[new_id] = desc;
-      //std::cout << "_cmdmap size: " << _cmdmap.size() << std::endl;
-      //std::cout << "_dt size: " << _data_types.size() << std::endl;
       return *save;
     }
 
@@ -162,12 +146,9 @@ class ConfigManager {
   public:
     typedef std::vector<ConfigGroup*> tGroupList;
     typedef tGroupList::iterator tGroupIter;
-    //typedef std::map<std::string, ConfigGroup*> tIdGroupMap;
 
     std::string command;
-    tStringMap cmdmap;
-    tStringMap data_types;
-    tStringMap usagemap;
+    tStringMap cmdmap, data_types, usagemap;
     tGroupList groups;
 
     virtual ~ConfigManager();
