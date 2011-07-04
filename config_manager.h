@@ -151,6 +151,11 @@ class ConfigManager {
     }
     
     template<class T>
+    const T& operator()(const std::string& id) {
+      return get<T>(id);
+    }
+
+    template<class T>
     ConfigOption& set(const std::string& id, const T& data) {
       return get_option(id).set(data);
     }
@@ -202,7 +207,6 @@ class ConfigGroup {
         _cmdmap[scmd] = new_id;
         parent->cmdmap[scmd] = new_id;
       }
-      
       return *members[new_id];
     }
 };
