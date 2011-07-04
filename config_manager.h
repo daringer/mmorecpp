@@ -149,6 +149,11 @@ class ConfigManager {
     const T& get(const std::string& id) {
       return get_option(id).get<T>();
     }
+    
+    template<class T>
+    const T& operator[](const std::string id) {
+      return get<T>(id);
+    }
 
     template<class T>
     ConfigOption& set(const std::string& id, const T& data) {
