@@ -4,12 +4,6 @@ using namespace std;
 using namespace TOOLS::FS;
 
 /**
- * @brief PathException constructor
- * @param msg the message to be showed for the occured exception
- */
-PathException::PathException(const string& msg) : BaseException(msg, "PathException") {}
-
-/**
  * @brief Path constructor from a std::string
  * @param path the string-representation of the path
  */

@@ -3,9 +3,6 @@
 using namespace std;
 using namespace TOOLS::NET;
 
-SocketException::SocketException(const std::string& msg)
-  : BaseException(msg, "SocketException") {}
-
 SocketStream::SocketStream(int fd) : fd(fd) {}
 
 SocketStream::SocketStream(const SocketStream& obj) : fd(obj.fd) {}

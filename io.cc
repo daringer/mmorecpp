@@ -3,9 +3,6 @@
 using namespace std;
 using namespace TOOLS::IO;
 
-
-TOOLS::IO::IOException::IOException(const string& msg) : BaseException(msg, "IOException") {}
-
 string TOOLS::IO::nextline(istream& inp) {
   char buffer[256] = {0};
 

@@ -21,13 +21,9 @@
 
 namespace TOOLS {
 namespace NET {
-/**
- * @brief the SocketException thrown on problems
- */
-class SocketException : public BaseException {
-  public:
-    SocketException(const std::string& msg);
-};
+
+DEFINE_EXCEPTION(SocketException, BaseException);
+
 /**
  * @brief the SocketStream handles the actual data
  *        writing and reading from the socket.

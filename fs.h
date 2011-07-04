@@ -19,13 +19,9 @@
 
 namespace TOOLS {
 namespace FS {
-/**
- * @brief an exception to throw related to Path(s)
- */
-class PathException : public BaseException {
-  public:
-    PathException(const std::string& msg);
-};
+
+DEFINE_EXCEPTION(PathException, BaseException);
+
 /**
  * @brief A handy Path representation and manipulation class.
  *        Supports "smart" path joining through addition:

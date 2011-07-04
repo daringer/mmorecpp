@@ -4,12 +4,6 @@ using namespace std;
 using namespace TOOLS;
 
 /**
- * @brief constructor
- * @param msg description of the occured exception
- */
-ConvertValueError::ConvertValueError(const string& msg)
-  : BaseException(msg, "ConvertValueError") { }
-/**
  * @brief empty constructor
  */
 XString::XString() : string() { }

@@ -12,13 +12,8 @@
 
 namespace TOOLS {
 
-/**
- * @brief the exception to be thrown if a conversion error occurs
- */
-class ConvertValueError : public BaseException {
-  public:
-    ConvertValueError(const std::string& msg);
-};
+DEFINE_EXCEPTION(ConvertValueError, BaseException);
+
 /**
  * @brief convert any given parameter to a string
  * @param any parameter, which has a string representation

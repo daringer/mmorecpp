@@ -22,13 +22,11 @@
 namespace TOOLS {
 namespace IO {
 
-class IOException : public BaseException {
-  public:
-    IOException(const std::string& msg);
-};
+DEFINE_EXCEPTION(IOException, BaseException);
 
 std::string nextline(std::istream& inp);
 std::string readfile(const std::string& filename);
+
 }
 }
 #endif
