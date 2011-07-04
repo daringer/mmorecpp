@@ -75,14 +75,16 @@ class ConfigDataKeeper {
     }
 }; 
 
+// is is also longcommandline arg and 
 class ConfigOption {
   public:
-    ConfigDataKeeper data, initial;
+    ConfigDataKeeper data;
     // id is also used as long cmd
     std::string id; 
     std::string cmd_short;
     std::string desc;
-    bool empty;
+    bool was_set;
+    bool has_default;
     ConfigGroup* parent;
 
     ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd); 
@@ -93,11 +95,10 @@ class ConfigOption {
         throw IncompatibleDataTypes("Data has: " + data.verbose_type() + \
             " Template(Option::set_default) was: " + typeid(T).name());
       
-      initial.set<T>(value);
-      if(empty)
-        data.set<T>(value);
-      // flag data as empty again
-      empty = true;
+      has_default = true;
+      data.set<T>(value);
+      // reset was_set to false, as default doesn't count
+      was_set = false;
 
       return *this;
     }
@@ -115,7 +116,7 @@ class ConfigOption {
             " Template(Option::set) was: " + typeid(T).name());
 
       data.set<T>(value);
-      empty = false;
+      was_set = true;
       return *this;
     }
 
@@ -126,11 +127,10 @@ class ConfigOption {
 
     template<class T>
     const T& get() {
-      if (empty)
+      if (!was_set && !has_default)
         throw ValueHasNotBeenSet(id);
       return data.get<T>();
     }
-
 };
 
 class ConfigManager {
@@ -150,11 +150,6 @@ class ConfigManager {
       return get_option(id).get<T>();
     }
     
-    template<class T>
-    const T& operator[](const std::string id) {
-      return get<T>(id);
-    }
-
     template<class T>
     ConfigOption& set(const std::string& id, const T& data) {
       return get_option(id).set(data);

@@ -22,7 +22,7 @@ string ConfigDataKeeper::verbose_type() {
 }
 
 ConfigOption::ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd) 
-  : data(tinfo), initial(tinfo), id(id), cmd_short(scmd), desc(desc), empty(true), parent(NULL) {}
+  : data(tinfo), id(id), cmd_short(scmd), desc(desc), was_set(false), has_default(false), parent(NULL) {}
 
 ConfigGroup::ConfigGroup(const std::string& name, ConfigManager* par) 
   : name(name), parent(par)  {}
@@ -59,8 +59,6 @@ ConfigOption& ConfigManager::get_option(const std::string& id) {
 
 ConfigManager::ConfigManager(const std::string& start_command) 
   : command(start_command) { }
-
-
 
 void ConfigManager::parse(tStringList* args) {
   string cmd = args->at(0);
@@ -163,13 +161,13 @@ void ConfigManager::parse_config_file(const string& fn) {
 bool ConfigManager::is_group_active(const std::string& name) {
   tOptionMap& opts = groups[name]->members;
   for(tOptionIter i=opts.begin(); i!=opts.end(); ++i)
-    if(!i->second->empty)
+    if(i->second->was_set)
       return true;
   return false;
 }
 
 bool ConfigManager::is_option_set(const std::string& id) {
-  return (!get_option(id).empty);
+  return (get_option(id).was_set || get_option(id).has_default);
 }
 
 void ConfigManager::usage(ostream& ss) {
