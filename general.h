@@ -2,7 +2,13 @@
 #define GENERAL_H
 
 #include <vector>
+#include <map>
+#include <set>
 #include <string>
+#include <iostream>
+#include <exception>
+#include <cstdlib>
+
 
 namespace TOOLS {
 
@@ -16,8 +22,16 @@ enum SOCKET_TYPE {
   UDP
 };
 
-typedef std::vector<std::string> Stringlist;
-typedef std::vector<int> Integerlist;
+typedef std::vector<std::string> tStringList;
+typedef tStringList::iterator tStringIter;
+
+typedef std::vector<int> tIntList;
+
+typedef std::map<std::string, std::string> tStringMap;
+typedef tStringMap::iterator tStringMapIter;
+
 
 }
+
 #endif
+

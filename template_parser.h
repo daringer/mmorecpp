@@ -75,7 +75,7 @@ class TemplateParser {
     bool is_rendered;
 
     std::map<std::string, std::string> string_vars;
-    std::map<std::string, Stringlist> vector_vars;
+    std::map<std::string, tStringList> vector_vars;
     std::map<std::string, int> iter_vars;
     std::map<std::string, bool> first_loop;
     std::map<std::string, bool> last_loop;

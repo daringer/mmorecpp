@@ -80,10 +80,10 @@ class XString : public std::string {
     XString& strip();
     XString& strip(const std::string& s);
 
-    Stringlist split();
-    Stringlist split(const std::string& s);
+    tStringList split();
+    tStringList split(const std::string& s);
 
-    XString& join(const Stringlist& list);
+    XString& join(const tStringList& list);
 
     XString& subs(const std::string& what, const std::string& with, int max_replaces);
     XString& subs(const std::string& what, const std::string& with);

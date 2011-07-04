@@ -16,7 +16,6 @@
 #include <string>
 
 #include "general.h"
-#include "exception.h"
 #include "xstring.h"
 
 

@@ -7,6 +7,7 @@
 #include <vector>
 #include <iomanip>
 
+#include "general.h"
 #include "exception.h"
 
 namespace TOOLS {

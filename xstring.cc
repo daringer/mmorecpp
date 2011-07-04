@@ -45,8 +45,8 @@ vector<string> XString::split() {
  * @brief split the string using given seperator char(s)
  * @return a vector<string> containing the results without the seperator char(s)
  */
-Stringlist XString::split(const string& s) {
-  Stringlist out;
+tStringList XString::split(const string& s) {
+  tStringList out;
   string::size_type pos = 0, last_pos = 0;
   while((pos = find(s, last_pos)) != string::npos) {
     out.push_back(substr(last_pos, pos-last_pos));
@@ -99,11 +99,11 @@ XString& XString::subs(const string& what, const string& with, int max_replaces)
  * @param the instance of the vector<string> to be joined
  * @return a string reference with the complete-joined string (*this)
  */
-XString& XString::join(const Stringlist& pieces) {
+XString& XString::join(const tStringList& pieces) {
   XString delim(*this);
   clear();
 
-  for(Stringlist::const_iterator i=pieces.begin(); i!=pieces.end(); ++i)
+  for(tStringList::const_iterator i=pieces.begin(); i!=pieces.end(); ++i)
     append((*i) + ((i != --pieces.end()) ? delim : ""));
   return *this;
 }
@@ -133,7 +133,7 @@ bool XString::startswith(const string& what) {
 }
 
 bool XString::endswith(const string& what) {
-  return (rfind(what) == length() - what.length());
+  return (rfind(what) == (length() - what.length()));
 }
 
 

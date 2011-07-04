@@ -16,6 +16,7 @@
 #include <vector>
 #include <streambuf>
 
+#include "general.h"
 #include "exception.h"
 
 namespace TOOLS {

@@ -3,111 +3,125 @@
 using namespace std;
 using namespace TOOLS;
 
-ConfigManagerException::ConfigManagerException(const string& msg, const string& exc_name) :
-  BaseException(msg, exc_name) {}
+ConfigDataKeeper::ConfigDataKeeper(void* data, const string& tinfo) : storage(data), tinfo(tinfo) { }
 
-ConfigManagerException::ConfigManagerException(const ConfigManagerException& obj) :
-  BaseException(obj.message, obj.exception_name) {}
+ConfigDataKeeper::ConfigDataKeeper(const string& tinfo) : storage(NULL), tinfo(tinfo) { }
 
-UnknownParameter::UnknownParameter(const string& msg) :
-  ConfigManagerException(msg, "UnknownParameter") {}
-
-ConfigItemAlreadyExists::ConfigItemAlreadyExists(const string& msg) :
-  ConfigManagerException(msg, "ConfigItemAlreadyExists") {}
-
-ShortCommandAlreadyExists::ShortCommandAlreadyExists(const string& msg) :
-  ConfigManagerException(msg, "ShortCommandAlreadyExists") {}
-
-ConfigNotFound::ConfigNotFound(const string& msg) :
-  ConfigManagerException(msg, "ConfigNotFound") {}
-
-IncompatibleDataTypes::IncompatibleDataTypes(const string& dtype, const string& found) :
-  ConfigManagerException("Wanted: '" + ConfigManager::type2str(dtype) + "' but found: '" + found + "'", "IncompatibleDataTypes") {}
-
-ErrorParsingConfigFile::ErrorParsingConfigFile(const string& msg) :
-  ConfigManagerException(msg, "ErrorParsingConfigFile") {}
-
-
-ConfigManager::~ConfigManager() {
-  // maybe the Items and the Groups - but when???
+string ConfigDataKeeper::verbose_type() {
+  if (tinfo == typeid(int).name())
+    return "integer";
+  else if (tinfo == typeid(double).name())
+    return "float";
+  else if (tinfo == typeid(string).name())
+    return "string";
+  else if (tinfo == typeid(tStringList).name())
+    return "string list";
+  else if (tinfo == typeid(bool).name())
+    return "boolean";
+  return "UNKNOWN";
 }
+
+ConfigOption::ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd) 
+  : data(tinfo), initial(tinfo), id(id), cmd_short(scmd), desc(desc), empty(true), parent(NULL) {}
 
 ConfigGroup::ConfigGroup(const std::string& name, ConfigManager* par) 
-  : name(name), parent(par) {}
+  : name(name), parent(par)  {}
     
+ConfigOption& ConfigGroup::get_option(const std::string& id) {
+  tOptionIter it = members.find(id);
+  if(it != members.end())
+    return *it->second;
+  throw OptionNotFound(id);
+}
+
 ConfigGroup* ConfigManager::new_group(const std::string& name) {
-    ConfigGroup* grp = new ConfigGroup(name, this);
-    groups.push_back(grp);
-    return grp;
+    groups[name] = new ConfigGroup(name, this);
+    return groups[name];
 }
 
-void ConfigManager::build_maps() {
-  cmdmap.clear();
-  data_types.clear();
-  usagemap.clear();
-  for(tGroupIter g=groups.begin(); g!=groups.end(); ++g) {
-    for(tStringMapIter i=(*g)->_cmdmap.begin(); i!=(*g)->_cmdmap.end(); ++i)
-      cmdmap[i->first] = i->second;
-    for(tStringMapIter i=(*g)->_data_types.begin(); i!=(*g)->_data_types.end(); ++i)
-      data_types[i->first] = i->second;
-    for(tStringMapIter i=(*g)->_usagemap.begin(); i!=(*g)->_usagemap.end(); ++i) 
-      usagemap[i->first] = i->second;
+ConfigGroup* ConfigManager::get_group(const string& name) {
+  tGroupIter it = groups.find(name);
+  if (it == groups.end())
+    throw GroupNotFound(name);
+  return it->second;
+}
+
+ConfigGroup* ConfigManager::get_group_from_option(const string& name) {
+  try {
+    return get_option(name).parent;
+  } catch (OptionNotFound e) {
+    e.show();
   }
+  return NULL;
 }
 
-void ConfigManager::parse(Stringlist* args) {
+
+ConfigOption& ConfigManager::get_option(const std::string& id) {
+  tOptionIter it = members.find(id);
+  if(it == members.end())
+    throw OptionNotFound(id);
+  return *(it->second);
+}
+
+ConfigManager::ConfigManager(const std::string& start_command) 
+  : command(start_command) { }
+
+
+
+void ConfigManager::parse(tStringList* args) {
   string cmd = args->at(0);
 
   if(cmdmap.find(cmd) == cmdmap.end()) 
     throw UnknownParameter(cmd);
 
   string id = cmdmap[cmd];
+  ConfigDataKeeper* tmp = &members[id]->data;
+  
   // catch boolean value as this doesn't need an arg
-  if(data_types[id] == typeid(bool).name()) {
+  if(tmp->same_data_types<bool>()) {
     set<bool>(id, true);
     args->erase(args->begin());
     return;
   }
+
+  if(args->size() < 2)
+    throw MissingParameter(cmd + " - found no more args");
+
   string arg = args->at(1);
   
   // check for integer and double
   try {
-    if (data_types[id] == typeid(int).name()) {
+    if (tmp->same_data_types<int>()) {
       set<int>(id, integer(arg));
       args->erase(args->begin(), args->begin()+2);
       return;
-    } else if(data_types[id] == typeid(double).name()) {
+    } else if(tmp->same_data_types<double>()) {
       set<double>(id, real(arg));
       args->erase(args->begin(), args->begin()+2);
       return;
     } 
   } catch (ConvertValueError e) { 
-    IncompatibleDataTypes(data_types[id], arg);
+    throw IncompatibleDataTypes("data: " + tmp->verbose_type() + " passed: " + arg);
   }
   
   // get string 
-  if(data_types[id] == typeid(string).name()) {
+  if(tmp->same_data_types<string>()) {
     set<string>(id, str(arg));
     args->erase(args->begin(), args->begin()+2);
     return;
   }
 
-  // build Stringlist from "," separated input
-  if(data_types[id] == typeid(Stringlist).name()) {
-    set<Stringlist>(id, XString(arg).split(","));
+  // build tStringList from "," separated input
+  if(tmp->same_data_types<tStringList>()) {
+    set<tStringList>(id, XString(arg).split(","));
     args->erase(args->begin(), args->begin()+2);
     return;
   }
-
-  throw IncompatibleDataTypes(data_types[id], arg);
+  throw IncompatibleDataTypes("data: " + tmp->verbose_type() + " passed: " + arg);
 }
 
 void ConfigManager::parse_cmdline(int argc, char* argv[]) {
-  build_maps();
-
-  command = argv[0];
-
-  Stringlist args;
+  tStringList args;
   for(int i=1; i<argc; ++i)
     args.push_back(argv[i]);
 
@@ -116,11 +130,9 @@ void ConfigManager::parse_cmdline(int argc, char* argv[]) {
 }
 
 void ConfigManager::parse_config_file(const string& fn) {
-  build_maps();
-
   ifstream fd(fn.c_str(), ios::in);
   XString line;
-  Stringlist tokens;
+  tStringList tokens;
   while(fd.good()) {
     getline(fd, line);
     line.strip().strip("\n");
@@ -135,7 +147,7 @@ void ConfigManager::parse_config_file(const string& fn) {
       continue;
     }
 
-    Stringlist lr = line.split("=");
+    tStringList lr = line.split("=");
     XString left(lr[0]), right(lr[1]);
     left.strip();
     right.strip();
@@ -154,89 +166,85 @@ void ConfigManager::parse_config_file(const string& fn) {
   }
 }
 
+bool ConfigManager::is_group_active(const std::string& name) {
+  tOptionMap& opts = groups[name]->members;
+  for(tOptionIter i=opts.begin(); i!=opts.end(); ++i)
+    if(!i->second->empty)
+      return true;
+  return false;
+}
+
+bool ConfigManager::is_option_set(const std::string& id) {
+  return (!get_option(id).empty);
+}
+
 void ConfigManager::usage(ostream& ss) {
   ss << "Usage: " << command << " <options>" << endl;
   ss << endl << "Options:" << endl;
 
   string::size_type id_len = 0, scmd_len = 0, desc_len = 0;
   for(tStringMapIter i=cmdmap.begin(); i!=cmdmap.end(); ++i) {
+    ConfigOption* opt = members[i->second];
     if(i->first.find("--") != string::npos)
-      id_len = max(i->first.length(), id_len);
+      id_len = max(opt->id.length(), id_len);
     else 
-      scmd_len = max(i->first.length(), scmd_len);
-    desc_len = max(usagemap[i->second].length(), desc_len);
+      scmd_len = max(opt->cmd_short.length(), scmd_len);
+    desc_len = max(opt->desc.length(), desc_len);
   }
 
-  string cmd, scmd, id;
-  for(tStringMapIter i=usagemap.begin(); i!=usagemap.end(); ++i) {
-    id = i->first;
-    for(tStringMapIter j=cmdmap.begin(); j!=cmdmap.end(); ++j) {
-      if (j->second == id) {
-        if (j->first.find("--") != string::npos)
-          cmd = j->first;
-        else if (j->first.find("-") != string::npos)
-          scmd = j->first;
-      }
+  for(tGroupIter g=groups.begin(); g!=groups.end(); ++g) {
+    ConfigGroup* grp = g->second;
+    ss << endl << "--- Group: " << grp->name << endl;
+    for(tOptionIter i=grp->members.begin(); i!=grp->members.end(); ++i) {
+      ConfigOption* opt = grp->members[i->first];
+
+      ss << right << setw(scmd_len+1) << ((opt->cmd_short.size() > 0) ? \
+          ("-" + opt->cmd_short) : "") << " | " << flush;
+      ss << left << setw(id_len+2) << ("--" + opt->id) << "   " << opt->desc;
+      ss << " [" << opt->data.verbose_type() << "]";
+      ss << endl;
     }
-    ss << right << setw(scmd_len+1) << scmd << " | " << flush;
-    ss << left << setw(id_len+2) << cmd << "   " << i->second;
-    ss << " [" << ConfigManager::type2str(data_types[id]) << "]";
-    ss << endl;
   }
   ss << endl;
 }
 
-string ConfigManager::type2str(const string& dtype) {
-  if (dtype == typeid(int).name())
-    return "integer";
-  else if (dtype == typeid(double).name())
-    return "float";
-  else if (dtype == typeid(string).name())
-    return "string";
-  else if (dtype == typeid(Stringlist).name())
-    return "string list";
-  else if (dtype == typeid(bool).name())
-    return "boolean";
-  return "UNKNOWN";
-}
 
+/*
+#include <stdlib.h>
+#include <stdio.h>
 
-//#include<stdlib.h>
-//#include<stdio.h>
+int main(int argc, char *argv[]) {
+  set_terminate(TOOLS::tools_lib_exception_handler);
 
-/*int main(int argc, char *argv[]) {
-  ConfigManager m;
-  ConfigGroup* g1 = m.new_group("Application Server");
-  g1->new_option<string>("my-id-name", "blabla foo bla", "s").set_default("foo");
-  g1->new_option<double>("some-other", "ihfsdauisdh", "w");
-  g1->new_option<bool>("andsobool", "jojojo????", "j").set_default(false);
-  g1->new_option<int>("abba", "my fancey nice description", "a").set_default(12);
-  g1->new_option<Stringlist>("more", "wh00000tuuup", "m");
-
+  ConfigManager* m = new ConfigManager(argv[0]);
+  ConfigGroup* g1 = m->new_group("Application Server");
+  ConfigGroup* g2 = m->new_group("another one");
+  g1->new_option<string>("my-id-name", "blabla foo bla", "s").set_default(str("foo"));
+  g1->new_option<double>("some-other", "ihfsdauisdh", "w").set_default(13.123);
+  g2->new_option<bool>("andsobool", "jojojo????", "j").set_default(false);
+  g2->new_option<int>("abba", "my fancey nice description", "a").set_default(12);
+  g2->new_option<tStringList>("more", "wh00000tuuup", "m");
+  
   try {
-    m.parse_config_file("my.conf");
-    m.parse_cmdline(argc, argv);
+    m->parse_config_file("my.conf");
+    m->parse_cmdline(argc, argv);
   } catch (ConfigManagerException e) {
     e.show();
-    m.usage(cout);
+    m->usage(cout);
     exit(1);
   } 
   cout << "parsing finished ";
 
   cout << "--- test --- test --- test ---" << endl;
-  cout << g1->get<string>("my-id-name") << endl;
-  cout << g1->get<double>("some-other") << endl;
-  cout << ((g1->get<bool>("andsobool")) ? "jo" : "nee") << endl; 
-  cout << g1->get<int>("abba") << endl;
-  g1->set<int>("abba", 1234);
-  cout << "abba: " << g1->get<int>("abba") << endl;
-  Stringlist foo = m.get<Stringlist>("more");
-  for(Stringlist::iterator i=foo.begin(); i!=foo.end(); ++i)
+  cout << m->get<string>("my-id-name") << endl;
+  cout << m->get<double>("some-other") << endl;
+  cout << ((m->get<bool>("andsobool")) ? "jo" : "nee") << endl; 
+  cout << m->get<int>("abba") << endl;
+  m->set<int>("abba", 1234);
+  cout << "abba: " << m->get<int>("abba") << endl;
+  tStringList foo = m->get<tStringList>("more");
+  for(tStringList::iterator i=foo.begin(); i!=foo.end(); ++i)
     cout << "list: " << *i << endl;
+  
   return 0;
 }*/
-
-
-
-
-

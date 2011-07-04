@@ -3,188 +3,209 @@
 
 #include <typeinfo>
 #include <map>
+#include <set>
 #include <vector>
 #include <string>
 #include <sstream>
 #include <fstream>
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "general.h"
 #include "exception.h"
 #include "xstring.h"
 
-#include "general.h"
 
 namespace TOOLS {
 
-class ConfigManagerException : public BaseException {
-  public:
-    ConfigManagerException(const std::string& msg, const std::string& exc_name);
-    ConfigManagerException(const ConfigManagerException& obj);
-};
+class ConfigGroup;
+class ConfigOption;
 
-class UnknownParameter : public ConfigManagerException {
-  public:
-    UnknownParameter(const std::string& msg);
-};
+DEFINE_PARENT_EXCEPTION(ConfigManagerException, BaseException);
+DEFINE_EXCEPTION(UnknownParameter,              ConfigManagerException);
+DEFINE_EXCEPTION(MissingParameter,              ConfigManagerException);
+DEFINE_EXCEPTION(ValueHasNotBeenSet,            ConfigManagerException);
+DEFINE_EXCEPTION(OptionAlreadyExists,           ConfigManagerException);
+DEFINE_EXCEPTION(ShortCommandAlreadyExists,     ConfigManagerException);
+DEFINE_EXCEPTION(OptionNotFound,                ConfigManagerException);
+DEFINE_EXCEPTION(GroupNotFound,                 ConfigManagerException);
+DEFINE_EXCEPTION(IncompatibleDataTypes,         ConfigManagerException);
+DEFINE_EXCEPTION(ErrorParsingConfigFile,        ConfigManagerException);
 
-class ConfigItemAlreadyExists : public ConfigManagerException {
-  public:
-    ConfigItemAlreadyExists(const std::string& msg);
-};
+typedef std::map<std::string, ConfigOption*> tOptionMap;
+typedef tOptionMap::iterator tOptionIter;
 
-class ShortCommandAlreadyExists : public ConfigManagerException {
-  public:
-    ShortCommandAlreadyExists(const std::string& msg);
-};
+typedef std::map<std::string, ConfigGroup*> tGroupList;
+typedef tGroupList::iterator tGroupIter;
 
-class RequiredConfigItemNotSet : public ConfigManagerException {
+class ConfigDataKeeper {
+  private:
+    void* storage;
   public:
-    RequiredConfigItemNotSet(const std::string& msg);
-};
-
-class ConfigNotFound : public ConfigManagerException {
-  public:
-    ConfigNotFound(const std::string& msg);
-};
-
-class IncompatibleDataTypes : public ConfigManagerException {
-  public:
-    IncompatibleDataTypes(const std::string& dtype, const std::string& found);
-};
-
-class ErrorParsingConfigFile : public ConfigManagerException {
-  public:
-    ErrorParsingConfigFile(const std::string& msg);
-};
-
-template<class T>
-class ConfigItem {
-  public:
-    ConfigItem(const std::string& id, 
-               const std::string& desc, const std::string& scmd="") 
-      : id(id), cmd_short(scmd), desc(desc), 
-      data_type(typeid(T).name()), empty(true)  {}
-
-    ConfigItem<T>& set_default(const T& value) {
-      initial = value;
-      if(empty)
-        data = value;
-      return *this;
-    }
+    std::string tinfo;
     
-    ConfigItem<T>& set(const T& value) {
-      data = value;
-      empty = false;
-      return *this;
-    }
+    ConfigDataKeeper(const std::string& tinfo);
+    ConfigDataKeeper(void* data, const std::string& tinfo);
 
+    std::string verbose_type();
+
+    template<class T>
+    const T& get() {
+      if (!same_data_types<T>())
+        throw IncompatibleDataTypes("Data: " + tinfo + \
+            " Template(Keeper::get) was: " + typeid(T).name());
+      return *( (T*) storage);
+    };
+
+    template<class T>
+    void set(const T& value) {
+      if(!same_data_types<T>())
+        throw IncompatibleDataTypes("Data: " + tinfo + \
+            " Template(Keeper::set) was: " + typeid(T).name());
+      
+      T* ptr = new T(value);
+      storage = (void*) ptr;
+    };
+
+    template<class T>
+    bool same_data_types() {
+      return (tinfo == typeid(T).name());
+    }
+}; 
+
+class ConfigOption {
+  public:
+    ConfigDataKeeper data, initial;
     // id is also used as long cmd
     std::string id; 
     std::string cmd_short;
     std::string desc;
-    T data;
-  private:
-    T initial;
-    std::string data_type;
     bool empty;
-};
+    ConfigGroup* parent;
 
-class ConfigManager;
+    ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd); 
 
-typedef std::map<std::string, std::string> tStringMap;
-typedef tStringMap::iterator tStringMapIter;
+    template<class T>
+    ConfigOption& set_default(const T& value) {
+      if(!data.same_data_types<T>())
+        throw IncompatibleDataTypes("Data has: " + data.verbose_type() + \
+            " Template(Option::set_default) was: " + typeid(T).name());
+      
+      initial.set<T>(value);
+      if(empty)
+        data.set<T>(value);
+      // flag data as empty again
+      empty = true;
 
-class ConfigGroup {
-  public:
-    typedef std::map<std::string, void*> tItemList;
-    typedef tItemList::iterator tItemIter;
+      return *this;
+    }
+
+    // TODO: some way to handle char[]-foo without converting to string explicitly
+    /*template<char*>
+    ConfigOption& set_default(const char* value[]) {
+      return set_default<std::string>(str(value));
+    }*/
     
-    std::string name;
-    ConfigManager* parent;
-    tItemList members;
- 
-    // command -> id   
-    tStringMap _cmdmap;
-    // id -> typeid
-    tStringMap _data_types;
-    // id -> desc
-    tStringMap _usagemap;
-
-    ConfigGroup(const std::string& name, ConfigManager* par);
-
     template<class T>
-    ConfigItem<T>& new_option(const std::string& new_id, const std::string& desc,
-                              const std::string& scmd="") {
-      // check if id is free - TODO
-      // check if short-cmd is free - TODO
-      ConfigItem<T>* save = new ConfigItem<T>(new_id, desc, scmd);
-      members[new_id] = (void*) save;
-      _cmdmap["--" + new_id] = new_id;
-      if(scmd != "")
-        _cmdmap["-" + scmd] = new_id;
-      _data_types[new_id] = typeid(T).name();
-      _usagemap[new_id] = desc;
-      return *save;
+    ConfigOption& set(const T& value) {
+      if(!data.same_data_types<T>())
+        throw IncompatibleDataTypes("Data has: " + data.verbose_type() + \
+            " Template(Option::set) was: " + typeid(T).name());
+
+      data.set<T>(value);
+      empty = false;
+      return *this;
     }
 
-    template<class T>
-    T& get(const std::string& id) {
-      return get_config<T>(id).data;
-    }
+    /*template<char*>
+    ConfigOption& set(const char* value[]) {
+      return set<std::string>(str(value));
+    }*/
 
     template<class T>
-    ConfigItem<T>& get_config(const std::string& id) {
-      return *((ConfigItem<T>*) members[id]);
+    const T& get() {
+      if (empty)
+        throw ValueHasNotBeenSet(id);
+      return data.get<T>();
     }
 
-    template<class T>
-    void set(const std::string& id, const T& new_data) {
-      get_config<T>(id).set(new_data);
-    }
 };
 
 class ConfigManager {
   public:
-    typedef std::vector<ConfigGroup*> tGroupList;
-    typedef tGroupList::iterator tGroupIter;
-
-    std::string command;
-    tStringMap cmdmap, data_types, usagemap;
+    tOptionMap members;
     tGroupList groups;
-
-    virtual ~ConfigManager();
-
-    template<class T>
-    ConfigItem<T>& get_config(const std::string& id) {
-      for(tGroupIter i=groups.begin(); i!=groups.end(); ++i) {
-        if((*i)->_cmdmap.find("--" + id) == (*i)->_cmdmap.end()) 
-          continue;
-        return (*i)->get_config<T>(id);
-      }
-      throw ConfigNotFound(id);
-    }
+    tStringMap cmdmap;
     
+    std::string command;
+    
+    ConfigManager(const std::string& start_command);
+
+    ConfigOption& get_option(const std::string& id);
+
     template<class T>
-    T& get(const std::string& id) {
-      return get_config<T>(id).data;
+    const T& get(const std::string& id) {
+      return get_option(id).get<T>();
     }
 
     template<class T>
-    void set(const std::string& id, const T& new_data) {
-      get_config<T>(id).set(new_data);
+    ConfigOption& set(const std::string& id, const T& data) {
+      return get_option(id).set(data);
     }
-  
-    void build_maps();
+ 
+    bool is_option_set(const std::string& id);
+    bool is_group_active(const std::string& name); 
+
     ConfigGroup* new_group(const std::string& name);
-
-    void parse(Stringlist* args);
+    ConfigGroup* get_group(const std::string& name);
+    ConfigGroup* get_group_from_option(const std::string& id);
+    
+    void parse(tStringList* args);
     void parse_cmdline(int argc, char* argv[]);
     void parse_config_file(const std::string& fn);
     void usage(std::ostream& ss);
-  
-    static std::string type2str(const std::string& dtype);
+};
+
+class ConfigGroup {
+  public:
+    tOptionMap members;
+    std::string name;
+    ConfigManager* parent;
+ 
+    // command -> id   
+    tStringMap _cmdmap;
+
+    ConfigGroup(const std::string& name, ConfigManager* par);
     
+    ConfigOption& get_option(const std::string& id);
+
+    template<class T>
+    ConfigOption& new_option(const std::string& new_id, const std::string& desc, const std::string& short_cmd="") {
+      if(members.find(new_id) != members.end())
+        throw OptionAlreadyExists(new_id);
+
+      std::string scmd = "-" + short_cmd;
+      std::string lcmd = "--" + new_id;
+
+      if(_cmdmap.find(scmd) != _cmdmap.end() || _cmdmap.find(scmd) != _cmdmap.end())
+        throw ShortCommandAlreadyExists(scmd);
+
+      members[new_id] = new ConfigOption(new_id, desc, typeid(T).name(), short_cmd);
+      members[new_id]->parent = this;
+      parent->members[new_id] = members[new_id];
+
+      _cmdmap[lcmd] = new_id;
+      parent->cmdmap[lcmd] = new_id;
+      if(short_cmd != "") {
+        _cmdmap[scmd] = new_id;
+        parent->cmdmap[scmd] = new_id;
+      }
+      
+      return *members[new_id];
+    }
 };
 }
-
 
 #endif
