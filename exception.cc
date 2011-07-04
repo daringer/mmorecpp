@@ -41,7 +41,7 @@ BaseException::BaseException(const BaseException& obj)
 * @brief show full message through stdout
 */
 void BaseException::show() {
-  cerr << output << endl;
+  cerr << endl << output << endl;
 }
 /**
 * @brief explicitly set the message

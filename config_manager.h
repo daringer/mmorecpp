@@ -163,9 +163,9 @@ class ConfigManager {
     bool is_option_set(const std::string& id);
     bool is_group_active(const std::string& name); 
 
-    ConfigGroup* new_group(const std::string& name);
-    ConfigGroup* get_group(const std::string& name);
-    ConfigGroup* get_group_from_option(const std::string& id);
+    ConfigGroup& new_group(const std::string& name);
+    ConfigGroup& get_group(const std::string& name);
+    ConfigGroup& get_group_from_option(const std::string& id);
     
     void parse(tStringList* args);
     void parse_cmdline(int argc, char* argv[]);
@@ -194,7 +194,7 @@ class ConfigGroup {
       std::string scmd = "-" + short_cmd;
       std::string lcmd = "--" + new_id;
 
-      if(_cmdmap.find(scmd) != _cmdmap.end() || _cmdmap.find(scmd) != _cmdmap.end())
+      if(_cmdmap.find(scmd) != _cmdmap.end())
         throw ShortCommandAlreadyExists(scmd);
 
       members[new_id] = new ConfigOption(new_id, desc, typeid(T).name(), short_cmd);

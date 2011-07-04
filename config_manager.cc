@@ -34,27 +34,21 @@ ConfigOption& ConfigGroup::get_option(const std::string& id) {
   throw OptionNotFound(id);
 }
 
-ConfigGroup* ConfigManager::new_group(const std::string& name) {
+ConfigGroup& ConfigManager::new_group(const std::string& name) {
     groups[name] = new ConfigGroup(name, this);
-    return groups[name];
+    return *groups[name];
 }
 
-ConfigGroup* ConfigManager::get_group(const string& name) {
+ConfigGroup& ConfigManager::get_group(const string& name) {
   tGroupIter it = groups.find(name);
   if (it == groups.end())
     throw GroupNotFound(name);
-  return it->second;
+  return *it->second;
 }
 
-ConfigGroup* ConfigManager::get_group_from_option(const string& name) {
-  try {
-    return get_option(name).parent;
-  } catch (OptionNotFound e) {
-    e.show();
-  }
-  return NULL;
+ConfigGroup& ConfigManager::get_group_from_option(const string& name) {
+  return *(get_option(name).parent);
 }
-
 
 ConfigOption& ConfigManager::get_option(const std::string& id) {
   tOptionIter it = members.find(id);
@@ -216,33 +210,33 @@ void ConfigManager::usage(ostream& ss) {
 int main(int argc, char *argv[]) {
   set_terminate(TOOLS::tools_lib_exception_handler);
 
-  ConfigManager* m = new ConfigManager(argv[0]);
-  ConfigGroup* g1 = m->new_group("Application Server");
-  ConfigGroup* g2 = m->new_group("another one");
-  g1->new_option<string>("my-id-name", "blabla foo bla", "s").set_default(str("foo"));
-  g1->new_option<double>("some-other", "ihfsdauisdh", "w").set_default(13.123);
-  g2->new_option<bool>("andsobool", "jojojo????", "j").set_default(false);
-  g2->new_option<int>("abba", "my fancey nice description", "a").set_default(12);
-  g2->new_option<tStringList>("more", "wh00000tuuup", "m");
+  ConfigManager m(argv[0]); 
+  ConfigGroup g1 = m.new_group("Application Server");
+  ConfigGroup g2 = m.new_group("another one");
+  g1.new_option<string>("my-id-name", "blabla foo bla", "s").set_default(str("foo"));
+  g1.new_option<double>("some-other", "ihfsdauisdh", "w").set_default(13.123);
+  g2.new_option<bool>("andsobool", "jojojo????", "j").set_default(false);
+  g2.new_option<int>("abba", "my fancey nice description", "a").set_default(12);
+  g2.new_option<tStringList>("more", "wh00000tuuup", "m");
   
   try {
-    m->parse_config_file("my.conf");
-    m->parse_cmdline(argc, argv);
+    m.parse_config_file("my.conf");
+    m.parse_cmdline(argc, argv);
   } catch (ConfigManagerException e) {
     e.show();
-    m->usage(cout);
+    m.usage(cout);
     exit(1);
   } 
   cout << "parsing finished ";
 
   cout << "--- test --- test --- test ---" << endl;
-  cout << m->get<string>("my-id-name") << endl;
-  cout << m->get<double>("some-other") << endl;
-  cout << ((m->get<bool>("andsobool")) ? "jo" : "nee") << endl; 
-  cout << m->get<int>("abba") << endl;
-  m->set<int>("abba", 1234);
-  cout << "abba: " << m->get<int>("abba") << endl;
-  tStringList foo = m->get<tStringList>("more");
+  cout << m.get<string>("my-id-name") << endl;
+  cout << m.get<double>("some-other") << endl;
+  cout << ((m.get<bool>("andsobool")) ? "jo" : "nee") << endl; 
+  cout << m.get<int>("abba") << endl;
+  m.set<int>("abba", 1234);
+  cout << "abba: " << m.get<int>("abba") << endl;
+  tStringList foo = m.get<tStringList>("more");
   for(tStringList::iterator i=foo.begin(); i!=foo.end(); ++i)
     cout << "list: " << *i << endl;
   
