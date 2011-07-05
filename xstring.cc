@@ -8,13 +8,6 @@ using namespace TOOLS;
  */
 XString::XString() : string() { }
 /**
- * @brief strip all leading and trailing whitespaces
- * @return *this
- */
-XString& XString::strip() {
-  return strip(" ");
-}
-/**
  * @brief strip all leading and trailing occurences of the given char(s)
  * @param s the char(s) to be stripped
  * @return *this
@@ -29,13 +22,6 @@ XString& XString::strip(const string& s) {
   return *this;
 }
 /**
- * @brief split the string using a whitespace as seperator
- * @return a vector<string> containing the results without any whitespaces
- */
-vector<string> XString::split() {
-  return split(" ");
-}
-/**
  * @brief split the string using given seperator char(s)
  * @return a vector<string> containing the results without the seperator char(s)
  */
@@ -48,15 +34,6 @@ tStringList XString::split(const string& s) {
   }
   out.push_back(substr(last_pos));
   return out;
-}
-/**
- * @brief substitute one occurence of the given string
- * @param what the searchstring to replace
- * @param with the string, which will be in place of what
- * @return *this
- */
-XString& XString::subs(const string& what, const string& with) {
-  return subs(what, with, 1);
 }
 /**
  * @brief substitute all occurences of the given string
@@ -78,8 +55,6 @@ XString& XString::subs_all(const string& what, const string& with) {
 XString& XString::subs(const string& what, const string& with, int max_replaces) {
   string::size_type pos = 0;
   int replaced = 0;
-  //string::size_type last_repl_len = 0;
-  //string placeholder = "!\"§$%&/()=";
   while((pos = find(what, pos)) != string::npos) {
     replace(pos, what.length(), with);
     if(++replaced == max_replaces)

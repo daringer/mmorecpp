@@ -26,14 +26,16 @@ namespace TOOLS {
   
   class BaseLoggerBackend {
     public:
-      void write(const std::string& text) = 0;
+      virtual void write(const std::string& text) = 0;
+      virtual void init_sink() = 0;
+      virtual void cleanup_sink() = 0;
   };
 
   class FileBackend : public BaseLoggerBackend {
     public:
       void write(const std::string&);
   };
-  class ReOp
+  //class Persistent
 
   
   class Logger {

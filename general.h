@@ -26,6 +26,7 @@ typedef std::vector<std::string> tStringList;
 typedef tStringList::iterator tStringIter;
 
 typedef std::vector<int> tIntList;
+typedef tIntList::iterator tIntIter;
 
 typedef std::map<std::string, std::string> tStringMap;
 typedef tStringMap::iterator tStringMapIter;

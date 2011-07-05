@@ -72,16 +72,13 @@ class XString : public std::string {
     template<class T, class S>
     XString(const T& val1, const S& val2) : std::string(val1, val2) {}
 
-    XString& strip();
-    XString& strip(const std::string& s);
+    XString& strip(const std::string& s=" ");
 
-    tStringList split();
-    tStringList split(const std::string& s);
+    tStringList split(const std::string& s=" ");
 
     XString& join(const tStringList& list);
 
-    XString& subs(const std::string& what, const std::string& with, int max_replaces);
-    XString& subs(const std::string& what, const std::string& with);
+    XString& subs(const std::string& what, const std::string& with, int max_replaces=1);
     XString& subs_all(const std::string& what, const std::string& with);
 
     XString& lower();
