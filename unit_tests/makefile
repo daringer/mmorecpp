@@ -4,7 +4,8 @@ include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
 #LIB = libtools$(EXTENSION).a
 
 TESTSUITS = fs xstring
-SOURCES.cc = run_tests.cc $(addsuffix .cc,$(TESTSUITS))
+SUITESOURCES.cc = $(addsuffix .cc,$(TESTSUITS))
+SOURCES.cc = run_tests.cc 
 #SOURCES.h = $(addsuffix .h,$(TOOLS))
 
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
@@ -27,7 +28,7 @@ clean:
 
 .PARALLEL: $(OBJECTS)
 
-$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) 
+$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) $(SUITESOURCES.cc)
 	@echo "\n - Linking $(PROGRAM) -\n"
 	$(LINK_PRE) $(LD) $(LDFLAGS)  -o $@ $(OBJECTS) $(OBJVHDL) $(LIBS)
 	@chmod 755 $@
