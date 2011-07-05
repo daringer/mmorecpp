@@ -190,7 +190,7 @@ class ConfigGroup {
       std::string scmd = "-" + short_cmd;
       std::string lcmd = "--" + new_id;
 
-      if(_cmdmap.find(scmd) != _cmdmap.end())
+      if(parent->cmdmap.find(scmd) != parent->cmdmap.end())
         throw ShortCommandAlreadyExists(scmd);
 
       members[new_id] = new ConfigOption(new_id, desc, typeid(T).name(), short_cmd);
