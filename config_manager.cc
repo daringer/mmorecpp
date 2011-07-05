@@ -200,7 +200,6 @@ void ConfigManager::usage(ostream& ss) {
   ss << endl;
 }
 
-
 /*
 #include <stdlib.h>
 #include <stdio.h>
@@ -211,7 +210,7 @@ int main(int argc, char *argv[]) {
   ConfigManager m(argv[0]); 
   ConfigGroup g1 = m.new_group("Application Server");
   ConfigGroup g2 = m.new_group("another one");
-  g1.new_option<string>("my-id-name", "blabla foo bla", "s").set_default(str("foo"));
+  g1.new_option<string>("my-id-name", "blabla foo bla", "s").set_default("foo");
   g1.new_option<double>("some-other", "ihfsdauisdh", "w").set_default(13.123);
   g2.new_option<bool>("andsobool", "jojojo????", "j").set_default(false);
   g2.new_option<int>("abba", "my fancey nice description", "a").set_default(12);

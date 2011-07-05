@@ -40,6 +40,7 @@ typedef tOptionMap::iterator tOptionIter;
 typedef std::map<std::string, ConfigGroup*> tGroupList;
 typedef tGroupList::iterator tGroupIter;
 
+
 class ConfigDataKeeper {
   private:
     void* storage;
@@ -97,17 +98,17 @@ class ConfigOption {
       
       has_default = true;
       data.set<T>(value);
-      // reset was_set to false, as default doesn't count
+      // set back "was_set" to false, as default doesn't count
       was_set = false;
 
       return *this;
     }
 
-    // TODO: some way to handle char[]-foo without converting to string explicitly
-    /*template<char*>
-    ConfigOption& set_default(const char* value[]) {
-      return set_default<std::string>(str(value));
-    }*/
+    // workaround to allow to pass "blafoo" directly
+    template<class T>
+    ConfigOption& set_default(T value[]) {
+      return set_default(str(value));
+    }
     
     template<class T>
     ConfigOption& set(const T& value) {
@@ -120,10 +121,10 @@ class ConfigOption {
       return *this;
     }
 
-    /*template<char*>
-    ConfigOption& set(const char* value[]) {
-      return set<std::string>(str(value));
-    }*/
+    template<class T>
+    ConfigOption& set(T value[]) {
+      return set(str(value));
+    }
 
     template<class T>
     const T& get() {
