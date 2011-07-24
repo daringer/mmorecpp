@@ -3,7 +3,7 @@ include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
 
 #LIB = libtools$(EXTENSION).a
 
-TESTSUITS = fs xstring
+TESTSUITS = fs xstring xregex
 SUITESOURCES.cc = $(addsuffix .cc,$(TESTSUITS))
 SOURCES.cc = run_tests.cc 
 #SOURCES.h = $(addsuffix .h,$(TOOLS))

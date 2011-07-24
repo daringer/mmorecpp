@@ -24,24 +24,22 @@ Regex::~Regex() {
 void Regex::apply_pattern(const string& s, int max_results) {
   regmatch_t res[MAX_GROUP_COUNT];
 
-  const char* pos = s.c_str();
+  const char* ptr = s.c_str();
   int offset = 0;
   int ret;
 
   results.clear();
 
-  //cout << "whooot" << endl;
-
-  while((ret = regexec(&pattern, pos, MAX_GROUP_COUNT, res, 0)) == 0) {
+  while((ret = regexec(&pattern, ptr, MAX_GROUP_COUNT, res, REG_EXTENDED)) == 0) {
     Grouplist group_data;
     int group = -1;
-    while(res[++group].rm_so != -1)
+    while(res[++group].rm_so != -1) 
       group_data.push_back(s.substr(res[group].rm_so + offset, res[group].rm_eo - res[group].rm_so));
     results.push_back(group_data);
 
-    int len = (res[0].rm_eo - res[0].rm_so);
-    pos += len;
-    offset += len;
+    //int len = (res[0].rm_eo - res[0].rm_so);
+    ptr += res[0].rm_eo;  
+    offset += res[0].rm_eo;
 
     if(max_results == 0)
       break;
@@ -51,20 +49,12 @@ void Regex::apply_pattern(const string& s, int max_results) {
     throw RegexException(ret, &pattern);
 }
 
-Regex::iterator Regex::begin() {
-  return results.begin();
-}
-
-Regex::iterator Regex::end() {
-  return results.end();
-}
-
 bool Regex::match(const string& s) {
   apply_pattern(s, 1);
   return (results.size() > 0) ? true : false;
 }
 
-Regex::Matchinglist& Regex::search(const string& s) {
+Matchinglist& Regex::search(const string& s) {
   apply_pattern(s, -1);
   return results;
 }
@@ -76,12 +66,12 @@ string Regex::replace(const string& s, const string& repl) {
     return s;
 
   Regex re_repl("[\\][1-9]");
-  Regex::Matchinglist refs = re_repl.search(repl);
+  Matchinglist refs = re_repl.search(repl);
 
   XString out = s;
-  for(iterator i=begin(); i!=end(); ++i) {
+  for(MatchingIter i=results.begin(); i!=results.end(); ++i) {
     XString replacement = repl;
-    for(iterator j=refs.begin(); j!=refs.end(); ++j)
+    for(MatchingIter j=refs.begin(); j!=refs.end(); ++j)
       replacement.subs((*j)[0], (*i)[integer((*j)[0].substr(1))]);
     out.subs((*i)[0], replacement);
   }

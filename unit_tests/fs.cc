@@ -14,17 +14,17 @@ class FSToolsTestSuite : public TestSuite {
     string fn, morefn, realdir, realfn, torealfn, realfile;
 
     FSToolsTestSuite() {
-      add_test("Constructor", &FSToolsTestSuite::test_path_init);
-      add_test("Copy constructor", &FSToolsTestSuite::test_copy_constructor);
-      add_test("Path existance", &FSToolsTestSuite::test_exists);
-      add_test("Move operation", &FSToolsTestSuite::test_move);
-      add_test("Create directory", &FSToolsTestSuite::test_create_dir);
-      add_test(".is_dir()", &FSToolsTestSuite::test_isdir);
-      add_test("!.is_dir()", &FSToolsTestSuite::test_isnotdir);
-      add_test(".is_file()", &FSToolsTestSuite::test_isfile);
-      add_test("!.is_file()", &FSToolsTestSuite::test_isnotfile);
-      add_test(".exists()", &FSToolsTestSuite::test_exists);
-      add_test("!.exists()", &FSToolsTestSuite::test_notexists);
+      REG_TEST(&FSToolsTestSuite::test_path_init);
+      REG_TEST(&FSToolsTestSuite::test_copy_constructor);
+      REG_TEST(&FSToolsTestSuite::test_exists);
+      REG_TEST(&FSToolsTestSuite::test_move);
+      REG_TEST(&FSToolsTestSuite::test_create_dir);
+      REG_TEST(&FSToolsTestSuite::test_isdir);
+      REG_TEST(&FSToolsTestSuite::test_isnotdir);
+      REG_TEST(&FSToolsTestSuite::test_isfile);
+      REG_TEST(&FSToolsTestSuite::test_isnotfile);
+      REG_TEST(&FSToolsTestSuite::test_exists);
+      REG_TEST(&FSToolsTestSuite::test_notexists);
     };
 
     virtual void setup() {

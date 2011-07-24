@@ -1,22 +1,31 @@
 #include "testing_suite.h"
 
 using namespace std;
+using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 
-Test::Test() : name(""), result(false), details(""), method(NULL), object(NULL) {};
+Test::Test() : name(""), result(true), details(""), method(NULL), object(NULL) {};
 
-Test::Test(const string& name, bool res, tMethod meth, TestSuite* obj)
-  : name(name), result(res), details(""), method(meth), object(obj) {}
+Test::Test(const string& name, tMethod meth, TestSuite* obj)
+  : name(name), result(true), details(""), method(meth), object(obj) {}
 
 TestSuite::TestSuite() : active_test(NULL) { }
 
-void TestSuite::CHECK(bool expr) {
-  active_test->result = expr;
+void TestSuite::add_check(bool expr, int line) {
+  active_test->result &= expr;
+  active_test->lineno = line;
+
+  const string lineinfo = (expr) ? " [good]" : " [bad]";
+  if (XString(active_test->details).startswith("Line(s):"))
+    active_test->details.append(", " + str(line) + lineinfo);
+  else
+    active_test->details.append("Line(s): " + str(line) + lineinfo);
 }
 
-void TestSuite::CHECK(bool expr, const string& desc) {
-  active_test->result = expr;
-  active_test->details.append("CHECK-debug [" + desc + "] - ");
+void TestSuite::add_exc_check(bool res, const std::string& excname, int line) {
+  add_check(res, line);
+  if (!res)
+    active_test->details.append("[exc: " + excname + "] ");
 }
 
 void TestSuite::setup() {}
@@ -37,8 +46,11 @@ void TestSuite::execute_tests() {
     after_setup();
     try {
       (i->second.object->*i->second.method)();
-    } catch(TOOLS::BaseException e) {
-      i->second.details.append("[E] run failed - exception caught: " + e.output + " - ");
+    } catch(TOOLS::BaseException& e) {
+      i->second.details.append("[E] test failed - exception caught: " + e.output + " - ");
+      i->second.result = false;
+    } catch(exception& e) {
+      i->second.details.append("[E] test failed - std::exception caught: " + str(e.what()) + " - ");
       i->second.result = false;
     }
     tear_down();
@@ -47,7 +59,7 @@ void TestSuite::execute_tests() {
   }
 }
 
-TestResult::TestResult(string& testid, bool res, string& details)
+TestResult::TestResult(const string& testid, bool res, const string& details)
   : id(testid), result(res), details(details) {}
 
 TestResult::TestResult() : id(""), result(false) {}
@@ -56,7 +68,9 @@ TestResult Test::get_result() {
   return TestResult(name, result, details);
 }
 
-TestFramework::TestFramework() {}
+TestFramework::TestFramework(int argc, char* argv[]) {
+  show_details = (argc == 2 && str(argv[1]) == "-d") ? true : false;
+}
 
 TestFramework::~TestFramework() {
   for(tTestSuiteIter i=test_suites.begin(); i!=test_suites.end(); ++i)
@@ -95,8 +109,9 @@ void TestFramework::show_results() {
 
     cout << "[" << icon << "] " << left << setw(45) << i->first << \
          setw(20) << right << rating << endl;
-    if(i->second.details != "")
-      cout << "[i]    Details: " << i->second.details << endl;
+
+    if(i->second.details != "" && ((!show_details && !i->second.result) || show_details))
+      cout << "[i]    " << i->second.details << endl;
   }
   cout << endl << "[i] Finished TestRun - good: " << good;
   if(bad > 0)

@@ -12,18 +12,34 @@ using namespace std;
 class XStringToolsTestSuite : public TestSuite {
   public:
     XStringToolsTestSuite() {
-      add_test("Constructor", &XStringToolsTestSuite::test_constructor);
-      add_test("String substitution", &XStringToolsTestSuite::test_subs);
-      add_test("String split", &XStringToolsTestSuite::test_split);
-      add_test("String strip", &XStringToolsTestSuite::test_strip);
+      REG_TEST(&XStringToolsTestSuite::test_constructor);
+      REG_TEST(&XStringToolsTestSuite::test_subs);
+      REG_TEST(&XStringToolsTestSuite::test_split);
+      REG_TEST(&XStringToolsTestSuite::test_strip);
+      REG_TEST(&XStringToolsTestSuite::test_real);
+      REG_TEST(&XStringToolsTestSuite::test_real_error);
+      REG_TEST(&XStringToolsTestSuite::test_integer);
+      REG_TEST(&XStringToolsTestSuite::test_integer_error);
+      REG_TEST(&XStringToolsTestSuite::test_lower_case);
+      REG_TEST(&XStringToolsTestSuite::test_upper_case);
     };
 
-    XString s1, s2, s3;
+    XString s1, s2, s3, foo, realstr, intstr, s3_big, s3_small;
+    double decimal;
+    int number;
+
 
     virtual void setup() { 
       s1 = "teststring";
       s2 = "longer teststring";
-      s3 = "and another";
+      s3 = "aNd aNoTHeR";
+      s3_big = "AND ANOTHER";
+      s3_small = "and another";
+      foo = "non-integer or real value";
+      realstr = "12.34";
+      decimal = 12.34;
+      intstr = "123";
+      number = 123;
     };
 
     virtual void tear_down() { };
@@ -64,4 +80,30 @@ class XStringToolsTestSuite : public TestSuite {
       XString xs2("--//--xxx-/-");
       CHECK(xs2.strip("-").strip("/").strip("-") == "xxx");
     };
+
+    void test_lower_case() {
+      CHECK(s3.lower() == s3_small);
+    };
+
+    void test_upper_case() {
+      CHECK(s3.upper() == s3_big);
+    };
+
+    void test_real() {
+      CHECK(real(realstr) == decimal);
+    };
+
+    void test_real_error() {
+      EXC_CHECK(ConvertValueError, real(foo));
+    };
+
+    void test_integer() {
+      CHECK(integer(intstr) == number);
+    };
+
+    void test_integer_error() {
+      EXC_CHECK(ConvertValueError, integer(foo));
+    };
+
+    
 };

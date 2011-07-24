@@ -11,8 +11,13 @@
 #include "exception.h"
 #include "xstring.h"
 
-
 namespace TOOLS {
+
+typedef tStringList Grouplist;
+typedef std::vector<tStringList> Matchinglist;
+typedef Matchinglist::iterator MatchingIter;
+typedef Grouplist::iterator GroupIter;
+
 
 /**
  * @brief RegexException to be thrown on any regular expression error
@@ -31,19 +36,11 @@ class RegexException : public BaseException {
  */
 class Regex {
   public:
-    typedef std::vector<std::string> Grouplist;
-    typedef std::vector<Grouplist> Matchinglist;
-    typedef Matchinglist::iterator iterator;
-    typedef Grouplist::iterator group_iterator;
-
     Matchinglist results;
     std::string raw_pattern;
 
     Regex(const std::string& pattern);
     ~Regex();
-
-    iterator begin();
-    iterator end();
 
     bool match(const std::string& s);
     Matchinglist& search(const std::string& s);

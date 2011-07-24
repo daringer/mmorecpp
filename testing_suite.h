@@ -9,6 +9,7 @@
 
 #include "general.h"
 #include "exception.h"
+#include "xstring.h"
 
 namespace TOOLS {
 namespace UNIT_TEST {
@@ -28,16 +29,34 @@ typedef tTestResultMap::iterator tTestResultIter;
 typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 
+#define CHECK(expr) \
+  add_check(expr, __LINE__);
+
+#define EXC_CHECK(exc, func) do { \
+  bool _res = false; \
+  try { \
+    func; \
+  } catch(exc e) { \
+    _res = true; \
+  } \
+  add_exc_check(_res, #exc, __LINE__); \
+} while(0)
+
+#define REG_TEST(method) \
+  add_test(#method, method);
+
+
 class Test {
   public:
     std::string name;
     bool result;
+    int lineno;
     std::string details;
     tMethod method;
     TestSuite* object;
 
     Test();
-    Test(const std::string& name, bool res, tMethod meth, TestSuite* object);
+    Test(const std::string& name, tMethod meth, TestSuite* object);
 
     TestResult get_result();
 };
@@ -59,12 +78,15 @@ class TestSuite {
   protected:
     Test* active_test;
 
-    void CHECK(bool expr);
-    void CHECK(bool expr, const std::string& desc);
+    void add_check(bool expr, int lineno);
+    void add_exc_check(bool res, const std::string& excname, int lineno);
+    
 
     template<class T>
-    void add_test(const std::string& name, void (T::*f)()) {
-      tests[name] = Test(name, false, static_cast<tMethod>(f), this);
+    void add_test(XString name, void (T::*f)()) {
+
+      XString desc = XString(name.split("::")[1]).subs("test_", "");
+      tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }
 };
 
@@ -75,12 +97,12 @@ class TestResult {
     std::string details;
 
     TestResult();
-    TestResult(std::string& testid, bool res, std::string& details);
+    TestResult(const std::string& testid, bool res, const std::string& details);
 };
 
 class TestFramework {
   public:
-    TestFramework();
+    TestFramework(int argc=0, char* argv[]=NULL);
     ~TestFramework();
 
     template<class T>
@@ -95,6 +117,7 @@ class TestFramework {
 
   private:
     tTestSuiteMap test_suites;
+    bool show_details;
 };
 
 }
