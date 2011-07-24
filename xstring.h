@@ -34,7 +34,7 @@ std::string str(const T& val, int precision=0) {
  * @return the converted integer
  */
 template <class T>
-int integer(const T& val) throw (ConvertValueError) {
+int integer(const T& val) throw(ConvertValueError) {
   std::istringstream inp(val);
   int out;
   if(!(inp >> out))
@@ -48,7 +48,7 @@ int integer(const T& val) throw (ConvertValueError) {
  * @return the converted integer
  */
 template <class T>
-double real(const T& val) throw (ConvertValueError) {
+double real(const T& val) throw(ConvertValueError) {
   std::istringstream inp(val);
   double out;
   if(!(inp >> out))

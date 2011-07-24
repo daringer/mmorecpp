@@ -16,7 +16,7 @@ void TestSuite::add_check(bool expr, int line) {
   active_test->lineno = line;
 
   const string lineinfo = (expr) ? " [good]" : " [bad]";
-  if (XString(active_test->details).startswith("Line(s):"))
+  if(XString(active_test->details).startswith("Line(s):"))
     active_test->details.append(", " + str(line) + lineinfo);
   else
     active_test->details.append("Line(s): " + str(line) + lineinfo);
@@ -24,7 +24,7 @@ void TestSuite::add_check(bool expr, int line) {
 
 void TestSuite::add_exc_check(bool res, const std::string& excname, int line) {
   add_check(res, line);
-  if (!res)
+  if(!res)
     active_test->details.append("[exc: " + excname + "] ");
 }
 

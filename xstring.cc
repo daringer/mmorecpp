@@ -13,7 +13,7 @@ XString::XString() : string() { }
  * @return *this
  */
 XString& XString::strip(const string& s) {
-  if (length() == 0)
+  if(length() == 0)
     return *this;
   while(substr(0, s.length()) == s)
     erase(0, s.length());

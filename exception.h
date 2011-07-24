@@ -21,13 +21,13 @@ class BaseException : public std::exception {
     BaseException(const BaseException& obj);
     BaseException();
 
-    virtual ~BaseException() throw ();
+    virtual ~BaseException() throw();
 
     void set_message(const std::string& input);
     void show();
 };
 
-// better exception handler - feed this to set_terminate and 
+// better exception handler - feed this to set_terminate and
 // derive your exceptions from BaseException
 void tools_lib_exception_handler();
 

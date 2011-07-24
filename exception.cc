@@ -19,7 +19,7 @@ void TOOLS::tools_lib_exception_handler() {
 * @param exc_name the name of the exception to be shown to the user
 */
 BaseException::BaseException(const string& msg, const string& exc_name)
-  : exception(), exception_name(exc_name), message(msg){
+  : exception(), exception_name(exc_name), message(msg) {
   set_message(message);
   BaseException::last_exception = this;
 }
@@ -27,7 +27,7 @@ BaseException::BaseException() { }
 /**
 * @brief descructor including very important throw declaration
 */
-BaseException::~BaseException() throw () { }
+BaseException::~BaseException() throw() { }
 /**
 * @brief copy constructor
 * @param obj the instance of the class to be copied

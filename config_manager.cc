@@ -8,25 +8,25 @@ ConfigDataKeeper::ConfigDataKeeper(void* data, const string& tinfo) : storage(da
 ConfigDataKeeper::ConfigDataKeeper(const string& tinfo) : storage(NULL), tinfo(tinfo) { }
 
 string ConfigDataKeeper::verbose_type() {
-  if (tinfo == typeid(int).name())
+  if(tinfo == typeid(int).name())
     return "integer";
-  else if (tinfo == typeid(double).name())
+  else if(tinfo == typeid(double).name())
     return "float";
-  else if (tinfo == typeid(string).name())
+  else if(tinfo == typeid(string).name())
     return "string";
-  else if (tinfo == typeid(tStringList).name())
+  else if(tinfo == typeid(tStringList).name())
     return "string list";
-  else if (tinfo == typeid(bool).name())
+  else if(tinfo == typeid(bool).name())
     return "boolean";
   return "UNKNOWN";
 }
 
-ConfigOption::ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd) 
+ConfigOption::ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd)
   : data(tinfo), id(id), cmd_short(scmd), desc(desc), was_set(false), has_default(false), parent(NULL) {}
 
-ConfigGroup::ConfigGroup(const std::string& name, ConfigManager* par) 
+ConfigGroup::ConfigGroup(const std::string& name, ConfigManager* par)
   : name(name), parent(par)  {}
-    
+
 ConfigOption& ConfigGroup::get_option(const std::string& id) {
   tOptionIter it = members.find(id);
   if(it != members.end())
@@ -35,13 +35,13 @@ ConfigOption& ConfigGroup::get_option(const std::string& id) {
 }
 
 ConfigGroup& ConfigManager::new_group(const std::string& name) {
-    groups[name] = new ConfigGroup(name, this);
-    return *groups[name];
+  groups[name] = new ConfigGroup(name, this);
+  return *groups[name];
 }
 
 ConfigGroup& ConfigManager::get_group(const string& name) {
   tGroupIter it = groups.find(name);
-  if (it == groups.end())
+  if(it == groups.end())
     throw GroupNotFound(name);
   return *it->second;
 }
@@ -57,18 +57,18 @@ ConfigOption& ConfigManager::get_option(const std::string& id) {
   return *(it->second);
 }
 
-ConfigManager::ConfigManager(const std::string& start_command) 
+ConfigManager::ConfigManager(const std::string& start_command)
   : command(start_command) { }
 
 void ConfigManager::parse(tStringList* args) {
   string cmd = args->at(0);
 
-  if(cmdmap.find(cmd) == cmdmap.end()) 
+  if(cmdmap.find(cmd) == cmdmap.end())
     throw UnknownParameter(cmd);
 
   string id = cmdmap[cmd];
   ConfigDataKeeper* tmp = &members[id]->data;
-  
+
   // catch boolean value as this doesn't need an arg
   if(tmp->same_data_types<bool>()) {
     set<bool>(id, true);
@@ -80,10 +80,10 @@ void ConfigManager::parse(tStringList* args) {
     throw MissingParameter(cmd + " - found no more args");
 
   string arg = args->at(1);
-  
+
   // check for integer and double
   try {
-    if (tmp->same_data_types<int>()) {
+    if(tmp->same_data_types<int>()) {
       set<int>(id, integer(arg));
       args->erase(args->begin(), args->begin()+2);
       return;
@@ -91,12 +91,12 @@ void ConfigManager::parse(tStringList* args) {
       set<double>(id, real(arg));
       args->erase(args->begin(), args->begin()+2);
       return;
-    } 
-  } catch (ConvertValueError e) { 
+    }
+  } catch(ConvertValueError e) {
     throw IncompatibleDataTypes("data: " + tmp->verbose_type() + " passed: " + arg);
   }
-  
-  // get string 
+
+  // get string
   if(tmp->same_data_types<string>()) {
     set<string>(id, str(arg));
     args->erase(args->begin(), args->begin()+2);
@@ -117,7 +117,7 @@ void ConfigManager::parse_cmdline(int argc, char* argv[]) {
   for(int i=1; i<argc; ++i)
     args.push_back(argv[i]);
 
-  while (args.size() > 0)
+  while(args.size() > 0)
     parse(&args);
 }
 
@@ -131,10 +131,10 @@ void ConfigManager::parse_config_file(const string& fn) {
     if(line.length() == 0)
       continue;
 
-    if (line.startswith("#"))
+    if(line.startswith("#"))
       continue;
 
-    if (line.find("=") == string::npos) {
+    if(line.find("=") == string::npos) {
       tokens.push_back("--" + line);
       continue;
     }
@@ -148,11 +148,11 @@ void ConfigManager::parse_config_file(const string& fn) {
     tokens.push_back(right);
   }
   fd.close();
-  
+
   try {
     while(tokens.size() > 0)
       parse(&tokens);
-  } catch (IncompatibleDataTypes& e) {
+  } catch(IncompatibleDataTypes& e) {
     e.message += " (inside configfile)";
     throw e;
   }
@@ -179,7 +179,7 @@ void ConfigManager::usage(ostream& ss) {
     ConfigOption* opt = members[i->second];
     if(i->first.find("--") != string::npos)
       id_len = max(opt->id.length(), id_len);
-    else 
+    else
       scmd_len = max(opt->cmd_short.length(), scmd_len);
     desc_len = max(opt->desc.length(), desc_len);
   }
@@ -191,7 +191,7 @@ void ConfigManager::usage(ostream& ss) {
       ConfigOption* opt = grp->members[i->first];
 
       ss << right << setw(scmd_len+1) << ((opt->cmd_short.size() > 0) ? \
-          ("-" + opt->cmd_short) : "") << " | " << flush;
+                                          ("-" + opt->cmd_short) : "") << " | " << flush;
       ss << left << setw(id_len+2) << ("--" + opt->id) << "   " << opt->desc;
       ss << " [" << opt->data.verbose_type() << "]";
       ss << endl;
@@ -207,7 +207,7 @@ void ConfigManager::usage(ostream& ss) {
 int main(int argc, char *argv[]) {
   set_terminate(TOOLS::tools_lib_exception_handler);
 
-  ConfigManager m(argv[0]); 
+  ConfigManager m(argv[0]);
   ConfigGroup g1 = m.new_group("Application Server");
   ConfigGroup g2 = m.new_group("another one");
   g1.new_option<string>("my-id-name", "blabla foo bla", "s").set_default("foo");
@@ -215,7 +215,7 @@ int main(int argc, char *argv[]) {
   g2.new_option<bool>("andsobool", "jojojo????", "j").set_default(false);
   g2.new_option<int>("abba", "my fancey nice description", "a").set_default(12);
   g2.new_option<tStringList>("more", "wh00000tuuup", "m");
-  
+
   try {
     m.parse_config_file("my.conf");
     m.parse_cmdline(argc, argv);
@@ -223,19 +223,19 @@ int main(int argc, char *argv[]) {
     e.show();
     m.usage(cout);
     exit(1);
-  } 
+  }
   cout << "parsing finished ";
 
   cout << "--- test --- test --- test ---" << endl;
   cout << m.get<string>("my-id-name") << endl;
   cout << m.get<double>("some-other") << endl;
-  cout << ((m.get<bool>("andsobool")) ? "jo" : "nee") << endl; 
+  cout << ((m.get<bool>("andsobool")) ? "jo" : "nee") << endl;
   cout << m.get<int>("abba") << endl;
   m.set<int>("abba", 1234);
   cout << "abba: " << m.get<int>("abba") << endl;
   tStringList foo = m.get<tStringList>("more");
   for(tStringList::iterator i=foo.begin(); i!=foo.end(); ++i)
     cout << "list: " << *i << endl;
-  
+
   return 0;
 }*/

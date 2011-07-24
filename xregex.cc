@@ -33,12 +33,12 @@ void Regex::apply_pattern(const string& s, int max_results) {
   while((ret = regexec(&pattern, ptr, MAX_GROUP_COUNT, res, REG_EXTENDED)) == 0) {
     Grouplist group_data;
     int group = -1;
-    while(res[++group].rm_so != -1) 
+    while(res[++group].rm_so != -1)
       group_data.push_back(s.substr(res[group].rm_so + offset, res[group].rm_eo - res[group].rm_so));
     results.push_back(group_data);
 
     //int len = (res[0].rm_eo - res[0].rm_so);
-    ptr += res[0].rm_eo;  
+    ptr += res[0].rm_eo;
     offset += res[0].rm_eo;
 
     if(max_results == 0)

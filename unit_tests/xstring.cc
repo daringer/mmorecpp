@@ -29,7 +29,7 @@ class XStringToolsTestSuite : public TestSuite {
     int number;
 
 
-    virtual void setup() { 
+    virtual void setup() {
       s1 = "teststring";
       s2 = "longer teststring";
       s3 = "aNd aNoTHeR";
@@ -105,5 +105,5 @@ class XStringToolsTestSuite : public TestSuite {
       EXC_CHECK(ConvertValueError, integer(foo));
     };
 
-    
+
 };

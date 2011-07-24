@@ -46,7 +46,7 @@ class ConfigDataKeeper {
     void* storage;
   public:
     std::string tinfo;
-    
+
     ConfigDataKeeper(const std::string& tinfo);
     ConfigDataKeeper(void* data, const std::string& tinfo);
 
@@ -54,18 +54,18 @@ class ConfigDataKeeper {
 
     template<class T>
     const T& get() {
-      if (!same_data_types<T>())
+      if(!same_data_types<T>())
         throw IncompatibleDataTypes("Data: " + tinfo + \
-            " Template(Keeper::get) was: " + typeid(T).name());
-      return *( (T*) storage);
+                                    " Template(Keeper::get) was: " + typeid(T).name());
+      return *((T*) storage);
     };
 
     template<class T>
     void set(const T& value) {
       if(!same_data_types<T>())
         throw IncompatibleDataTypes("Data: " + tinfo + \
-            " Template(Keeper::set) was: " + typeid(T).name());
-      
+                                    " Template(Keeper::set) was: " + typeid(T).name());
+
       T* ptr = new T(value);
       storage = (void*) ptr;
     };
@@ -74,28 +74,28 @@ class ConfigDataKeeper {
     bool same_data_types() {
       return (tinfo == typeid(T).name());
     }
-}; 
+};
 
-// is is also longcommandline arg and 
+// is is also longcommandline arg and
 class ConfigOption {
   public:
     ConfigDataKeeper data;
     // id is also used as long cmd
-    std::string id; 
+    std::string id;
     std::string cmd_short;
     std::string desc;
     bool was_set;
     bool has_default;
     ConfigGroup* parent;
 
-    ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd); 
+    ConfigOption(const std::string& id, const std::string& desc, const std::string& tinfo, const std::string& scmd);
 
     template<class T>
     ConfigOption& set_default(const T& value) {
       if(!data.same_data_types<T>())
         throw IncompatibleDataTypes("Data has: " + data.verbose_type() + \
-            " Template(Option::set_default) was: " + typeid(T).name());
-      
+                                    " Template(Option::set_default) was: " + typeid(T).name());
+
       has_default = true;
       data.set<T>(value);
       // set back "was_set" to false, as default doesn't count
@@ -109,12 +109,12 @@ class ConfigOption {
     ConfigOption& set_default(T value[]) {
       return set_default(str(value));
     }
-    
+
     template<class T>
     ConfigOption& set(const T& value) {
       if(!data.same_data_types<T>())
         throw IncompatibleDataTypes("Data has: " + data.verbose_type() + \
-            " Template(Option::set) was: " + typeid(T).name());
+                                    " Template(Option::set) was: " + typeid(T).name());
 
       data.set<T>(value);
       was_set = true;
@@ -128,7 +128,7 @@ class ConfigOption {
 
     template<class T>
     const T& get() {
-      if (!was_set && !has_default)
+      if(!was_set && !has_default)
         throw ValueHasNotBeenSet(id);
       return data.get<T>();
     }
@@ -139,9 +139,9 @@ class ConfigManager {
     tOptionMap members;
     tGroupList groups;
     tStringMap cmdmap;
-    
+
     std::string command;
-    
+
     ConfigManager(const std::string& start_command);
 
     ConfigOption& get_option(const std::string& id);
@@ -150,19 +150,19 @@ class ConfigManager {
     const T& get(const std::string& id) {
       return get_option(id).get<T>();
     }
-    
+
     template<class T>
     ConfigOption& set(const std::string& id, const T& data) {
       return get_option(id).set(data);
     }
- 
+
     bool is_option_set(const std::string& id);
-    bool is_group_active(const std::string& name); 
+    bool is_group_active(const std::string& name);
 
     ConfigGroup& new_group(const std::string& name);
     ConfigGroup& get_group(const std::string& name);
     ConfigGroup& get_group_from_option(const std::string& id);
-    
+
     void parse(tStringList* args);
     void parse_cmdline(int argc, char* argv[]);
     void parse_config_file(const std::string& fn);
@@ -174,12 +174,12 @@ class ConfigGroup {
     tOptionMap members;
     std::string name;
     ConfigManager* parent;
- 
-    // command -> id   
+
+    // command -> id
     tStringMap _cmdmap;
 
     ConfigGroup(const std::string& name, ConfigManager* par);
-    
+
     ConfigOption& get_option(const std::string& id);
 
     template<class T>

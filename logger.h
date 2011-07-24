@@ -10,79 +10,79 @@
 #include "xstring.h"
 
 #define LOG(lvl, logid)  \
-  TOOLS::LogStream(TOOLS::Logger::get(logid), lvl,__LINE__,__FILE__,__FUNCTION__) 
+  TOOLS::LogStream(TOOLS::Logger::get(logid), lvl,__LINE__,__FILE__,__FUNCTION__)
 #define DEBUG \
-    TOOLS::LogStream(TOOLS::Logger::get(logid), 10,__LINE__,__FILE__,__FUNCTION__) 
+  TOOLS::LogStream(TOOLS::Logger::get(logid), 10,__LINE__,__FILE__,__FUNCTION__)
 #define INFO \
-    TOOLS::LogStream(TOOLS::Logger::get(logid), 7,__LINE__,__FILE__,__FUNCTION__) 
+  TOOLS::LogStream(TOOLS::Logger::get(logid), 7,__LINE__,__FILE__,__FUNCTION__)
 #define WARN \
-    TOOLS::LogStream(TOOLS::Logger::get(logid), 5,__LINE__,__FILE__,__FUNCTION__) 
+  TOOLS::LogStream(TOOLS::Logger::get(logid), 5,__LINE__,__FILE__,__FUNCTION__)
 #define ERROR \
-    TOOLS::LogStream(TOOLS::Logger::get(logid), 3,__LINE__,__FILE__,__FUNCTION__) 
+  TOOLS::LogStream(TOOLS::Logger::get(logid), 3,__LINE__,__FILE__,__FUNCTION__)
 
 namespace TOOLS {
 
-  DEFINE_EXCEPTION(BackendFailedToWrite, BaseException);
-  DEFINE_EXCEPTION(NoSuchLoggerAvailable, BaseException);
+DEFINE_EXCEPTION(BackendFailedToWrite, BaseException);
+DEFINE_EXCEPTION(NoSuchLoggerAvailable, BaseException);
 
-  class Logger;
+class Logger;
 
-  typedef std::map<std::string, Logger*> tLoggerMap;
+typedef std::map<std::string, Logger*> tLoggerMap;
 
-  class BaseLoggerBackend {
-    public:
-      virtual void write(const std::string& text) = 0;
-      virtual void init_sink() = 0;
-      virtual void cleanup_sink() = 0;
-  }; // must they be pure virtual, (*sink)
+class BaseLoggerBackend {
+  public:
+    virtual void write(const std::string& text) = 0;
+    virtual void init_sink() = 0;
+    virtual void cleanup_sink() = 0;
+}; // must they be pure virtual, (*sink)
 
-  class FileBackend : public BaseLoggerBackend {
-    public:
-      std::string filename;
+class FileBackend : public BaseLoggerBackend {
+  public:
+    std::string filename;
 
-      FileBackend(const std::string& fn);
+    FileBackend(const std::string& fn);
 
-      void write(const std::string& msg);
-  };
-  //class PersistentFileBackend
+    void write(const std::string& msg);
+};
+//class PersistentFileBackend
 
-  class ConsoleBackend : public BaseLoggerBackend {
+class ConsoleBackend : public BaseLoggerBackend {
     //public:
-      //void 
-      // write console backend, and think about multiple backends inside logger
-  }
+    //void
+    // write console backend, and think about multiple backends inside logger
+}
 
-  
-  class Logger {
-    public:
-      Logger(const std::string& id, BaseLoggerBackend* back);
 
-      static tLoggerMap log_map;
-      static Logger* get(const std::string& id) throw (NoSuchLoggerAvailable);
+class Logger {
+  public:
+    Logger(const std::string& id, BaseLoggerBackend* back);
 
-      void set_logging_template(const std::string& tmpl);
-      void set_time_format(const std::string& format);
+    static tLoggerMap log_map;
+    static Logger* get(const std::string& id) throw(NoSuchLoggerAvailable);
 
-      void log_msg(std::string& data, int loglevel, std::string& line, const std::string& fn, const std::string& func);
+    void set_logging_template(const std::string& tmpl);
+    void set_time_format(const std::string& format);
 
-    private:
-      BaseLoggerBackend* backend;
-      std::string log_template;
-      std::string time_format;
-  };
-  tLoggerMap Logger::log_map;
+    void log_msg(std::string& data, int loglevel, std::string& line, const std::string& fn, const std::string& func);
 
-  class LogStream : public std::ostringstream {
-    public:
-      Logger* obj;
-      int loglvl;
-      std::string line;
-      std::string fn;
-      std::string func;
+  private:
+    BaseLoggerBackend* backend;
+    std::string log_template;
+    std::string time_format;
+};
+tLoggerMap Logger::log_map;
 
-      LogStream(Logger* logobj, int loglvl, const std::string& line, const std::string& fn, const std::string& func);
-      ~LogStream();
-  };
+class LogStream : public std::ostringstream {
+  public:
+    Logger* obj;
+    int loglvl;
+    std::string line;
+    std::string fn;
+    std::string func;
+
+    LogStream(Logger* logobj, int loglvl, const std::string& line, const std::string& fn, const std::string& func);
+    ~LogStream();
+};
 
 }
 #endif

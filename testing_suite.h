@@ -33,14 +33,14 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   add_check(expr, __LINE__);
 
 #define EXC_CHECK(exc, func) do { \
-  bool _res = false; \
-  try { \
-    func; \
-  } catch(exc e) { \
-    _res = true; \
-  } \
-  add_exc_check(_res, #exc, __LINE__); \
-} while(0)
+    bool _res = false; \
+    try { \
+      func; \
+    } catch(exc e) { \
+      _res = true; \
+    } \
+    add_exc_check(_res, #exc, __LINE__); \
+  } while(0)
 
 #define REG_TEST(method) \
   add_test(#method, method);
@@ -80,7 +80,7 @@ class TestSuite {
 
     void add_check(bool expr, int lineno);
     void add_exc_check(bool res, const std::string& excname, int lineno);
-    
+
 
     template<class T>
     void add_test(XString name, void (T::*f)()) {
