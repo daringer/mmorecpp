@@ -4,7 +4,7 @@ using namespace std;
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 
-Test::Test() : name(""), result(true), details(""), method(NULL), object(NULL) {};
+Test::Test() : name(""), result(true), details(""), method(NULL), object(NULL) {}
 
 Test::Test(const string& name, tMethod meth, TestSuite* obj)
   : name(name), result(true), details(""), method(meth), object(obj) {}

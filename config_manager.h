@@ -23,16 +23,16 @@ namespace TOOLS {
 class ConfigGroup;
 class ConfigOption;
 
-DEFINE_PARENT_EXCEPTION(ConfigManagerException, BaseException);
-DEFINE_EXCEPTION(UnknownParameter,              ConfigManagerException);
-DEFINE_EXCEPTION(MissingParameter,              ConfigManagerException);
-DEFINE_EXCEPTION(ValueHasNotBeenSet,            ConfigManagerException);
-DEFINE_EXCEPTION(OptionAlreadyExists,           ConfigManagerException);
-DEFINE_EXCEPTION(ShortCommandAlreadyExists,     ConfigManagerException);
-DEFINE_EXCEPTION(OptionNotFound,                ConfigManagerException);
-DEFINE_EXCEPTION(GroupNotFound,                 ConfigManagerException);
-DEFINE_EXCEPTION(IncompatibleDataTypes,         ConfigManagerException);
-DEFINE_EXCEPTION(ErrorParsingConfigFile,        ConfigManagerException);
+DEFINE_PARENT_EXCEPTION(ConfigManagerException, BaseException)
+DEFINE_EXCEPTION(UnknownParameter,              ConfigManagerException)
+DEFINE_EXCEPTION(MissingParameter,              ConfigManagerException)
+DEFINE_EXCEPTION(ValueHasNotBeenSet,            ConfigManagerException)
+DEFINE_EXCEPTION(OptionAlreadyExists,           ConfigManagerException)
+DEFINE_EXCEPTION(ShortCommandAlreadyExists,     ConfigManagerException)
+DEFINE_EXCEPTION(OptionNotFound,                ConfigManagerException)
+DEFINE_EXCEPTION(GroupNotFound,                 ConfigManagerException)
+DEFINE_EXCEPTION(IncompatibleDataTypes,         ConfigManagerException)
+DEFINE_EXCEPTION(ErrorParsingConfigFile,        ConfigManagerException)
 
 typedef std::map<std::string, ConfigOption*> tOptionMap;
 typedef tOptionMap::iterator tOptionIter;
@@ -58,7 +58,7 @@ class ConfigDataKeeper {
         throw IncompatibleDataTypes("Data: " + tinfo + \
                                     " Template(Keeper::get) was: " + typeid(T).name());
       return *((T*) storage);
-    };
+    }
 
     template<class T>
     void set(const T& value) {
@@ -68,7 +68,7 @@ class ConfigDataKeeper {
 
       T* ptr = new T(value);
       storage = (void*) ptr;
-    };
+    }
 
     template<class T>
     bool same_data_types() {

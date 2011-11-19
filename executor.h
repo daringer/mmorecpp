@@ -14,8 +14,8 @@
 
 namespace TOOLS {
 
-DEFINE_EXCEPTION(CommandNotFound, BaseException);
-DEFINE_EXCEPTION(CommunicationNotInited, BaseException);
+DEFINE_EXCEPTION(CommandNotFound, BaseException)
+DEFINE_EXCEPTION(CommunicationNotInited, BaseException)
 
 #define CMD_LEN 2048
 #define MAX_ARGS 256

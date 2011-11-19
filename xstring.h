@@ -12,7 +12,7 @@
 
 namespace TOOLS {
 
-DEFINE_EXCEPTION(ConvertValueError, BaseException);
+DEFINE_EXCEPTION(ConvertValueError, BaseException)
 
 /**
  * @brief convert any given parameter to a string

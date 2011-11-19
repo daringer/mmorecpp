@@ -1,11 +1,10 @@
-
 #include "testing_suite.h"
-
 
 #include "fs.cc"
 #include "xstring.cc"
 #include "xregex.cc"
 #include "executor.cc"
+
 
 using namespace std;
 using namespace TOOLS;
@@ -20,5 +19,5 @@ int main(int argc, char* argv[]) {
   f.run();
   f.show_results();
 
-
+  return 0;
 }

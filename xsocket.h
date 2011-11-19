@@ -22,7 +22,9 @@
 namespace TOOLS {
 namespace NET {
 
-DEFINE_EXCEPTION(SocketException, BaseException);
+DEFINE_EXCEPTION(SocketException, BaseException)
+
+#define MAX_BUF 2048
 
 /**
  * @brief the SocketStream handles the actual data

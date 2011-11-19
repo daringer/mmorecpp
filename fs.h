@@ -20,7 +20,7 @@
 namespace TOOLS {
 namespace FS {
 
-DEFINE_EXCEPTION(PathException, BaseException);
+DEFINE_EXCEPTION(PathException, BaseException)
 
 /**
  * @brief A handy Path representation and manipulation class.

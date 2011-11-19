@@ -22,7 +22,7 @@
 namespace TOOLS {
 namespace IO {
 
-DEFINE_EXCEPTION(IOException, BaseException);
+DEFINE_EXCEPTION(IOException, BaseException)
 
 std::string nextline(std::istream& inp);
 std::string readfile(const std::string& filename);

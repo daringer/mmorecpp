@@ -1,4 +1,8 @@
+#include "string.h"
+
 #include "xregex.h"
+
+
 
 using namespace std;
 using namespace TOOLS;
@@ -14,6 +18,9 @@ RegexException::RegexException(int errcode, const regex_t* pattern) : BaseExcept
 Regex::Regex(const std::string& query) : raw_pattern(query), pattern(new regex_t) {
   bzero(pattern, sizeof(regex_t));
 
+  /*char* buf = new char[2048];
+  bzero(buf, 2048);
+  strncpy(buf, raw_pattern.c_str(), 2048);*/
   int ret = regcomp(pattern, query.c_str(), REG_EXTENDED);
   if(ret != 0)
     throw RegexException(ret, pattern);

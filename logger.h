@@ -22,8 +22,8 @@
 
 namespace TOOLS {
 
-DEFINE_EXCEPTION(BackendFailedToWrite, BaseException);
-DEFINE_EXCEPTION(NoSuchLoggerAvailable, BaseException);
+DEFINE_EXCEPTION(BackendFailedToWrite, BaseException)
+DEFINE_EXCEPTION(NoSuchLoggerAvailable, BaseException)
 
 class Logger;
 

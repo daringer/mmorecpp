@@ -14,25 +14,27 @@ class ExecutorToolsTestSuite : public TestSuite {
     char* c_cmd;
 
     ExecutorToolsTestSuite() {
-      REG_TEST(&ExecutorToolsTestSuite::test_system_like);
-      REG_TEST(&ExecutorToolsTestSuite::test_nonblocking_wait);
-      REG_TEST(&ExecutorToolsTestSuite::test_bash_and_output);
-      REG_TEST(&ExecutorToolsTestSuite::test_simple_output);
-      REG_TEST(&ExecutorToolsTestSuite::test_non_path_constructor);
-      REG_TEST(&ExecutorToolsTestSuite::test_constructor_and_defaults);
-      REG_TEST(&ExecutorToolsTestSuite::test_initialization);
-    };
+      REG_TEST(&ExecutorToolsTestSuite::test_system_like)
+      REG_TEST(&ExecutorToolsTestSuite::test_nonblocking_wait)
+      REG_TEST(&ExecutorToolsTestSuite::test_bash_and_output)
+      REG_TEST(&ExecutorToolsTestSuite::test_bash_again)
+      REG_TEST(&ExecutorToolsTestSuite::test_bash_third_time)
+      REG_TEST(&ExecutorToolsTestSuite::test_simple_output)
+      REG_TEST(&ExecutorToolsTestSuite::test_non_path_constructor)
+      REG_TEST(&ExecutorToolsTestSuite::test_constructor_and_defaults)
+      REG_TEST(&ExecutorToolsTestSuite::test_initialization)
+    }
 
     virtual void setup() {
       example_cmd = "cat /proc/cpuinfo";
       c_cmd = new char[CMD_LEN];
       bzero(c_cmd, sizeof(char) * CMD_LEN);
       strncpy(c_cmd, example_cmd.c_str(), CMD_LEN-1);
-    };
+    }
 
     virtual void tear_down() {
       delete [] c_cmd;
-    };
+    }
 
     void test_initialization() {
       Executor e("bash");
@@ -43,7 +45,7 @@ class ExecutorToolsTestSuite : public TestSuite {
       Executor e("head -n 1 /proc/cpuinfo");
       e.run();
       CHECK(true);
-    };
+    }
 
     void test_constructor_and_defaults() {
       Executor e(c_cmd);
@@ -86,6 +88,13 @@ class ExecutorToolsTestSuite : public TestSuite {
       CHECK(ret == 0 && out.find("bogomips") != string::npos && out.find("cpu") != string::npos);
     }
 
+    void test_bash_again() {
+      test_bash_and_output();
+    }
+
+    void test_bash_third_time() {
+      test_bash_and_output();
+    }
     void test_nonblocking_wait() {
       Executor e("bash");
       e.communicate();

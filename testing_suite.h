@@ -108,7 +108,7 @@ class TestFramework {
     template<class T>
     void add_suite(const std::string& desc) {
       test_suites[desc] = new T();
-    };
+    }
 
     void run();
 

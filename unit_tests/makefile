@@ -1,21 +1,21 @@
 include $(AMV_HOME)/templates/makefile.libs
 include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
 
-#LIB = libtools$(EXTENSION).a
+
 
 TESTSUITS = fs xstring xregex executor
-SUITESOURCES.cc = $(addsuffix .cc,$(TESTSUITS))
-SOURCES.cc = run_tests.cc 
+SOURCES.cc = run_tests.cc $(addsuffix .cc,$(TESTSUITS))
 
 SOURCES = $(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 LIBOBJ =  ../libtools$(EXTENSION).a
 
-CCFLAGS = -w -I.. -g 
+CCFLAGS = -w -I. -I.. -g -Wall -pedantic -DLINUX -I$(TOOLS_DIR)
 PROGRAM = run_tests
 
 LIBS += -lm -ltools$(EXTENSION) -L$(AMV_HOME)/c/tools_lib
 
+CCC=clang
 
 all:	 $(PROGRAM)
 objects: $(SOURCES) $(OBJECTS)
@@ -23,18 +23,20 @@ sources: $(SOURCES)
 targets: $(SOURCES)
 
 clean:
-	# Removing libs from $(LAPACKDIR_OHNE_PERF)!!!
 	$(RM) $(OBJECTS) core $(LIB)
 
 .PARALLEL: $(OBJECTS)
 
-$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) $(SUITESOURCES.cc) $(LIBOBJ)
+$(LIBOBJ): 
+	make -C ..
+
+$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) $(LIBOBJ)
 	@echo "\n - Linking $(PROGRAM) -\n"
 	$(LINK_PRE) $(LD) $(LDFLAGS)  -o $@ $(OBJECTS) $(OBJVHDL) $(LIBS)
 	@chmod 755 $@
 
 # building object files here
-%$(EXTENSION).o: %.cc $(SOURCES.h) $(MAKEFILE) $(MAKEFILEINC) $(SUITESOURCES.cc)
+%$(EXTENSION).o: %.cc $(SOURCES.h) $(MAKEFILE) $(MAKEFILEINC) $(LIBOBJ)
 	@rm -f $@
 	$(CCC) $(CCFLAGS) -c -g $(@:%$(EXTENSION).o=%.cc) -o $@
 	@chmod g+w,a+r $@

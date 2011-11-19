@@ -27,8 +27,8 @@ void SocketStream::send(const std::string& data, int len) {
 }
 
 const std::string SocketStream::get(int len) {
-  char buf[len+1];
-  bzero(&buf, len+1);
+  char buf[MAX_BUF];
+  bzero(&buf, MAX_BUF);
 
   int n = read(fd, &buf, len);
   if(n < 0)

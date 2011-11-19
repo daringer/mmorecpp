@@ -10,13 +10,16 @@ SOURCES.h = $(addsuffix .h,$(TOOLS))
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
-ORGCCFLAGS += -w -I.. -g
-CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall 
+ORGCCFLAGS += -w -I.. -g -c
+CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic
+#CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3
 
-all:	 $(LIB) unit_tests
+all:	 $(LIB) tests
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
+
+CCC=clang
 
 tests: unit_tests
 	make -C unit_tests/
@@ -24,6 +27,7 @@ tests: unit_tests
 clean:
 	# Removing libs from $(LAPACKDIR_OHNE_PERF)!!!
 	$(RM) $(OBJECTS) core $(LIB)
+	make -C unit_tests/ clean
 
 .PARALLEL: $(OBJECTS)
 
