@@ -50,7 +50,7 @@ class ConsoleBackend : public BaseLoggerBackend {
     //public:
     //void
     // write console backend, and think about multiple backends inside logger
-}
+};
 
 
 class Logger {
@@ -70,6 +70,7 @@ class Logger {
     std::string log_template;
     std::string time_format;
 };
+
 tLoggerMap Logger::log_map;
 
 class LogStream : public std::ostringstream {

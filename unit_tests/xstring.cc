@@ -22,6 +22,8 @@ class XStringToolsTestSuite : public TestSuite {
       REG_TEST(&XStringToolsTestSuite::test_integer_error);
       REG_TEST(&XStringToolsTestSuite::test_lower_case);
       REG_TEST(&XStringToolsTestSuite::test_upper_case);
+      REG_TEST(&XStringToolsTestSuite::test_empty_string_split);
+      REG_TEST(&XStringToolsTestSuite::test_string_no_delim);
     };
 
     XString s1, s2, s3, foo, realstr, intstr, s3_big, s3_small;
@@ -105,5 +107,14 @@ class XStringToolsTestSuite : public TestSuite {
       EXC_CHECK(ConvertValueError, integer(foo));
     };
 
+    void test_empty_string_split() {
+      XString xs("");
+      tStringList sl = xs.split(" ");
+      CHECK(sl.size() == 1 && sl[0] == "");
+    };
 
+    void test_string_no_delim() {
+      tStringList sl = s1.split(" ");
+      CHECK(sl.size() == 1 && sl[0] == s1);
+    };
 };

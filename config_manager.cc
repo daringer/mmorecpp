@@ -16,6 +16,8 @@ string ConfigDataKeeper::verbose_type() {
     return "string";
   else if(tinfo == typeid(tStringList).name())
     return "string list";
+  else if(tinfo == typeid(tStringMap).name())
+    return "string map";
   else if(tinfo == typeid(bool).name())
     return "boolean";
   return "UNKNOWN";
@@ -106,6 +108,18 @@ void ConfigManager::parse(tStringList* args) {
   // build tStringList from "," separated input
   if(tmp->same_data_types<tStringList>()) {
     set<tStringList>(id, XString(arg).split(","));
+    args->erase(args->begin(), args->begin()+2);
+    return;
+  // build tStringMap from "," and "=" separated input
+  } 
+  if (tmp->same_data_types<tStringMap>()) {
+    tStringList tmp = XString(arg).split(",");
+    tStringMap tmpmap;
+    for(tStringIter i=tmp.begin(); i!=tmp.end(); ++i) {
+      tStringList two = XString(*i).split("=");
+      tmpmap[two[0]] = two[1];
+    }
+    set<tStringMap>(id, tmpmap);
     args->erase(args->begin(), args->begin()+2);
     return;
   }
