@@ -27,10 +27,7 @@ clean:
 
 .PARALLEL: $(OBJECTS)
 
-$(LIBOBJ): 
-	make -C ..
-
-$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) $(LIBOBJ)
+$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC)
 	@echo "\n - Linking $(PROGRAM) -\n"
 	$(LINK_PRE) $(LD) $(LDFLAGS)  -o $@ $(OBJECTS) $(OBJVHDL) $(LIBS)
 	@chmod 755 $@
