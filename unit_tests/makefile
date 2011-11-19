@@ -9,6 +9,7 @@ SOURCES.cc = run_tests.cc
 
 SOURCES = $(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
+LIBOBJ =  ../libtools$(EXTENSION).a
 
 CCFLAGS = -w -I.. -g 
 PROGRAM = run_tests
@@ -27,7 +28,7 @@ clean:
 
 .PARALLEL: $(OBJECTS)
 
-$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) $(SUITESOURCES.cc)
+$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC) $(SUITESOURCES.cc) $(LIBOBJ)
 	@echo "\n - Linking $(PROGRAM) -\n"
 	$(LINK_PRE) $(LD) $(LDFLAGS)  -o $@ $(OBJECTS) $(OBJVHDL) $(LIBS)
 	@chmod 755 $@

@@ -11,14 +11,16 @@ RegexException::RegexException(int errcode, const regex_t* pattern) : BaseExcept
   set_message(buf);
 }
 
-Regex::Regex(const std::string& query) : raw_pattern(query) {
-  int ret = regcomp(&pattern, query.c_str(), REG_EXTENDED);
+Regex::Regex(const std::string& query) : raw_pattern(query), pattern(new regex_t) {
+  bzero(pattern, sizeof(regex_t));
+
+  int ret = regcomp(pattern, query.c_str(), REG_EXTENDED);
   if(ret != 0)
-    throw RegexException(ret, &pattern);
+    throw RegexException(ret, pattern);
 }
 
 Regex::~Regex() {
-  regfree(&pattern);
+  regfree(pattern);
 }
 
 void Regex::apply_pattern(const string& s, int max_results) {
@@ -30,7 +32,7 @@ void Regex::apply_pattern(const string& s, int max_results) {
 
   results.clear();
 
-  while((ret = regexec(&pattern, ptr, MAX_GROUP_COUNT, res, REG_EXTENDED)) == 0) {
+  while((ret = regexec(pattern, ptr, MAX_GROUP_COUNT, res, REG_EXTENDED)) == 0) {
     Grouplist group_data;
     int group = -1;
     while(res[++group].rm_so != -1)
@@ -46,7 +48,7 @@ void Regex::apply_pattern(const string& s, int max_results) {
     max_results--;
   }
   if(ret != REG_NOMATCH && ret != 0)
-    throw RegexException(ret, &pattern);
+    throw RegexException(ret, pattern);
 }
 
 bool Regex::match(const string& s) {

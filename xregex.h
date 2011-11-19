@@ -47,7 +47,7 @@ class Regex {
     std::string replace(const std::string& what, const std::string& with);
 
   protected:
-    regex_t pattern;
+    regex_t* pattern;
 
     void apply_pattern(const std::string& s, int max_results);
 };

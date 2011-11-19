@@ -13,10 +13,13 @@ OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 ORGCCFLAGS += -w -I.. -g
 CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall 
 
-all:	 $(LIB)
+all:	 $(LIB) unit_tests
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
+
+tests: unit_tests
+	make -C unit_tests/
 
 clean:
 	# Removing libs from $(LAPACKDIR_OHNE_PERF)!!!
