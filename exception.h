@@ -33,6 +33,9 @@ void tools_lib_exception_handler();
 
 }
 
+//// TODO: PROVIDE ONLY ONE(!) MACRO WHICH CAN HANDLE BOTH!!!! however....
+//// TODO: PROVIDE A NON-ARGUMENT VERSION!!!
+
 #define DEFINE_EXCEPTION(CLASS,PARENT) \
   class CLASS : public PARENT { \
     public: \

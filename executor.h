@@ -1,5 +1,5 @@
 #ifndef EXECUTOR_H
-#define EXECUTRO_H
+#define EXECUTOR_H
  
 #include <stdlib.h>
 #include <stdio.h>
@@ -47,7 +47,6 @@ class Executor {
     char **cargs;
     
     int fdin[2], fdout[2], fderr[2];
-    //int org_flags_stdin, org_flags_stderr;
 
     int BUF_SIZE;
     char* buffer;

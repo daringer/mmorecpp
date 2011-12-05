@@ -22,8 +22,7 @@ void SocketStream::send(const std::string& data) {
 void SocketStream::send(const std::string& data, int len) {
   int n = write(fd, data.c_str(), len);
   if(n < 0)
-    throw SocketException("Could not write to socket");
-  //flush(fd);
+    throw SocketException("");
 }
 
 const std::string SocketStream::get(int len) {
@@ -32,7 +31,7 @@ const std::string SocketStream::get(int len) {
 
   int n = read(fd, &buf, len);
   if(n < 0)
-    throw SocketException("Could not read from socket");
+    throw SocketException("");
   return buf;
 }
 

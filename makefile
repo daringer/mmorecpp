@@ -19,8 +19,6 @@ objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
-CCC=clang
-
 tests: unit_tests
 	make -C unit_tests/
 

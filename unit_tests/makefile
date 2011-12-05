@@ -15,8 +15,6 @@ PROGRAM = run_tests
 
 LIBS += -lm -ltools$(EXTENSION) -L$(AMV_HOME)/c/tools_lib
 
-CCC=clang
-
 all:	 $(PROGRAM)
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
