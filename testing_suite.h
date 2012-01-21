@@ -42,6 +42,13 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
     add_exc_check(_res, #exc, __LINE__); \
   } while(0)
 
+#define CHECK_EQ_ITER(iter, lbox, rbox, expr) do { \
+  bool _res = true; \
+  for(iter i=lbox.begin(), j=rbox.begin(); i!=lbox.end(), j!=rbox.end(); ++i, ++j) \
+      _res &= (expr); \
+  add_check(_res, __LINE__); \
+} while(0)
+
 #define REG_TEST(method) \
   add_test(#method, method);
 

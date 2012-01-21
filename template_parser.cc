@@ -102,7 +102,7 @@ string TemplateParser::get_val(const string& name) {
     return str(integer(name));
   } catch(ConvertValueError e) { }
 
-  vector<string> name_tokens = XString(name).split(".");
+  tStringList name_tokens = XString(name).split(".");
   // handle {first,last}_loop and direct vector item access
   if(name_tokens.size() == 2) {
     if(vector_vars.count(name_tokens[0]) == 1 &&

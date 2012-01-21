@@ -49,7 +49,7 @@ class ASTNode {
  *   - length of a filled vector {{ #my_vector }} (also usable in for/if)
  *   - 'if-else-end' control-structure, only one variable and no
  *     expression allowed. There is an exception for 'not', which simply
- *     does what you expectcwith the expression/variable:
+ *     does what you expect with the expression/variable:
  *     \code
  *     {% if not simple %}it_was_true{% else %}and_here_false{% end %}
  *     \endcode
@@ -58,7 +58,7 @@ class ASTNode {
  *     up to any other. Supports last_loop flag, first_loop flag, outputting
  *     iteration var:
  *     \code
- *     {% for i in range from offset %}
+ *     {% for i to range from offset %}
  *       {% if i.first_loop %}something special in 1st loop{% end %}
  *       Write Line {{ i }} - some content outputted every iteration
  *       {% if not i.last_loop %}everytime except in the last loop{% end %}
@@ -67,6 +67,7 @@ class ASTNode {
  *
  * @todo better error handling and catching
  * @todo and how about a "is-this-a-legal-template-file-checker" ==
+ * @todo arbitrary depth for loops, thus a possibility to save them
  */
 class TemplateParser {
   private:
@@ -90,7 +91,6 @@ class TemplateParser {
     void show_ast(ASTNode* node, int level);
 
     std::string get_val(const std::string& name);
-
 
   public:
     TemplateParser(const std::string& template_path);

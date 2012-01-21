@@ -55,6 +55,10 @@ double real(const T& val) throw(ConvertValueError) {
     throw ConvertValueError("Could not convert: '" + str(val) + "' to double");
   return out;
 }
+
+// add some helper/shortcut functions like:
+// contents = string((istreambuf_iterator<char>(spec_tmp)), istreambuf_iterator<char>());
+
 /**
  * @brief A string class fully compatible with std::string featuring some
  *        often used methods, to bring a little comfort into string handling
