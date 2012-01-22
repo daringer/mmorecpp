@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
   f.add_suite<XRegexToolsTestSuite>("TOOLS::XRegex");
   f.add_suite<ExecutorToolsTestSuite>("TOOLS::Executor");
   f.run();
-  f.show_results();
+  f.show_result_overview();
 
   return 0;
 }

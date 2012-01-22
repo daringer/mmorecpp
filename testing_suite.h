@@ -42,7 +42,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
     add_exc_check(_res, #exc, __LINE__); \
   } while(0)
 
-#define CHECK_EQ_DUAL_ITER(iter, lbox, rbox, expr) do { \
+#define CHECK_DUAL_ITER(iter, lbox, rbox, expr) do { \
   int _count = 0; \
   tIntList errs; \
   for(iter i=lbox.begin(), j=rbox.begin(); \
@@ -52,7 +52,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   add_eq_iter_check(errs.empty(), _count, errs, __LINE__); \
 } while(0)
 
-#define CHECK_EQ_ITER(iter, box, expr) do { \
+#define CHECK_ITER(iter, box, expr) do { \
   int _count = 0; \
   tIntList errs; \
   for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
@@ -64,25 +64,34 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 #define REG_TEST(method) \
   add_test(#method, method);
 
+class TestResult {
+  public:
+    std::string id;
+    bool result;
+    std::string details;
+
+    TestResult();
+    TestResult(const std::string& testid, bool res, const std::string& details);
+
+    void show(bool show_details);
+};
 
 class Test {
   public:
     std::string name;
-    bool result;
     int lineno;
-    std::string details;
     tMethod method;
     TestSuite* object;
+    TestResult res;
 
     Test();
     Test(const std::string& name, tMethod meth, TestSuite* object);
-
-    TestResult get_result();
 };
 
 class TestSuite {
   public:
     tTestMap tests;
+    int check_count;
 
     TestSuite();
 
@@ -99,28 +108,18 @@ class TestSuite {
 
     void add_check(bool expr, int lineno);
     void add_exc_check(bool res, const std::string& excname, int lineno);
-    void add_eq_iter_check(bool res, int iters, tIntList errs, int lineno);
+    void add_iter_check(bool res, int iters, tIntList errs, int lineno);
 
 
     template<class T>
     void add_test(XString name, void (T::*f)()) {
-
-      XString desc = XString(name.split("::")[1]).subs("test_", "");
+      XString desc = XString(name).subs("test_", "").subs("&", "").subs("TestSuite", "");
       tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }
   private:
     bool show_good_details;
 };
 
-class TestResult {
-  public:
-    std::string id;
-    bool result;
-    std::string details;
-
-    TestResult();
-    TestResult(const std::string& testid, bool res, const std::string& details);
-};
 
 class TestFramework {
   public:
@@ -134,8 +133,7 @@ class TestFramework {
 
     void run();
 
-    tTestResultMap get_results();
-    void show_results();
+    void show_result_overview();
 
   private:
     tTestSuiteMap test_suites;
