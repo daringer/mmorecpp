@@ -49,7 +49,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
       i!=lbox.end(), j!=rbox.end(); ++i, ++j, ++_count) \
       if(!(expr)) \
         errs.push_back(_count); \
-  add_eq_iter_check(errs.empty(), _count, errs, __LINE__); \
+  add_iter_check(errs.empty(), _count, errs, __LINE__); \
 } while(0)
 
 #define CHECK_ITER(iter, box, expr) do { \
@@ -58,7 +58,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
       if(!(expr)) \
         errs.push_back(_count); \
-  add_eq_iter_check(errs.empty(), _count, errs, __LINE__); \
+  add_iter_check(errs.empty(), _count, errs, __LINE__); \
 } while(0)
 
 #define REG_TEST(method) \
