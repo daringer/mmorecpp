@@ -108,6 +108,8 @@ class TestSuite {
       XString desc = XString(name.split("::")[1]).subs("test_", "");
       tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }
+  private:
+    bool show_good_details;
 };
 
 class TestResult {

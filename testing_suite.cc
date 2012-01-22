@@ -9,17 +9,19 @@ Test::Test() : name(""), result(true), details(""), method(NULL), object(NULL) {
 Test::Test(const string& name, tMethod meth, TestSuite* obj)
   : name(name), result(true), details(""), method(meth), object(obj) {}
 
-TestSuite::TestSuite() : active_test(NULL) { }
+TestSuite::TestSuite() : active_test(NULL), show_good_details(false) { }
 
 void TestSuite::add_check(bool expr, int line) {
   active_test->result &= expr;
   active_test->lineno = line;
 
-  const string lineinfo = (expr) ? " [good]" : " [bad]";
-  if(XString(active_test->details).startswith("Line(s):"))
-    active_test->details.append(", " + str(line) + lineinfo);
-  else
-    active_test->details.append("Line(s): " + str(line) + lineinfo);
+  if(show_good_details || !expr) {
+    const string lineinfo = (expr) ? " [good]" : " [bad]";
+    if(XString(active_test->details).startswith("Line(s):"))
+      active_test->details.append(", " + str(line) + lineinfo);
+    else
+      active_test->details.append("Line(s): " + str(line) + lineinfo);
+  }
 }
 
 void TestSuite::add_exc_check(bool res, const std::string& excname, int line) {
@@ -119,12 +121,12 @@ void TestFramework::show_results() {
       bad++;
       icon = "-";
     }
-
+    
     cout << "[" << icon << "] " << left << setw(45) << i->first << \
-         setw(20) << right << rating << endl;
+      setw(20) << right << rating << endl;
 
     if(i->second.details != "" && ((!show_details && !i->second.result) || show_details))
-      cout << "[i]    " << i->second.details << endl;
+          cout << "[i]    " << i->second.details << endl;
   }
   cout << endl << "[i] Finished TestRun - good: " << good;
   if(bad > 0)
