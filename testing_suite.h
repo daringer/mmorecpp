@@ -42,11 +42,23 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
     add_exc_check(_res, #exc, __LINE__); \
   } while(0)
 
-#define CHECK_EQ_ITER(iter, lbox, rbox, expr) do { \
-  bool _res = true; \
-  for(iter i=lbox.begin(), j=rbox.begin(); i!=lbox.end(), j!=rbox.end(); ++i, ++j) \
-      _res &= (expr); \
-  add_check(_res, __LINE__); \
+#define CHECK_EQ_DUAL_ITER(iter, lbox, rbox, expr) do { \
+  int _count = 0; \
+  tIntList errs; \
+  for(iter i=lbox.begin(), j=rbox.begin(); \
+      i!=lbox.end(), j!=rbox.end(); ++i, ++j, ++_count) \
+      if(!(expr)) \
+        errs.push_back(_count); \
+  add_eq_iter_check(errs.empty(), _count, errs, __LINE__); \
+} while(0)
+
+#define CHECK_EQ_ITER(iter, box, expr) do { \
+  int _count = 0; \
+  tIntList errs; \
+  for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
+      if(!(expr)) \
+        errs.push_back(_count); \
+  add_eq_iter_check(errs.empty(), _count, errs, __LINE__); \
 } while(0)
 
 #define REG_TEST(method) \
@@ -87,6 +99,7 @@ class TestSuite {
 
     void add_check(bool expr, int lineno);
     void add_exc_check(bool res, const std::string& excname, int lineno);
+    void add_eq_iter_check(bool res, int iters, tIntList errs, int lineno);
 
 
     template<class T>

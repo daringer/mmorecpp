@@ -28,6 +28,19 @@ void TestSuite::add_exc_check(bool res, const std::string& excname, int line) {
     active_test->details.append("[exc: " + excname + "] ");
 }
 
+void TestSuite::add_eq_iter_check(bool res, int iters, tIntList errs, int line) {
+  add_check(res, line);
+  stringstream out;
+  for(tIntIter i=errs.begin(); i!=errs.end(); ++i) {
+    out << *i;
+    if(i+1 != errs.end())
+      out << ",";
+  }
+  if(!res)
+    active_test->details.append("[eq_iter: iterations: " + 
+        str(iters) + " errors in: " + out.str() + "]");
+}
+
 void TestSuite::setup() {}
 void TestSuite::tear_down() {}
 
