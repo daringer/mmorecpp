@@ -101,7 +101,7 @@ class TestSuite {
     virtual void setup();
     void after_setup();
 
-    void execute_tests();
+    void execute_tests(const std::string& suite_name);
 
   protected:
     Test* active_test;
@@ -113,7 +113,7 @@ class TestSuite {
 
     template<class T>
     void add_test(XString name, void (T::*f)()) {
-      XString desc = XString(name).subs("test_", "").subs("&", "").subs("TestSuite", "");
+      XString desc = XString(name).subs("test_", "").split("::")[1];
       tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }
   private:

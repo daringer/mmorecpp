@@ -55,9 +55,9 @@ void TestSuite::after_tear_down() {
   //active_test->details.append("TearDown finished!");
 }
 
-void TestSuite::execute_tests() {
+void TestSuite::execute_tests(const string& suite_name) {
   for(tTestIter i=tests.begin(); i!=tests.end(); ++i) {
-    i->second.res.id =  i->first;
+    i->second.res.id = suite_name + "::" + i->first;
     active_test = &i->second;
     setup();
     after_setup();
@@ -112,7 +112,7 @@ TestFramework::~TestFramework() {
 
 void TestFramework::run() {
   for(tTestSuiteIter i=test_suites.begin(); i!=test_suites.end(); ++i)
-    i->second->execute_tests();
+    i->second->execute_tests(i->first);
 }
 
 void TestFramework::show_result_overview() {
