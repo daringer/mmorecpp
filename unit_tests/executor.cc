@@ -38,7 +38,7 @@ class ExecutorToolsTestSuite : public TestSuite {
 
     void test_initialization() {
       Executor e("bash");
-      EXC_CHECK(CommunicationNotInited, e.read_stdout());
+      CHECK_EXC(CommunicationNotInited, e.read_stdout());
     }
 
     void test_system_like() {
@@ -53,7 +53,7 @@ class ExecutorToolsTestSuite : public TestSuite {
     }
 
     void test_non_path_constructor() {
-      EXC_CHECK(CommandNotFound, Executor("/foo/bar/ls", false));
+      CHECK_EXC(CommandNotFound, Executor("/foo/bar/ls", false));
     }
 
     void test_simple_output() {

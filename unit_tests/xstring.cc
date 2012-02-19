@@ -96,7 +96,7 @@ class XStringToolsTestSuite : public TestSuite {
     }
 
     void test_real_error() {
-      EXC_CHECK(ConvertValueError, real(foo));
+      CHECK_EXC(ConvertValueError, real(foo));
     }
 
     void test_integer() {
@@ -104,7 +104,7 @@ class XStringToolsTestSuite : public TestSuite {
     }
 
     void test_integer_error() {
-      EXC_CHECK(ConvertValueError, integer(foo));
+      CHECK_EXC(ConvertValueError, integer(foo));
     }
 
     void test_empty_string_split() {
