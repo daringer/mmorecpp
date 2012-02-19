@@ -58,16 +58,3 @@ void tools_lib_exception_handler();
   };
 
 #endif
-
-/*#define DEFINE_PARENT_EXCEPTION(CLASS,PARENT) \
-  class CLASS : public PARENT { \
-    public: \
-      CLASS(const std::string& msg, const std::string& exc_name) : PARENT(msg, exc_name) { } \
-      CLASS(const CLASS& obj) : PARENT(obj) { } \
-  };
-
-#endif*/
-
-
-
-
