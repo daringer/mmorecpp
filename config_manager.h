@@ -23,7 +23,7 @@ namespace TOOLS {
 class ConfigGroup;
 class ConfigOption;
 
-DEFINE_PARENT_EXCEPTION(ConfigManagerException, BaseException)
+DEFINE_EXCEPTION(ConfigManagerException, BaseException)
 DEFINE_EXCEPTION(UnknownParameter,              ConfigManagerException)
 DEFINE_EXCEPTION(MissingParameter,              ConfigManagerException)
 DEFINE_EXCEPTION(ValueHasNotBeenSet,            ConfigManagerException)

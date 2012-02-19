@@ -32,7 +32,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 #define CHECK(expr) \
   add_check(expr, __LINE__);
 
-#define EXC_CHECK(exc, func) do { \
+#define CHECK_EXC(exc, func) do { \
     bool _res = false; \
     try { \
       func; \

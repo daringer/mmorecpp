@@ -2,6 +2,7 @@
 #define EXCEPTION_H
 
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <cstdlib>
 
@@ -17,9 +18,16 @@ class BaseException : public std::exception {
 
     static BaseException* last_exception;
 
-    BaseException(const std::string& msg, const std::string& exc_name);
+    template<class T>
+    BaseException(const std::string& exc_name, const T& msg)
+    : exception(), exception_name(exc_name), message(msg) {
+      std::stringstream ss;
+      ss << msg;
+      set_message(ss.str());
+      BaseException::last_exception = this;
+    }
+    BaseException(const std::string& exc_name);
     BaseException(const BaseException& obj);
-    BaseException();
 
     virtual ~BaseException() throw();
 
@@ -33,23 +41,27 @@ void tools_lib_exception_handler();
 
 }
 
-//// TODO: PROVIDE ONLY ONE(!) MACRO WHICH CAN HANDLE BOTH!!!! however....
-//// TODO: PROVIDE A NON-ARGUMENT VERSION!!!
-
 #define DEFINE_EXCEPTION(CLASS,PARENT) \
   class CLASS : public PARENT { \
     public: \
-      CLASS(const std::string& msg) : PARENT(msg, #CLASS) { } \
+      CLASS() : PARENT(#CLASS) { } \
+      template<class T> \
+      CLASS(const T& msg) : PARENT(#CLASS, msg) { } \
+      template<class T> \
+      CLASS(const std::string& exc, const T& msg) : PARENT(exc, msg) { } \
+      CLASS(const CLASS& obj) : PARENT(obj.exception_name, obj.message) { } \
   };
 
-#define DEFINE_PARENT_EXCEPTION(CLASS,PARENT) \
+#endif
+
+/*#define DEFINE_PARENT_EXCEPTION(CLASS,PARENT) \
   class CLASS : public PARENT { \
     public: \
       CLASS(const std::string& msg, const std::string& exc_name) : PARENT(msg, exc_name) { } \
       CLASS(const CLASS& obj) : PARENT(obj) { } \
   };
 
-#endif
+#endif*/
 
 
 

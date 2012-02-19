@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "exception.h"
+#include "xstring.h"
 
 namespace TOOLS {
 namespace FS {
