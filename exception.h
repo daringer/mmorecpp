@@ -20,12 +20,15 @@ class BaseException : public std::exception {
 
     template<class T>
     BaseException(const std::string& exc_name, const T& msg)
-    : exception(), exception_name(exc_name), message(msg) {
+    : exception(), exception_name(exc_name) {
       std::stringstream ss;
-      ss << msg;
-      set_message(ss.str());
-      BaseException::last_exception = this;
+      if(!(ss << msg)) {
+        throw exception();
+      }
+      message = ss.str();
+      init();  
     }
+
     BaseException(const std::string& exc_name);
     BaseException(const BaseException& obj);
 
@@ -33,6 +36,8 @@ class BaseException : public std::exception {
 
     void set_message(const std::string& input);
     void show();
+  private:
+    void init();
 };
 
 // better exception handler - feed this to set_terminate and

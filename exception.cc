@@ -19,8 +19,7 @@ void TOOLS::tools_lib_exception_handler() {
 */
 BaseException::BaseException(const std::string& exc_name) 
   : exception(), exception_name(exc_name), message("") {
-  set_message(message);
-  BaseException::last_exception = this;
+    init();
 }
 /**
  * @brief copy-constructor
@@ -28,8 +27,7 @@ BaseException::BaseException(const std::string& exc_name)
  */
 BaseException::BaseException(const BaseException& obj) 
   : exception(), exception_name(obj.exception_name), message(obj.message) {
-  set_message(message);
-  BaseException::last_exception = this;  
+    init();
 }
 /**
 * @brief descructor including very important throw declaration
@@ -40,6 +38,13 @@ BaseException::~BaseException() throw() { }
 */
 void BaseException::show() {
   cerr << endl << output << endl;
+}
+/**
+ * @brief actual initialization
+ */
+void BaseException::init() {
+  set_message(message);
+  BaseException::last_exception = this;
 }
 /**
 * @brief explicitly set the message
