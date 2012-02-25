@@ -51,6 +51,3 @@ LogStream::~LogStream() {
   obj->log_msg(msg, loglvl, line, fn, func);
 }
 
-int main() {
-  return 0;
-}
