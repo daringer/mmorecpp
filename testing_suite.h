@@ -55,7 +55,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 #define CHECK_ITER(iter, box, expr) do { \
   int _count = 0; \
   tIntList errs; \
-  for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
+  for(iter i=pbox.begin(); i!=pbox.end(); ++i, ++_count) \
       if(!(expr)) \
         errs.push_back(_count); \
   add_iter_check(errs.empty(), _count, errs, __LINE__); \
