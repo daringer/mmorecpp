@@ -62,7 +62,7 @@ void TestSuite::execute_tests(const string& suite_name) {
     setup();
     after_setup();
     try {
-      (i->second.object->*i->second.method)();
+      (i->second.object->*i->second.method)(true);
     } catch(TOOLS::BaseException& e) {
       i->second.res.details.append(
           "[E] test failed - exception caught: " + e.output + " - ");

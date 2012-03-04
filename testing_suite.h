@@ -18,7 +18,7 @@ class TestSuite;
 class TestResult;
 class Test;
 
-typedef void (TestSuite::*tMethod)();
+typedef void (TestSuite::*tMethod)(bool);
 
 typedef std::map<std::string, TestResult> tTestResultMap;
 typedef std::map<std::string, Test> tTestMap;
@@ -30,7 +30,8 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 
 #define CHECK(expr) \
-  add_check(expr, __LINE__);
+  if(do_checks) \
+    add_check(expr, __LINE__);
 
 #define CHECK_EXC(exc, func) do { \
     bool _res = false; \
@@ -63,6 +64,12 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 #define REG_TEST(method) \
   add_test(#method, method);
+
+#define MAKE_TEST(name) \
+  void test_ ## name(bool do_checks=true) 
+
+#define PREPARE_WITH(fnc) \
+  test_ ## fnc(false);
 
 class TestResult {
   public:
@@ -112,7 +119,7 @@ class TestSuite {
 
 
     template<class T>
-    void add_test(XString name, void (T::*f)()) {
+    void add_test(XString name, void (T::*f)(bool)) {
       XString desc = XString(name).subs("test_", "").split("::")[1];
       tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }

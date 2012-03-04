@@ -40,12 +40,12 @@ class FSToolsTestSuite : public TestSuite {
       system(("rm -rf " + fn + " " + morefn + " " + realfn + " " + torealfn).c_str());
     }
 
-    void test_path_init() {
+    MAKE_TEST(path_init) {
       FS::Path foo(fn);
       CHECK(foo.path == fn);
     }
 
-    void test_copy_constructor() {
+    MAKE_TEST(copy_constructor) {
       FS::Path foo(fn);
       FS::Path foocopy(foo);
 
@@ -53,44 +53,44 @@ class FSToolsTestSuite : public TestSuite {
       CHECK(foo.path != foocopy.path);
     }
 
-    void test_exists() {
+    MAKE_TEST(exists) {
       FS::Path p(realdir);
       CHECK(p.exists());
     }
 
-    void test_notexists() {
+    MAKE_TEST(notexists) {
       FS::Path p(fn);
       CHECK(!p.exists());
     }
 
-    void test_isfile() {
+    MAKE_TEST(isfile) {
       FS::Path p(realfile);
       CHECK(p.is_file());
     }
 
-    void test_isnotfile() {
+    MAKE_TEST(isnotfile) {
       FS::Path p(realdir);
       CHECK(!p.is_file());
     }
 
-    void test_isdir() {
+    MAKE_TEST(isdir) {
       FS::Path p(realdir);
       CHECK(p.is_dir());
     }
 
-    void test_isnotdir() {
+    MAKE_TEST(isnotdir) {
       FS::Path p(realfile);
       CHECK(!p.is_dir());
     }
 
-    void test_create_dir() {
+    MAKE_TEST(create_dir) {
       FS::Path p(realfn);
       p.create_dir();
       CHECK(p.exists());
       CHECK(FS::Path(realfn).exists());
     }
 
-    void test_move() {
+    MAKE_TEST(move) {
       FS::Path p(realfn);
       p.create_dir();
       p.move(torealfn);

@@ -36,73 +36,59 @@ class ExecutorToolsTestSuite : public TestSuite {
       delete [] c_cmd;
     }
 
-    void test_initialization() {
+    MAKE_TEST(initialization) {
       Executor e("bash");
       CHECK_EXC(CommunicationNotInited, e.read_stdout());
     }
 
-    void test_system_like() {
+    MAKE_TEST(system_like) {
       Executor e("head -n 1 /proc/cpuinfo");
       e.run();
       CHECK(true);
     }
 
-    void test_constructor_and_defaults() {
+    MAKE_TEST(constructor_and_defaults) {
       Executor e(c_cmd);
       CHECK(e.result == -1 && e.pid == -1 && e.verbose == false);
     }
 
-    void test_non_path_constructor() {
+    MAKE_TEST(non_path_constructor) {
       CHECK_EXC(CommandNotFound, Executor("/foo/bar/ls", false));
     }
 
-    void test_simple_output() {
-      //Executor e(("ls " + dirname).c_str(), true);
+    MAKE_TEST(simple_output) {
       Executor e(c_cmd);
-      //e.verbose = true;
       e.communicate();
       string err = e.read_stderr();
       string out = e.read_stdout();
-      /*cout << "out:" << endl;
-      cout << out << endl;
-      cout << err << endl;
-      cout << "end out..." << endl;
-      cerr << "WAAS HIER LOOOS????" << endl;
-      cout << "EXITCODE: " << strerror(e.check_for_exit(true)) << endl;*/
       CHECK(out.find("bogomips") != string::npos && out.find("cpu") != string::npos);
     }
 
-    void test_bash_and_output() {
+    MAKE_TEST(bash_and_output) {
       Executor e("bash");
       e.communicate();
       e.write_stdin(example_cmd);
-      //perror("WHOOOT: ");
-      //e.write_stdin("exit");
       e.write_stdin("exit");
       string out = e.read_stdout();
-      //cout << "EXITCODE: " << strerror(e.check_for_exit(true)) << endl;
       
-      //perror("WHOOOT: ");
-      //cout << out << endl;
       int ret = e.check_for_exit();
       CHECK(ret == 0 && out.find("bogomips") != string::npos && out.find("cpu") != string::npos);
     }
 
-    void test_bash_again() {
+    MAKE_TEST(bash_again) {
       test_bash_and_output();
     }
 
-    void test_bash_third_time() {
+    MAKE_TEST(bash_third_time) {
       test_bash_and_output();
     }
-    void test_nonblocking_wait() {
+    MAKE_TEST(nonblocking_wait) {
       Executor e("bash");
       e.communicate();
       
       int res;
       e.write_stdin(c_cmd);
       res = e.check_for_exit();
-      //cout << "RES NONBLOCKING wait??: " << strerror(res) << endl;
       CHECK(res == -1);
       
       e.write_stdin("exit");

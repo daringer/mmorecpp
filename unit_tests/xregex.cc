@@ -26,17 +26,17 @@ class XRegexToolsTestSuite : public TestSuite {
       replaced = "xxx---b---xxx123---b---21yyyy---b---yyy";
     }
 
-    void test_compile_pattern() {
+    MAKE_TEST(compile_pattern) {
       Regex pat(regexp);
       CHECK(true);
     }
 
-    void test_match() {
+    MAKE_TEST(match) {
       Regex pat(regexp);
       CHECK(pat.match(haystack));
     }
 
-    void test_search() {
+    MAKE_TEST(search) {
       Regex pat(regexp);
       Matchinglist m = pat.search(haystack);
       CHECK(m[0][0] == "abcXx" && m[0][1] == "abc" && \
@@ -48,7 +48,7 @@ class XRegexToolsTestSuite : public TestSuite {
       CHECK(m.size() == 3);
     }
 
-    void test_replace() {
+    MAKE_TEST(replace) {
       Regex pat(regexp);
       CHECK(pat.replace(haystack, repl) == replaced);
     }

@@ -47,14 +47,14 @@ class XStringToolsTestSuite : public TestSuite {
 
     virtual void tear_down() { }
 
-    void test_constructor() {
+    MAKE_TEST(constructor) {
       XString xs1("abc");
       CHECK(xs1 == "abc");
       XString xs2(s1);
       CHECK(xs2 == s1);
     }
 
-    void test_subs() {
+    MAKE_TEST(subs) {
       XString src("abc--[placeholder]---[two]--[two]-[two]---[two][two][two][one][one][one]");
       XString step("abc--yyy---xxx--xxx-[two]---[two][two][two][one][one][one]");
       XString final("abc--yyy---xxx--xxx-xxx---xxxxxxxxxzzzzzzzzz");
@@ -65,7 +65,7 @@ class XStringToolsTestSuite : public TestSuite {
       XString xs2 = xs1.subs_all("[two]","xxx").subs_all("[one]", "zzz");
       CHECK(xs2 == final);
     }
-    void test_split() {
+    MAKE_TEST(split) {
       tStringList l = s2.split();
       CHECK(l.size() == 2 && l[0].length() == 6 && l[1].length() == 10);
 
@@ -76,44 +76,44 @@ class XStringToolsTestSuite : public TestSuite {
             m[5].length() == 4);
     }
 
-    void test_strip() {
+    MAKE_TEST(strip) {
       XString xs1("  abc   ");
       CHECK(xs1.strip() == "abc");
       XString xs2("--//--xxx-/-");
       CHECK(xs2.strip("-").strip("/").strip("-") == "xxx");
     }
 
-    void test_lower_case() {
+    MAKE_TEST(lower_case) {
       CHECK(s3.lower() == s3_small);
     }
 
-    void test_upper_case() {
+    MAKE_TEST(upper_case) {
       CHECK(s3.upper() == s3_big);
     }
 
-    void test_real() {
+    MAKE_TEST(real) {
       CHECK(real(realstr) == decimal);
     }
 
-    void test_real_error() {
+    MAKE_TEST(real_error) {
       CHECK_EXC(ConvertValueError, real(foo));
     }
 
-    void test_integer() {
+    MAKE_TEST(integer) {
       CHECK(integer(intstr) == number);
     }
 
-    void test_integer_error() {
+    MAKE_TEST(integer_error) {
       CHECK_EXC(ConvertValueError, integer(foo));
     }
 
-    void test_empty_string_split() {
+    MAKE_TEST(empty_string_split) {
       XString xs("");
       tStringList sl = xs.split(" ");
       CHECK(sl.size() == 1 && sl[0] == "");
     }
 
-    void test_string_no_delim() {
+    MAKE_TEST(string_no_delim) {
       tStringList sl = s1.split(" ");
       CHECK(sl.size() == 1 && sl[0] == s1);
     }
