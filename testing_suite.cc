@@ -4,6 +4,8 @@ using namespace std;
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 
+/// @todo PREPARE_WITH DOES NOT WORK!
+
 Test::Test() : name(""), method(NULL), object(NULL) {}
 
 Test::Test(const string& name, tMethod meth, TestSuite* obj)
@@ -40,7 +42,7 @@ void TestSuite::add_iter_check(bool res, int iters, tIntList errs, int line) {
       out << ",";
   }
   if(!res)
-    active_test->res.details.append("[eq_iter: iterations: " + 
+    active_test->res.details.append("[eq_iter: iterations: " +
         str(iters) + " errors in: " + out.str() + "]");
 }
 
@@ -99,6 +101,7 @@ void TestResult::show(bool show_details) {
 
   if(details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;
+
 }
 
 TestFramework::TestFramework(int argc, char* argv[]) {
@@ -132,6 +135,72 @@ void TestFramework::show_result_overview() {
     cout << " and bad: " << bad << endl;
   else
     cout << " and NO bad ones!" << endl;
+}
+
+void TestFramework::print_stacktrace(uint max_frames) {
+    //fprintf(out, "stack trace:\n");
+    cerr << "[BT] ";
+
+    void* addrlist[max_frames+1];
+    int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
+
+    if(addrlen == 0) {
+        cerr << "[E] backtrace() returned 0 - Error!" << endl;
+        return;
+    }
+
+    // resolve addresses to -> "filename(function+address)"
+    // symlist must be free()-ed !
+    char** symlist = backtrace_symbols(addrlist, addrlen);
+
+    size_t funcnamesize = 256;
+    char* funcname = (char*)malloc(funcnamesize);
+
+    // demangle all functionnames
+    for (int i=1; i<addrlen; ++i) {
+        char* begin_name = 0;
+        char* begin_offset = 0;
+        char* end_offset = 0;
+
+        // find parentheses and +address offset surrounding the mangled name:
+        // ./module(function+0x15c) [0x8048a6d]
+        for (char *p = symlist[i]; *p; ++p) {
+            if (*p == '(')
+                begin_name = p;
+            else if (*p == '+')
+                begin_offset = p;
+            else if (*p == ')' && begin_offset) {
+                end_offset = p;
+                break;
+            }
+        }
+
+        if (begin_name && begin_offset && end_offset
+            && begin_name < begin_offset) {
+            *begin_name++ = '\0';
+            *begin_offset++ = '\0';
+            *end_offset = '\0';
+
+            // mangled name is now in [begin_name, begin_offset) and caller
+            // offset in [begin_offset, end_offset). now apply
+            // __cxa_demangle():
+
+            int status;
+            char* ret = abi::__cxa_demangle(begin_name,
+                                            funcname, &funcnamesize, &status);
+            if (status == 0) {
+                funcname = ret; // use possibly realloc()-ed string
+                cerr << "[BT] " << symlist[i] << " " \
+                     << funcname << "+" << begin_offset << endl;
+            } else { // demangle failes
+                cerr << "[BT] " << symlist[i] << " " \
+                     << begin_name << "+" << begin_offset << endl;
+            }
+        } else // parsing failed
+            cerr << "[BT]" << symlist[i] << endl;
+    }
+    free(funcname);
+    free(symlist);
 }
 
 

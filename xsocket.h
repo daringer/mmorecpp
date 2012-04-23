@@ -24,7 +24,7 @@ namespace NET {
 
 DEFINE_EXCEPTION(SocketException, BaseException)
 
-#define MAX_BUF 2048
+#define MAX_BUF (1024*100)
 
 /**
  * @brief the SocketStream handles the actual data

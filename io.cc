@@ -11,7 +11,6 @@ string TOOLS::IO::nextline(istream& inp) {
 
   inp.getline(buffer, 255);
   return buffer;
-
 }
 
 string TOOLS::IO::readfile(const string& filename) {

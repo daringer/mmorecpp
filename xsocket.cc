@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include "xsocket.h"
 
 using namespace std;

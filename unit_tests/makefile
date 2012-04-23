@@ -10,8 +10,9 @@ SOURCES = $(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 LIBOBJ =  ../libtools$(EXTENSION).a
 
-CCFLAGS = -w -I. -I.. -g -Wall -pedantic -DLINUX -I$(TOOLS_DIR)
+CCFLAGS = -w -c -I. -I.. -ggdb -g -Wall -pedantic -DLINUX -I$(TOOLS_DIR) -rdynamic
 PROGRAM = run_tests
+LDFLAGS = -ggdb -rdynamic -g -w
 
 LIBS += -lm -ltools$(EXTENSION) -L$(AMV_HOME)/c/tools_lib
 

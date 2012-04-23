@@ -1,6 +1,11 @@
 #ifndef TESTING_SUITE_H
 #define TESTING_SUITE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <execinfo.h>
+#include <cxxabi.h>
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -66,7 +71,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   add_test(#method, method);
 
 #define MAKE_TEST(name) \
-  void test_ ## name(bool do_checks=true) 
+  void test_ ## name(bool do_checks=true)
 
 #define PREPARE_WITH(fnc) \
   test_ ## fnc(false);
@@ -131,7 +136,9 @@ class TestSuite {
 class TestFramework {
   public:
     TestFramework(int argc=0, char* argv[]=NULL);
-    ~TestFramework();
+    virtual ~TestFramework();
+
+    static inline void print_stacktrace(uint max_frames = 63);
 
     template<class T>
     void add_suite(const std::string& desc) {
