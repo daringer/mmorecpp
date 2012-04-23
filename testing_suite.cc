@@ -138,7 +138,6 @@ void TestFramework::show_result_overview() {
 }
 
 void TestFramework::print_stacktrace(uint max_frames) {
-    //fprintf(out, "stack trace:\n");
     cerr << "[BT] ";
 
     void* addrlist[max_frames+1];
@@ -148,7 +147,6 @@ void TestFramework::print_stacktrace(uint max_frames) {
         cerr << "[E] backtrace() returned 0 - Error!" << endl;
         return;
     }
-
     // resolve addresses to -> "filename(function+address)"
     // symlist must be free()-ed !
     char** symlist = backtrace_symbols(addrlist, addrlen);
