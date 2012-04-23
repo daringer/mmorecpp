@@ -138,7 +138,7 @@ void TestFramework::show_result_overview() {
 }
 
 void TestFramework::print_stacktrace(uint max_frames) {
-    cerr << "[BT] ";
+    cerr << "[BT] Showing stacktrace: " << endl;
 
     void* addrlist[max_frames+1];
     int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
