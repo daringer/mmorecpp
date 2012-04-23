@@ -138,7 +138,7 @@ class TestFramework {
     TestFramework(int argc=0, char* argv[]=NULL);
     virtual ~TestFramework();
 
-    static inline void print_stacktrace(uint max_frames = 63);
+    static void print_stacktrace(uint max_frames = 63);
 
     template<class T>
     void add_suite(const std::string& desc) {
