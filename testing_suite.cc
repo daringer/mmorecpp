@@ -59,13 +59,17 @@ void TestSuite::after_tear_down() {
 
 void TestSuite::execute_tests(const string& suite_name) {
   for(tTestIter i=tests.begin(); i!=tests.end(); ++i) {
+
     i->second.res.id = suite_name + "::" + i->first;
     active_test = &i->second;
+
     setup();
     after_setup();
+
     struct timeval tv;
     gettimeofday(&tv, NULL);
     i->second.res.start_time = tv.tv_usec;
+
     try {
       (i->second.object->*i->second.method)(true);
     } catch(TOOLS::BaseException& e) {
@@ -77,10 +81,13 @@ void TestSuite::execute_tests(const string& suite_name) {
         "[E] test failed - std::exception caught: " + str(e.what()) + " - ");
       i->second.res.result = false;
     }
+
     gettimeofday(&tv, NULL);
     i->second.res.end_time = tv.tv_usec;
+
     tear_down();
     after_tear_down();
+
     active_test = NULL;
     i->second.res.show(false);
   }
@@ -104,7 +111,7 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << \
        setw(20) << right << rating;
 
-  cout << " ->" << setw(6) << right  << (end_time - start_time) << "us"  << endl;
+  cout << " ->" << setw(6) << right  << (long) (end_time - start_time) << "us"  << endl;
 
   if(details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;
