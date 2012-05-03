@@ -104,7 +104,7 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << \
        setw(20) << right << rating;
 
-  cout << " in: " << (end_time - start_time) << "us" << endl;
+  cout << " ->" << setw(6) << right  << (end_time - start_time) << "us"  << endl;
 
   if(details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;
