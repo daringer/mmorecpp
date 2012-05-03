@@ -71,7 +71,7 @@ class ExecutorToolsTestSuite : public TestSuite {
       e.write_stdin(example_cmd);
       e.write_stdin("exit");
       string out = e.read_stdout();
-      
+
       int ret = e.check_for_exit();
       CHECK(ret == 0 && out.find("bogomips") != string::npos && out.find("cpu") != string::npos);
     }
@@ -86,12 +86,12 @@ class ExecutorToolsTestSuite : public TestSuite {
     MAKE_TEST(nonblocking_wait) {
       Executor e("bash");
       e.communicate();
-      
+
       int res;
       e.write_stdin(c_cmd);
       res = e.check_for_exit();
       CHECK(res == -1);
-      
+
       e.write_stdin("exit");
       sleep(1);
       res = e.check_for_exit();

@@ -12,7 +12,7 @@ class XRegexToolsTestSuite : public TestSuite {
   public:
     string haystack, regexp, repl, replaced;
 
-     XRegexToolsTestSuite() {
+    XRegexToolsTestSuite() {
       REG_TEST(&XRegexToolsTestSuite::test_compile_pattern)
       REG_TEST(&XRegexToolsTestSuite::test_match)
       REG_TEST(&XRegexToolsTestSuite::test_search)

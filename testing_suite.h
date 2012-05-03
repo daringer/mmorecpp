@@ -50,23 +50,23 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   } while(0)
 
 #define CHECK_DUAL_ITER(iter, lbox, rbox, expr) do { \
-  int _count = 0; \
-  tIntList errs; \
-  for(iter i=lbox.begin(), j=rbox.begin(); \
-      i!=lbox.end(), j!=rbox.end(); ++i, ++j, ++_count) \
+    int _count = 0; \
+    tIntList errs; \
+    for(iter i=lbox.begin(), j=rbox.begin(); \
+        i!=lbox.end(), j!=rbox.end(); ++i, ++j, ++_count) \
       if(!(expr)) \
         errs.push_back(_count); \
-  add_iter_check(errs.empty(), _count, errs, __LINE__); \
-} while(0)
+    add_iter_check(errs.empty(), _count, errs, __LINE__); \
+  } while(0)
 
 #define CHECK_ITER(iter, box, expr) do { \
-  int _count = 0; \
-  tIntList errs; \
-  for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
+    int _count = 0; \
+    tIntList errs; \
+    for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
       if(!(expr)) \
         errs.push_back(_count); \
-  add_iter_check(errs.empty(), _count, errs, __LINE__); \
-} while(0)
+    add_iter_check(errs.empty(), _count, errs, __LINE__); \
+  } while(0)
 
 #define REG_TEST(method) \
   add_test(#method, method);

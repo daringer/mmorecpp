@@ -4,16 +4,16 @@
 namespace TOOLS {
 
 // globally overload new and delete ???
-// NO! better: provide macros, which usefully 
+// NO! better: provide macros, which usefully
 // mimic the behavior of new/delete and a also
 // do some fancy stuff:
 // - auto-bzero anything new
-// - auto-NULL anything new 
+// - auto-NULL anything new
 // - save line/file and variablename of allocated variables
-//   - this could lead to a very basic garbage collector 
+//   - this could lead to a very basic garbage collector
 //     (not really without a special pointer)
 // - well why not a reference-counting pointer? isn't there one already?
-// - nothing automagic, but stuff that can be manually started/used 
+// - nothing automagic, but stuff that can be manually started/used
 
 #include <typeinfo>
 
@@ -22,7 +22,7 @@ namespace TOOLS {
 DEFINE_EXCEPTION(PointerNotFound, BaseException);
 
 #define Xnew \
-  
+   
 
 typedef std::map<std::string, std::map<void*, uint> > tRefMap;
 class MemMan {
@@ -31,14 +31,14 @@ class MemMan {
     static void add(const Xptr<T>& obj) {
       add(obj.ptr);
     }
-    
+
     template<class T>
     static void add(T* ptr) {
       std::string t = typeid(T);
       if(ref_map[t].find(ptr) == ref_map[t].end())
         ref_map[t][ptr] = 1;
       else
-        ref_map[t][ptr]++; 
+        ref_map[t][ptr]++;
     }
 
     template<class T>
@@ -64,13 +64,13 @@ class BuildWrapper {
   public:
     BuildWrapper() {}
     ~BuildWrapper() {
-      
+
     }
 }*/
 
 template<class T>
-class XPtr { 
-  public: 
+class XPtr {
+  public:
     explicit XPtr(T* p) {
       MemMan::add(p);
     }
@@ -107,17 +107,18 @@ class XPtr {
     T* operator->() {
       return ptr;
     }
-    operator void*() const; { 
+    operator void* () const;
+    {
       return ptr;
-    } 
-    operator T*() const {
+    }
+    operator T* () const {
       return ptr;
     }
 
-  protected: 
+  protected:
     T* ptr;
-}; 
+};
 
 }
 
-#endif 
+#endif

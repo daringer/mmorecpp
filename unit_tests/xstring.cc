@@ -15,7 +15,7 @@ class XStringToolsTestSuite : public TestSuite {
     double decimal;
     int number;
 
-    XStringToolsTestSuite(){
+    XStringToolsTestSuite() {
       REG_TEST(&XStringToolsTestSuite::test_constructor)
       REG_TEST(&XStringToolsTestSuite::test_subs)
       REG_TEST(&XStringToolsTestSuite::test_split)

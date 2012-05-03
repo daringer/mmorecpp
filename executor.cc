@@ -16,22 +16,22 @@
 using namespace std;
 using namespace TOOLS;
 
-Executor::Executor(const string& cmd, bool use_path) : 
-  pid(-1), result(-1), verbose(false), use_path(use_path), cargs(NULL), 
+Executor::Executor(const string& cmd, bool use_path) :
+  pid(-1), result(-1), verbose(false), use_path(use_path), cargs(NULL),
   BUF_SIZE(16384), buffer(NULL), init_done(false) {
 
-    set_buffer_size(BUF_SIZE);
+  set_buffer_size(BUF_SIZE);
 
-    tStringList raw = XString(cmd).split(" ");
-    for(tStringIter i=raw.begin(); i!=raw.end(); ++i) 
-      if(i == raw.begin())
-        command = *i;
-      else
-        args.push_back(*i);
+  tStringList raw = XString(cmd).split(" ");
+  for(tStringIter i=raw.begin(); i!=raw.end(); ++i)
+    if(i == raw.begin())
+      command = *i;
+    else
+      args.push_back(*i);
 
-    if (!use_path && !FS::Path(command).exists())
-      throw CommandNotFound(command);
-  }
+  if(!use_path && !FS::Path(command).exists())
+    throw CommandNotFound(command);
+}
 
 void Executor::set_buffer_size(int buf_size) {
   BUF_SIZE = buf_size;
@@ -81,11 +81,11 @@ void Executor::communicate() {
     int ret = execute();
     exit(ret);
   } else {
-    if (close(fderr[1]) == -1)
+    if(close(fderr[1]) == -1)
       perror("close(fderr[1])");
-    if (close(fdin[1]) == -1)
+    if(close(fdin[1]) == -1)
       perror("close(fderr[1])");
-    if (close(fdout[0]) == -1)
+    if(close(fdout[0]) == -1)
       perror("close(fdout[0])");
   }
   init_done = true;
@@ -102,7 +102,7 @@ int Executor::run() {
   } else if(pid == 0) {
     execute();
     exit(1);
-  } else 
+  } else
     out = check_for_exit(true);
 
   init_done = false;
@@ -159,7 +159,7 @@ int Executor::execute() {
     strncpy(cargs[i+1], args[i].c_str(), CMD_LEN);
   }
 
-  cargs[args.size()+1] = (char *) NULL;
+  cargs[args.size()+1] = (char*) NULL;
 
   if(use_path)
     out = execvp(cargs[0], cargs);
@@ -174,7 +174,7 @@ int Executor::execute() {
 }
 
 int Executor::check_for_exit(bool blocking) {
-  if (verbose)
+  if(verbose)
     cout << "[i] Checking for child (pid: " << pid << ") to exit" << endl;
 
   int flags = 0;

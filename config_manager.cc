@@ -110,9 +110,9 @@ void ConfigManager::parse(tStringList* args) {
     set<tStringList>(id, XString(arg).split(","));
     args->erase(args->begin(), args->begin()+2);
     return;
-  // build tStringMap from "," and "=" separated input
-  } 
-  if (tmp->same_data_types<tStringMap>()) {
+    // build tStringMap from "," and "=" separated input
+  }
+  if(tmp->same_data_types<tStringMap>()) {
     tStringList tmp = XString(arg).split(",");
     tStringMap tmpmap;
     for(tStringIter i=tmp.begin(); i!=tmp.end(); ++i) {

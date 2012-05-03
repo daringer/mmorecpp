@@ -20,13 +20,13 @@ class BaseException : public std::exception {
 
     template<class T>
     BaseException(const std::string& exc_name, const T& msg)
-    : exception(), exception_name(exc_name) {
+      : exception(), exception_name(exc_name) {
       std::stringstream ss;
       if(!(ss << msg)) {
         throw exception();
       }
       message = ss.str();
-      init();  
+      init();
     }
 
     BaseException(const std::string& exc_name);

@@ -43,7 +43,7 @@ void TestSuite::add_iter_check(bool res, int iters, tIntList errs, int line) {
   }
   if(!res)
     active_test->res.details.append("[eq_iter: iterations: " +
-        str(iters) + " errors in: " + out.str() + "]");
+                                    str(iters) + " errors in: " + out.str() + "]");
 }
 
 void TestSuite::setup() {}
@@ -70,11 +70,11 @@ void TestSuite::execute_tests(const string& suite_name) {
       (i->second.object->*i->second.method)(true);
     } catch(TOOLS::BaseException& e) {
       i->second.res.details.append(
-          "[E] test failed - exception caught: " + e.output + " - ");
+        "[E] test failed - exception caught: " + e.output + " - ");
       i->second.res.result = false;
     } catch(exception& e) {
       i->second.res.details.append(
-          "[E] test failed - std::exception caught: " + str(e.what()) + " - ");
+        "[E] test failed - std::exception caught: " + str(e.what()) + " - ");
       i->second.res.result = false;
     }
     gettimeofday(&tv, NULL);
@@ -102,7 +102,7 @@ void TestResult::show(bool show_details) {
   }
 
   cout << "[" << icon << "] " << left << setw(45) << id << \
-    setw(20) << right << rating;
+       setw(20) << right << rating;
 
   cout << " in: " << (end_time - start_time) << "us" << endl;
 
@@ -137,7 +137,7 @@ void TestFramework::show_result_overview() {
     }
   }
   cout << endl << "[i] Finished TestRun (" <<
-    all_tests << " checks done) - Tests: good: " << good;
+       all_tests << " checks done) - Tests: good: " << good;
   if(bad > 0)
     cout << " and bad: " << bad << endl;
   else
@@ -145,67 +145,67 @@ void TestFramework::show_result_overview() {
 }
 
 void TestFramework::print_stacktrace(uint max_frames) {
-    cerr << "[BT] Showing stacktrace: " << endl;
+  cerr << "[BT] Showing stacktrace: " << endl;
 
-    void* addrlist[max_frames+1];
-    int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
+  void* addrlist[max_frames+1];
+  int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
-    if(addrlen == 0) {
-        cerr << "[E] backtrace() returned 0 - Error!" << endl;
-        return;
+  if(addrlen == 0) {
+    cerr << "[E] backtrace() returned 0 - Error!" << endl;
+    return;
+  }
+  // resolve addresses to -> "filename(function+address)"
+  // symlist must be free()-ed !
+  char** symlist = backtrace_symbols(addrlist, addrlen);
+
+  size_t funcnamesize = 256;
+  char* funcname = (char*)malloc(funcnamesize);
+
+  // demangle all functionnames
+  for(int i=1; i<addrlen; ++i) {
+    char* begin_name = 0;
+    char* begin_offset = 0;
+    char* end_offset = 0;
+
+    // find parentheses and +address offset surrounding the mangled name:
+    // ./module(function+0x15c) [0x8048a6d]
+    for(char* p = symlist[i]; *p; ++p) {
+      if(*p == '(')
+        begin_name = p;
+      else if(*p == '+')
+        begin_offset = p;
+      else if(*p == ')' && begin_offset) {
+        end_offset = p;
+        break;
+      }
     }
-    // resolve addresses to -> "filename(function+address)"
-    // symlist must be free()-ed !
-    char** symlist = backtrace_symbols(addrlist, addrlen);
 
-    size_t funcnamesize = 256;
-    char* funcname = (char*)malloc(funcnamesize);
+    if(begin_name && begin_offset && end_offset
+        && begin_name < begin_offset) {
+      *begin_name++ = '\0';
+      *begin_offset++ = '\0';
+      *end_offset = '\0';
 
-    // demangle all functionnames
-    for (int i=1; i<addrlen; ++i) {
-        char* begin_name = 0;
-        char* begin_offset = 0;
-        char* end_offset = 0;
+      // mangled name is now in [begin_name, begin_offset) and caller
+      // offset in [begin_offset, end_offset). now apply
+      // __cxa_demangle():
 
-        // find parentheses and +address offset surrounding the mangled name:
-        // ./module(function+0x15c) [0x8048a6d]
-        for (char *p = symlist[i]; *p; ++p) {
-            if (*p == '(')
-                begin_name = p;
-            else if (*p == '+')
-                begin_offset = p;
-            else if (*p == ')' && begin_offset) {
-                end_offset = p;
-                break;
-            }
-        }
-
-        if (begin_name && begin_offset && end_offset
-            && begin_name < begin_offset) {
-            *begin_name++ = '\0';
-            *begin_offset++ = '\0';
-            *end_offset = '\0';
-
-            // mangled name is now in [begin_name, begin_offset) and caller
-            // offset in [begin_offset, end_offset). now apply
-            // __cxa_demangle():
-
-            int status;
-            char* ret = abi::__cxa_demangle(begin_name,
-                                            funcname, &funcnamesize, &status);
-            if (status == 0) {
-                funcname = ret; // use possibly realloc()-ed string
-                cerr << "[BT] " << symlist[i] << " " \
-                     << funcname << "+" << begin_offset << endl;
-            } else { // demangle failes
-                cerr << "[BT] " << symlist[i] << " " \
-                     << begin_name << "+" << begin_offset << endl;
-            }
-        } else // parsing failed
-            cerr << "[BT]" << symlist[i] << endl;
-    }
-    free(funcname);
-    free(symlist);
+      int status;
+      char* ret = abi::__cxa_demangle(begin_name,
+                                      funcname, &funcnamesize, &status);
+      if(status == 0) {
+        funcname = ret; // use possibly realloc()-ed string
+        cerr << "[BT] " << symlist[i] << " " \
+             << funcname << "+" << begin_offset << endl;
+      } else { // demangle failes
+        cerr << "[BT] " << symlist[i] << " " \
+             << begin_name << "+" << begin_offset << endl;
+      }
+    } else // parsing failed
+      cerr << "[BT]" << symlist[i] << endl;
+  }
+  free(funcname);
+  free(symlist);
 }
 
 

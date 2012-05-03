@@ -1,6 +1,6 @@
 #ifndef EXECUTOR_H
 #define EXECUTOR_H
- 
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
@@ -34,7 +34,7 @@ class Executor {
 
     int run();
     void communicate();
- 
+
     int check_for_exit(bool blocking=false);
     void set_buffer_size(int buf_size);
 
@@ -44,8 +44,8 @@ class Executor {
 
   private:
     bool use_path;
-    char **cargs;
-    
+    char** cargs;
+
     int fdin[2], fdout[2], fderr[2];
 
     int BUF_SIZE;

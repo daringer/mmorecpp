@@ -17,17 +17,17 @@ void TOOLS::tools_lib_exception_handler() {
 * @brief constructor global BaseException (without additional information)
 * @param exc_name the name of the exception to be shown to the user
 */
-BaseException::BaseException(const std::string& exc_name) 
+BaseException::BaseException(const std::string& exc_name)
   : exception(), exception_name(exc_name), message("") {
-    init();
+  init();
 }
 /**
  * @brief copy-constructor
  * @param the object to be copied
  */
-BaseException::BaseException(const BaseException& obj) 
+BaseException::BaseException(const BaseException& obj)
   : exception(), exception_name(obj.exception_name), message(obj.message) {
-    init();
+  init();
 }
 /**
 * @brief descructor including very important throw declaration
