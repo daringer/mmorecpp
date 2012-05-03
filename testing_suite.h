@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
+#include <sys/time.h>
 
 #include <iostream>
 #include <map>
@@ -81,6 +82,8 @@ class TestResult {
     std::string id;
     bool result;
     std::string details;
+    suseconds_t start_time;
+    suseconds_t end_time;
 
     TestResult();
     TestResult(const std::string& testid, bool res, const std::string& details);
