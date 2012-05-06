@@ -15,7 +15,9 @@
 #include "general.h"
 #include "exception.h"
 #include "xstring.h"
+#include "config_manager.h"
 #include "xtime.h"
+
 
 namespace TOOLS {
 namespace UNIT_TEST {
@@ -115,7 +117,7 @@ class TestSuite {
     virtual void setup();
     void after_setup();
 
-    void execute_tests(const std::string& suite_name);
+    void execute_tests(const std::string& suite_name, const std::string& only_test);
 
   protected:
     Test* active_test;
@@ -154,6 +156,7 @@ class TestFramework {
   private:
     tTestSuiteMap test_suites;
     bool show_details;
+    std::string execute_test;
 };
 
 }

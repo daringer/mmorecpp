@@ -57,10 +57,15 @@ void TestSuite::after_tear_down() {
   //active_test->details.append("TearDown finished!");
 }
 
-void TestSuite::execute_tests(const string& suite_name) {
+void TestSuite::execute_tests(const string& suite_name, const string& only_test) {
   for(tTestIter i=tests.begin(); i!=tests.end(); ++i) {
 
     i->second.res.id = suite_name + "::" + i->first;
+
+    // if executing single test
+    if(only_test != "" && i->second.res.id != only_test)
+        continue;
+
     active_test = &i->second;
 
     setup();
@@ -116,7 +121,28 @@ void TestResult::show(bool show_details) {
 }
 
 TestFramework::TestFramework(int argc, char* argv[]) {
-  show_details = (argc == 2 && str(argv[1]) == "-d") ? true : false;
+  ConfigManager conf(argv[0]);
+
+  ConfigGroup& grp = conf.new_group("Main Options");
+  grp.new_option<bool>("debug", "Show test details", "d"). \
+  set_default(false);
+
+  grp.new_option<string>("execute-test", "Execute test by name", "t"). \
+  set_default("");
+
+  // ConfigManager init finished, start parsing file, then cmdline
+  try {
+    conf.parse_config_file("noname.conf");
+    conf.parse_cmdline(argc, argv);
+    cout << "[+] Parsing commandline complete" << endl;
+  } catch(ConfigManagerException& e) {
+    e.show();
+    conf.usage(cout);
+    exit(1);
+  }
+
+  show_details = conf.get<bool>("debug");
+  execute_test = conf.get<string>("execute-test");
 }
 
 TestFramework::~TestFramework() {
@@ -126,7 +152,7 @@ TestFramework::~TestFramework() {
 
 void TestFramework::run() {
   for(tTestSuiteIter i=test_suites.begin(); i!=test_suites.end(); ++i)
-    i->second->execute_tests(i->first);
+    i->second->execute_tests(i->first, execute_test);
 }
 
 void TestFramework::show_result_overview() {
