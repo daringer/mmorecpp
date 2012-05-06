@@ -66,6 +66,8 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test)
     if(only_test != "" && i->second.res.id != only_test)
         continue;
 
+    i->second.res.run = true;
+
     active_test = &i->second;
 
     setup();
@@ -98,7 +100,7 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test)
 TestResult::TestResult(const string& testid, bool res, const string& details)
   : id(testid), result(res), details(details) {}
 
-TestResult::TestResult() : id(""), result(true) {}
+TestResult::TestResult() : id(""), result(true), run(false) {}
 
 void TestResult::show(bool show_details) {
   string icon, rating;
@@ -163,7 +165,8 @@ void TestFramework::show_result_overview() {
   for(tTestSuiteIter i=test_suites.begin(); i!=test_suites.end(); ++i) {
     all_tests += i->second->check_count;
     for(tTestIter j=i->second->tests.begin(); j!=i->second->tests.end(); ++j) {
-      (j->second.res.result) ? good++ : bad++;
+      if(j->second.res.run)
+        (j->second.res.result) ? good++ : bad++;
     }
   }
   cout << endl << "[i] Finished TestRun (" <<

@@ -83,6 +83,7 @@ class TestResult {
   public:
     std::string id;
     bool result;
+    bool run;
     std::string details;
     XTime timer;
 
