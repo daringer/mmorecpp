@@ -42,6 +42,8 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
     add_check(expr, __LINE__);
 
 #define CHECK_EXC(exc, func) do { \
+    if(!do_checks) \
+        break; \
     bool _res = false; \
     try { \
       func; \
@@ -52,6 +54,8 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   } while(0)
 
 #define CHECK_DUAL_ITER(iter, lbox, rbox, expr) do { \
+    if(!do_checks) \
+      break; \
     int _count = 0; \
     tIntList errs; \
     for(iter i=lbox.begin(), j=rbox.begin(); \
@@ -62,6 +66,8 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   } while(0)
 
 #define CHECK_ITER(iter, box, expr) do { \
+    if(!do_checks) \
+      break; \
     int _count = 0; \
     tIntList errs; \
     for(iter i=box.begin(); i!=box.end(); ++i, ++_count) \
