@@ -4,8 +4,6 @@ using namespace std;
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 
-/// @todo PREPARE_WITH DOES NOT WORK!
-
 Test::Test() : name(""), method(NULL), object(NULL) {}
 
 Test::Test(const string& name, tMethod meth, TestSuite* obj)
