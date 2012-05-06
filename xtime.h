@@ -1,5 +1,5 @@
-#ifndef XTIME_HEADER
-#define XTIME_HEADER
+#ifndef XTIME_H
+#define XTIME_H
 
 #include <sys/time.h>
 
