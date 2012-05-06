@@ -85,6 +85,8 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 #define PREPARE_WITH(fnc) \
   test_ ## fnc(false);
 
+static void print_stacktrace(uint max_frames = 63);
+
 class TestResult {
   public:
     std::string id;
@@ -148,8 +150,6 @@ class TestFramework {
   public:
     TestFramework(int argc=0, char* argv[]=NULL);
     virtual ~TestFramework();
-
-    static void print_stacktrace(uint max_frames = 63);
 
     template<class T>
     void add_suite(const std::string& desc) {

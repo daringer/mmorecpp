@@ -175,7 +175,7 @@ void TestFramework::show_result_overview() {
     cout << " and NO bad ones!" << endl;
 }
 
-void TestFramework::print_stacktrace(uint max_frames) {
+void print_stacktrace(uint max_frames) {
   cerr << "[BT] Showing stacktrace: " << endl;
 
   void* addrlist[max_frames+1];
