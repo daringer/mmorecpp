@@ -66,9 +66,7 @@ void TestSuite::execute_tests(const string& suite_name) {
     setup();
     after_setup();
 
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    i->second.res.start_time = tv.tv_usec;
+    i->second.res.timer.start();
 
     try {
       (i->second.object->*i->second.method)(true);
@@ -82,8 +80,7 @@ void TestSuite::execute_tests(const string& suite_name) {
       i->second.res.result = false;
     }
 
-    gettimeofday(&tv, NULL);
-    i->second.res.end_time = tv.tv_usec;
+    i->second.res.timer.stop();
 
     tear_down();
     after_tear_down();
@@ -111,7 +108,7 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << \
        setw(20) << right << rating;
 
-  cout << " ->" << setw(6) << right  << (long) (end_time - start_time) << "us"  << endl;
+  cout << " ->" << setw(6) << right << timer.diff_us() << "us"  << endl;
 
   if(details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;

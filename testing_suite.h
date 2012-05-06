@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
-#include <sys/time.h>
 
 #include <iostream>
 #include <map>
@@ -16,6 +15,7 @@
 #include "general.h"
 #include "exception.h"
 #include "xstring.h"
+#include "xtime.h"
 
 namespace TOOLS {
 namespace UNIT_TEST {
@@ -82,8 +82,7 @@ class TestResult {
     std::string id;
     bool result;
     std::string details;
-    suseconds_t start_time;
-    suseconds_t end_time;
+    XTime timer;
 
     TestResult();
     TestResult(const std::string& testid, bool res, const std::string& details);
