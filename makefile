@@ -3,7 +3,7 @@ include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
 
 LIB = libtools$(EXTENSION).a
 
-TOOLS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor logger xtime threading
+TOOLS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor logger xtime threading simple_xml
 SOURCES.cc = $(addsuffix .cc,$(TOOLS))
 SOURCES.h = $(addsuffix .h,$(TOOLS))
 
@@ -11,8 +11,8 @@ SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
 ORGCCFLAGS += -w -I.. -g -c
-CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c
-#CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3
+#CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c
+CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3 -w -c
 
 all:	 $(LIB) tests
 objects: $(SOURCES) $(OBJECTS)
@@ -36,7 +36,7 @@ clean:
 	$(CCC) $(CCFLAGS) -c -g $(@:%$(EXTENSION).o=%.cc) -o $@
 	@chmod g+w,a+r $@
 
-# building/linking library 
+# building/linking library
 $(LIB): $(SOURCES) $(OBJECTS) $(MAKEFILE) $(MAKEFILEINC)
 	# Compiling $(LIB)
 	@rm -f $(LIB)
