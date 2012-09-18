@@ -55,13 +55,13 @@ void TestSuite::after_tear_down() {
   //active_test->details.append("TearDown finished!");
 }
 
-void TestSuite::execute_tests(const string& suite_name, const string& only_test) {
+void TestSuite::execute_tests(const string& suite_name, const string& only_test, const bool& return_on_fail) {
   for(tTestIter i=tests.begin(); i!=tests.end(); ++i) {
 
     i->second.res.id = suite_name + "::" + i->first;
 
-    // if executing single test
-    if(only_test != "" && i->second.res.id != only_test)
+    // if executing choosen test
+    if(only_test != "" && i->second.res.id.find(only_test) != 0)
         continue;
 
     i->second.res.run = true;
@@ -74,7 +74,7 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test)
     i->second.res.timer.start();
 
     try {
-      (i->second.object->*i->second.method)(true);
+      (i->second.object->*i->second.method)(true, return_on_fail);
     } catch(TOOLS::BaseException& e) {
       i->second.res.details.append(
         "[E] test failed - exception caught: " + e.output + " - ");
@@ -127,8 +127,10 @@ TestFramework::TestFramework(int argc, char* argv[]) {
   grp.new_option<bool>("debug", "Show test details", "d"). \
   set_default(false);
 
-  grp.new_option<string>("execute-test", "Execute test by name", "t"). \
+  grp.new_option<string>("execute-test", "Execute test(s) by name", "t"). \
   set_default("");
+  grp.new_option<bool>("return-on-fail", "Return from test on fail", "r"). \
+  set_default(true);
 
   // ConfigManager init finished, start parsing file, then cmdline
   try {
@@ -143,6 +145,7 @@ TestFramework::TestFramework(int argc, char* argv[]) {
 
   show_details = conf.get<bool>("debug");
   execute_test = conf.get<string>("execute-test");
+  return_on_fail = conf.get<bool>("return-on-fail");
 }
 
 TestFramework::~TestFramework() {
@@ -152,7 +155,7 @@ TestFramework::~TestFramework() {
 
 void TestFramework::run() {
   for(tTestSuiteIter i=test_suites.begin(); i!=test_suites.end(); ++i)
-    i->second->execute_tests(i->first, execute_test);
+    i->second->execute_tests(i->first, execute_test, return_on_fail);
 }
 
 void TestFramework::show_result_overview() {

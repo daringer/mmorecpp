@@ -26,7 +26,7 @@ class TestSuite;
 class TestResult;
 class Test;
 
-typedef void (TestSuite::*tMethod)(bool);
+typedef void (TestSuite::*tMethod)(bool, bool);
 
 typedef std::map<std::string, TestResult> tTestResultMap;
 typedef std::map<std::string, Test> tTestMap;
@@ -39,7 +39,9 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 #define CHECK(expr) \
   if(do_checks) \
-    add_check(expr, __LINE__);
+    add_check(expr, __LINE__); \
+  if(!(expr)) \
+    return;
 
 #define CHECK_EXC(exc, func) do { \
     if(!do_checks) \
@@ -80,7 +82,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   add_test(#method, method);
 
 #define MAKE_TEST(name) \
-  void test_ ## name(bool do_checks=true)
+  void test_ ## name(bool do_checks=true, bool return_on_fail=true)
 
 #define PREPARE_WITH(fnc) \
   test_ ## fnc(false);
@@ -126,7 +128,7 @@ class TestSuite {
     virtual void setup();
     void after_setup();
 
-    void execute_tests(const std::string& suite_name, const std::string& only_test);
+    void execute_tests(const std::string& suite_name, const std::string& only_test, const bool& return_on_fail);
 
   protected:
     Test* active_test;
@@ -137,7 +139,7 @@ class TestSuite {
 
 
     template<class T>
-    void add_test(XString name, void (T::*f)(bool)) {
+    void add_test(XString name, void (T::*f)(bool, bool)) {
       XString desc = XString(name).subs("test_", "").split("::")[1];
       tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }
@@ -164,6 +166,7 @@ class TestFramework {
     tTestSuiteMap test_suites;
     bool show_details;
     std::string execute_test;
+    bool return_on_fail;
 };
 
 }
