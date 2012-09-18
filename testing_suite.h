@@ -40,7 +40,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 #define CHECK(expr) \
   if(do_checks) \
     add_check(expr, __LINE__); \
-  if(!(expr)) \
+  if(!(expr) && return_on_fail) \
     return;
 
 #define CHECK_EXC(exc, func) do { \

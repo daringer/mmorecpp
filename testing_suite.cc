@@ -129,8 +129,8 @@ TestFramework::TestFramework(int argc, char* argv[]) {
 
   grp.new_option<string>("execute-test", "Execute test(s) by name", "t"). \
   set_default("");
-  grp.new_option<bool>("return-on-fail", "Return from test on fail", "r"). \
-  set_default(true);
+  grp.new_option<bool>("stay-on-fail", "Stay in test on fail", "r"). \
+  set_default(false);
 
   // ConfigManager init finished, start parsing file, then cmdline
   try {
@@ -145,7 +145,7 @@ TestFramework::TestFramework(int argc, char* argv[]) {
 
   show_details = conf.get<bool>("debug");
   execute_test = conf.get<string>("execute-test");
-  return_on_fail = conf.get<bool>("return-on-fail");
+  return_on_fail = !conf.get<bool>("stay-on-fail");
 }
 
 TestFramework::~TestFramework() {
