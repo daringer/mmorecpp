@@ -113,7 +113,8 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << \
        setw(20) << right << rating;
 
-  cout << " ->" << setw(6) << right << timer.diff_us() << "us"  << endl;
+  double diff = timer.diff_s() * 1000.0 + timer.diff_us() / 1000.0;
+  cout << " ->" << setw(9) << right << diff << "ms"  << endl;
 
   if(details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;
