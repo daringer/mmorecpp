@@ -61,7 +61,7 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
     i->second.res.id = suite_name + "::" + i->first;
 
     // if executing choosen test
-    if(only_test != "" && i->second.res.id.find(only_test) != 0)
+    if(only_test != "" && i->second.res.id.find(only_test) == string::npos)
         continue;
 
     i->second.res.run = true;
@@ -113,7 +113,7 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << \
        setw(20) << right << rating;
 
-  double diff = timer.diff_s() * 1000.0 + timer.diff_us() / 1000.0;
+  double diff = timer.diff_us() / 1000.;
   cout << " ->" << setw(9) << right << diff << "ms"  << endl;
 
   if(details != "" && ((!show_details && !result) || show_details))
