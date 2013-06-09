@@ -44,7 +44,9 @@ void TemplateParser::read_template(ifstream& stream) {
  * @brief constructor, to handle plain filenames
  * @param template_path the path to the template file to be used
  */
-TemplateParser::TemplateParser(const string& template_path) : root_node(new ASTNode) {
+TemplateParser::TemplateParser(const string& template_path) 
+  : tmpl_filename(template_path), root_node(new ASTNode) {
+  
   ifstream stream(template_path.c_str());
   read_template(stream);
 }
@@ -52,7 +54,9 @@ TemplateParser::TemplateParser(const string& template_path) : root_node(new ASTN
  * @brief constructor, to directly handle a stream
  * @param stream the input-stream, which should be read to get the template
  */
-TemplateParser::TemplateParser(ifstream& stream) : root_node(new ASTNode) {
+TemplateParser::TemplateParser(ifstream& stream) 
+  : tmpl_filename(""), root_node(new ASTNode) {
+  
   read_template(stream);
 }
 /**
@@ -63,6 +67,7 @@ void TemplateParser::replace_template(const string& template_path) {
   ifstream stream(template_path.c_str());
   delete root_node;
   root_node = new ASTNode;
+  tmpl_filename = template_path;
   read_template(stream);
 }
 /**
@@ -324,4 +329,18 @@ bool TemplateParser::save_to_file(const string& filename) {
   fd << output;
   fd.close();
   return true;
+}
+/**
+ * @brief no target filename specified, thus using template-filename without .tmpl suffix
+ *        (only accept this save_to_file() request, if the filename endswith .tmpl
+ *        or we could overwrite the template file.
+ * @return true if file was saved successfully
+ */
+bool TemplateParser::save_to_file() {
+  XString xs(tmpl_filename);
+  if(!xs.endswith(".tmpl"))
+    throw SaveFilenameAmbigous("got: " + tmpl_filename + \
+        " need either .tmpl suffix or pass target file to save_to_file()");
+  
+  return save_to_file(xs.subs(".tmpl", ""));
 }

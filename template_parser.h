@@ -13,6 +13,8 @@
 
 namespace TOOLS {
 
+DEFINE_EXCEPTION(SaveFilenameAmbigous, BaseException);
+
 /**
  * @brief Represents one node inside the constructed abstract syntax tree
  */
@@ -42,6 +44,26 @@ class ASTNode {
  * You have to 'feed' the data and the fitting key/variable -names into
  * the TemplateParser instance. This happens through
  * the set_key() respectivly add_to_key() methods.
+ *
+ * Usage example:
+ * ----------------------------------------------------------------------
+ * TemplateParser p("mytemplatefile.tmpl");      // init template parser
+ * 
+ * p.set_key("title", "my_fancy_title");         // fill a key with a string
+ *
+ * p.add_to_key("mylist", "item1");              // automaticly declare "mylist"
+ * p.add_to_key("mylist", "item2");              // as a list of strings
+ * 
+ * p.save_to_file();                             // save rendered file
+ *
+ * p.replace_template("other_file");             // replace internal template
+ *                                               // while keeping keys
+ * p.save_to_file("/tmp/my_choosen_filename");   // re-render with new template 
+ *                                               // and save to given filename
+ * -----------------------------------------------------------------------
+ * If the template filename ends with ".tmpl", save_to_file() without a 
+ * parameter leads to a filename without the ".tmpl" suffix - is the suffix
+ * and the save_to_file()-argument missing an exception is thrown.
  *
  * The provided set of functionalities at this moment:
  *   - simple replacement of variables {{ simple }}
@@ -93,6 +115,8 @@ class TemplateParser {
     std::string get_val(const std::string& name);
 
   public:
+    std::string tmpl_filename;
+
     TemplateParser(const std::string& template_path);
     TemplateParser(std::ifstream& stream);
     virtual ~TemplateParser();
@@ -100,10 +124,16 @@ class TemplateParser {
     void replace_template(const std::string& template_path);
 
     void set_key(const std::string& name, const std::string& val);
-    void add_to_key(const std::string& name, const std::string& val);
+    // set_key() could also understand things like elems.width, which would make this a (2D) array
+    // this would mean elems.i.width.j would access the 2-dimensional array
+    // void set_key(const std::string& name);                           /// <--- this could mean: "I'm an array"
+    void add_to_key(const std::string& name, const std::string& val);   /// <--- then this should fail on non-boxes
 
     std::string& render();
+    
+    bool save_to_file();
     bool save_to_file(const std::string& filename);
+    
     void show_ast();
 };
 }
