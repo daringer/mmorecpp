@@ -1,6 +1,9 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
+#include <execinfo.h>
+#include <cxxabi.h>
+
 #include <string>
 #include <sstream>
 #include <iostream>
@@ -44,7 +47,11 @@ class BaseException : public std::exception {
 // derive your exceptions from BaseException
 void tools_lib_exception_handler();
 
+// print a stacktrace
+static void print_stacktrace(uint max_frames = 63);
+
 }
+
 
 #define DEFINE_EXCEPTION(CLASS,PARENT) \
   class CLASS : public PARENT { \

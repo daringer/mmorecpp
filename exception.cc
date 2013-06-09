@@ -9,6 +9,7 @@ BaseException* BaseException::last_exception = NULL;
 void TOOLS::tools_lib_exception_handler() {
   std::cout << endl << "[E] An uncaught exception occurred!" << std::endl;
   BaseException::last_exception->show();
+  print_stacktrace();
   std::cout << "[i] exiting now..." << std::endl;
   std::abort();
 }
@@ -34,10 +35,10 @@ BaseException::BaseException(const BaseException& obj)
 */
 BaseException::~BaseException() throw() { }
 /**
-* @brief show full message through stdout
+* @brief show full message through stderr
 */
 void BaseException::show() {
-  cerr << endl << output << endl;
+  cerr << output << endl;
 }
 /**
  * @brief actual initialization
@@ -54,5 +55,74 @@ void BaseException::set_message(const string& msg="") {
   output = "[" + exception_name + "]";
   if(msg != "")
     output += " " + msg;
+}
+
+/**
+ * @brief print a stacktrace for the active frame
+ * @param max_frames maximum depth of the trace
+ */
+
+void print_stacktrace(uint max_frames) {
+  cerr << "[BT] Showing stacktrace: " << endl;
+
+  void* addrlist[max_frames+1];
+  int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
+
+  if(addrlen == 0) {
+    cerr << "[E] backtrace() returned 0 - Error!" << endl;
+    return;
+  }
+  // resolve addresses to -> "filename(function+address)"
+  // symlist must be free()-ed !
+  char** symlist = backtrace_symbols(addrlist, addrlen);
+
+  size_t funcnamesize = 256;
+  char* funcname = (char*)malloc(funcnamesize);
+
+  // demangle all functionnames
+  for(int i=1; i<addrlen; ++i) {
+    char* begin_name = 0;
+    char* begin_offset = 0;
+    char* end_offset = 0;
+
+    // find parentheses and +address offset surrounding the mangled name:
+    // ./module(function+0x15c) [0x8048a6d]
+    for(char* p = symlist[i]; *p; ++p) {
+      if(*p == '(')
+        begin_name = p;
+      else if(*p == '+')
+        begin_offset = p;
+      else if(*p == ')' && begin_offset) {
+        end_offset = p;
+        break;
+      }
+    }
+
+    if(begin_name && begin_offset && end_offset
+        && begin_name < begin_offset) {
+      *begin_name++ = '\0';
+      *begin_offset++ = '\0';
+      *end_offset = '\0';
+
+      // mangled name is now in [begin_name, begin_offset) and caller
+      // offset in [begin_offset, end_offset). now apply
+      // __cxa_demangle():
+
+      int status;
+      char* ret = abi::__cxa_demangle(begin_name,
+                                      funcname, &funcnamesize, &status);
+      if(status == 0) {
+        funcname = ret; // use possibly realloc()-ed string
+        cerr << "[BT] " << symlist[i] << " " \
+             << funcname << "+" << begin_offset << endl;
+      } else { // demangle failes
+        cerr << "[BT] " << symlist[i] << " " \
+             << begin_name << "+" << begin_offset << endl;
+      }
+    } else // parsing failed
+      cerr << "[BT]" << symlist[i] << endl;
+  }
+  free(funcname);
+  free(symlist);
 }
 

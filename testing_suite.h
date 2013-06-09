@@ -3,8 +3,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <execinfo.h>
-#include <cxxabi.h>
 
 #include <iostream>
 #include <map>
@@ -86,8 +84,6 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 #define PREPARE_WITH(fnc) \
   test_ ## fnc(false);
-
-static void print_stacktrace(uint max_frames = 63);
 
 class TestResult {
   public:
