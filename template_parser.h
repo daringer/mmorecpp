@@ -14,6 +14,7 @@
 namespace TOOLS {
 
 DEFINE_EXCEPTION(SaveFilenameAmbigous, BaseException);
+DEFINE_EXCEPTION(NoTemplateProvided, BaseException);
 
 /**
  * @brief Represents one node inside the constructed abstract syntax tree
@@ -105,7 +106,7 @@ class TemplateParser {
 
     ASTNode* root_node;
 
-    void read_template(std::ifstream& stream);
+    void read_template(std::istream& stream);
 
     void generate_ast();
     void parse(ASTNode* node);
@@ -118,7 +119,7 @@ class TemplateParser {
     std::string tmpl_filename;
 
     TemplateParser(const std::string& template_path);
-    TemplateParser(std::ifstream& stream);
+    TemplateParser(std::istream& stream);
     virtual ~TemplateParser();
 
     void replace_template(const std::string& template_path);

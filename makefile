@@ -11,8 +11,9 @@ SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
 ORGCCFLAGS += -w -I.. -g -c
+CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c -std=gnu++0x
 #CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c
-CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3 -w -c
+#CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3 -w -c -std=c++11
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)

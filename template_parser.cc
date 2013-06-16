@@ -35,7 +35,7 @@ ASTNode::~ASTNode() {
  *        read the templatefile and set some needed instancevariables
  * @param stream the input-stream, which should be read to get the template
  */
-void TemplateParser::read_template(ifstream& stream) {
+void TemplateParser::read_template(istream& stream) {
   content = string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
   output = "";
   is_rendered = false;
@@ -45,7 +45,7 @@ void TemplateParser::read_template(ifstream& stream) {
  * @param template_path the path to the template file to be used
  */
 TemplateParser::TemplateParser(const string& template_path) 
-  : tmpl_filename(template_path), root_node(new ASTNode) {
+: is_rendered(false), tmpl_filename(template_path), root_node(new ASTNode) {
   
   ifstream stream(template_path.c_str());
   read_template(stream);
@@ -54,8 +54,8 @@ TemplateParser::TemplateParser(const string& template_path)
  * @brief constructor, to directly handle a stream
  * @param stream the input-stream, which should be read to get the template
  */
-TemplateParser::TemplateParser(ifstream& stream) 
-  : tmpl_filename(""), root_node(new ASTNode) {
+TemplateParser::TemplateParser(istream& stream) 
+  : is_rendered(false), tmpl_filename(""), root_node(new ASTNode) {
   
   read_template(stream);
 }
@@ -65,8 +65,6 @@ TemplateParser::TemplateParser(ifstream& stream)
  */
 void TemplateParser::replace_template(const string& template_path) {
   ifstream stream(template_path.c_str());
-  delete root_node;
-  root_node = new ASTNode;
   tmpl_filename = template_path;
   read_template(stream);
 }
@@ -84,6 +82,7 @@ TemplateParser::~TemplateParser() {
  *            inside the template
  */
 void TemplateParser::set_key(const string& name, const string& val) {
+  is_rendered = false;
   string_vars[name] = val;
 }
 /**
@@ -92,6 +91,7 @@ void TemplateParser::set_key(const string& name, const string& val) {
  * @param val the value to be pushed into the vector
  */
 void TemplateParser::add_to_key(const string& name, const string& val) {
+  is_rendered = false;
   vector_vars[name].push_back(val);
 }
 /**
@@ -142,12 +142,17 @@ string TemplateParser::get_val(const string& name) {
 }
 /**
  * @brief the high-level render method controls the render process
- * @return the fully rendered template according to the available data
+ * @return the fully rendered template 
  */
 string& TemplateParser::render() {
-  generate_ast();
-  parse_children(root_node);
-  is_rendered = true;
+  if (!is_rendered) {
+    output = "";
+    delete root_node;
+    root_node = new ASTNode;
+    generate_ast();
+    parse_children(root_node);
+    is_rendered = true;
+  }
   return output;
 }
 /**
