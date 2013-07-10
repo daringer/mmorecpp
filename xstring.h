@@ -28,6 +28,7 @@ std::string str(const T& val, int precision=0) {
     out << std::setprecision(precision) << val;
   return out.str();
 }
+
 /**
  * @brief convert any input to an integer, if possible
  * @param any parameter, which has a integer representation
