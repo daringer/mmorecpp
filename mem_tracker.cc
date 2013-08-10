@@ -6,6 +6,9 @@
 #include <sstream>
 
 #include "xstring.h"
+
+#define NO_NEW_MACRO_DEFINE
+
 #include "mem_tracker.h"
 
 using namespace std;
@@ -114,8 +117,7 @@ string show_memory_tracker_results() {
 }
 
 /** To avoid a segfault on exit, if MEM_TRACKER is used.
- *  (Segfault due to the automated cleanup of std::map on leaving scope)
- *  Also _abusing_ it to show the new/delete call statistic! */
+ *  (Segfault due to the automated cleanup of std::map on leaving scope) */
 void exit(int status) throw() {
   MEMORY_MAP.clear();
   MEMORY_DATA_MAP.clear();

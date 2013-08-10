@@ -9,8 +9,6 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-#define DEBUG_NEW new (__FILE__, __LINE__)
-#define new DEBUG_NEW
 
 class MemTrackerToolsTestSuite : public TestSuite {
   public:

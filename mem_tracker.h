@@ -64,5 +64,15 @@ void init_memory_tracker();
 /** show results summary */
 std::string show_memory_tracker_results();
 
+/** backend function, which handles new-calls */
+void* __handle_new_request(size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc);
+
+
 #endif
 
+#ifndef NO_NEW_MACRO_DEFINE
+
+#define DEBUG_NEW new (__FILE__, __LINE__)
+#define new DEBUG_NEW
+
+#endif
