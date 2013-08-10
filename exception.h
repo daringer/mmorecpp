@@ -39,6 +39,7 @@ class BaseException : public std::exception {
 
     void set_message(const std::string& input);
     void show();
+    void what(); // keep compatibility to c++
   private:
     void init();
 };

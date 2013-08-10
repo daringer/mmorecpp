@@ -3,7 +3,7 @@ include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
 
 LIB = libtools$(EXTENSION).a
 
-TOOLS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading
+TOOLS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
 SOURCES.cc = $(addsuffix .cc,$(TOOLS))
 SOURCES.h = $(addsuffix .h,$(TOOLS))
 
@@ -11,9 +11,8 @@ SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
 ORGCCFLAGS += -w -I.. -g -c
-CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c -std=gnu++0x
-#CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c
-#CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3 -w -c -std=c++11
+CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c -std=c++11
+#CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3 -w -c -std=c++11 -pedantic -w -c 
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
@@ -29,6 +28,8 @@ clean:
 	make -C unit_tests/ clean
 
 .PARALLEL: $(OBJECTS)
+
+#CCC=clang
 
 
 # building object files here

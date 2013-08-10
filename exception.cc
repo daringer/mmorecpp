@@ -8,10 +8,18 @@ BaseException* BaseException::last_exception = NULL;
 
 void TOOLS::tools_lib_exception_handler() {
   std::cout << endl << "[E] An uncaught exception occurred!" << std::endl;
-  BaseException::last_exception->show();
+  //BaseException::last_exception->show();
   print_stacktrace();
-  std::cout << "[i] exiting now..." << std::endl;
-  std::abort();
+  try {
+    std::exception_ptr exc = std::current_exception();
+    std::rethrow_exception(exc);
+  } catch (std::exception& e) {
+    cout << "[E] Exception description following:" << endl;
+    cout << "[E] " << e.what() << endl;
+  }
+
+  cout << "[i] exiting now..." << std::endl;
+  abort();
 }
 
 /**
@@ -39,6 +47,12 @@ BaseException::~BaseException() throw() { }
 */
 void BaseException::show() {
   cerr << output << endl;
+}
+/**
+* @brief show full message through stderr (C++ wrapper method)
+*/
+void BaseException::what() {
+  show();
 }
 /**
  * @brief actual initialization

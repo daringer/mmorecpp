@@ -6,6 +6,7 @@
 #include "xstring.cc"
 #include "xtime.cc"
 #include "xlogger.cc"
+#include "mem_tracker.cc"
 #include "template_parser.cc"
 
 using namespace std;
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]) {
   f.add_suite<XTimeToolsTestSuite>("TOOLS::XTime");
   f.add_suite<XLoggerToolsTestSuite>("TOOLS::XLogger");
   f.add_suite<TemplateParserToolsTestSuite>("TOOLS::TemplateParser");
+  f.add_suite<MemTrackerToolsTestSuite>("TOOLS::MemTracker");
   f.run();
   f.show_result_overview();
 
