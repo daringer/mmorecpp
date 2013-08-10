@@ -70,6 +70,7 @@ class MemTrackerToolsTestSuite : public TestSuite {
 
       USE_MEM_TRACKER = false;
       CHECK(CALL_COUNT_NEW == mem_calls);
+      cout << CALL_COUNT_DELETE << endl;
       CHECK(CALL_COUNT_DELETE == mem_calls);
       CHECK(MEMORY_COUNT_NEW == mem_taken);
       CHECK(MEMORY_COUNT_DELETE == mem_taken);
@@ -106,6 +107,8 @@ class MemTrackerToolsTestSuite : public TestSuite {
       CHECK(MEMORY_COUNT_DELETE == mem_freed);
       string output = show_memory_tracker_results();
       CHECK(output.length() > 0); 
+
+      cout << show_memory_tracker_results() << endl;
     }
 
 };
