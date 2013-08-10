@@ -9,40 +9,40 @@
 #define BUFSIZE 256
 
 namespace TOOLS {
-  class XTime {
-    private:
-      struct timeval raw_start;
-      struct timeval raw_end;
+class XTime {
+  private:
+    struct timeval raw_start;
+    struct timeval raw_end;
 
-    public:
-      XTime(bool auto_start=false);
+  public:
+    XTime(bool auto_start=false);
 
-      void start();
-      void stop();
+    void start();
+    void stop();
 
-      long diff_us();
-      long diff_s();
-  };
-  
-  class XDateTime {
-    private:
-      time_t rawtime;
-      struct tm* timeinfo;
-      char buf[BUFSIZE];
-      std::string fmt_template;
+    long diff_us();
+    long diff_s();
+};
 
-      void render();
+class XDateTime {
+  private:
+    time_t rawtime;
+    struct tm* timeinfo;
+    char buf[BUFSIZE];
+    std::string fmt_template;
 
-    public:
-      XDateTime(const XDateTime& obj);
-      XDateTime(const std::string& fmt="%c");
-      XDateTime(const time_t& stamp);
-      
-      void set_format(const std::string& fmt);
-      std::string format() const;
-  };
+    void render();
 
-  std::ostream& operator<<(std::ostream& os, const XDateTime& dt);
+  public:
+    XDateTime(const XDateTime& obj);
+    XDateTime(const std::string& fmt="%c");
+    XDateTime(const time_t& stamp);
+
+    void set_format(const std::string& fmt);
+    std::string format() const;
+};
+
+std::ostream& operator<<(std::ostream& os, const XDateTime& dt);
 }
 
 #endif

@@ -52,8 +52,8 @@ extern tMemoryDataMap MEMORY_DATA_MAP;
 void exit(int status) throw();
 
 /** overriding new to count occurences and allocated heap-memory */
-void* operator new(size_t size, const char* fn, size_t line) _GLIBCXX_THROW (std::bad_alloc);
-void* operator new[](size_t size, const char* fn, size_t line) _GLIBCXX_THROW (std::bad_alloc);
+void* operator new(size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc);
+void* operator new[](size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc);
 
 /** overriding delete to be able to count lost/leaked pointers/memory */
 void operator delete(void* ptr, size_t size) _GLIBCXX_USE_NOEXCEPT;

@@ -44,9 +44,9 @@ void TemplateParser::read_template(istream& stream) {
  * @brief constructor, to handle plain filenames
  * @param template_path the path to the template file to be used
  */
-TemplateParser::TemplateParser(const string& template_path) 
-: is_rendered(false), tmpl_filename(template_path), root_node(new ASTNode) {
-  
+TemplateParser::TemplateParser(const string& template_path)
+  : is_rendered(false), tmpl_filename(template_path), root_node(new ASTNode) {
+
   ifstream stream(template_path.c_str());
   read_template(stream);
 }
@@ -54,9 +54,9 @@ TemplateParser::TemplateParser(const string& template_path)
  * @brief constructor, to directly handle a stream
  * @param stream the input-stream, which should be read to get the template
  */
-TemplateParser::TemplateParser(istream& stream) 
+TemplateParser::TemplateParser(istream& stream)
   : is_rendered(false), tmpl_filename(""), root_node(new ASTNode) {
-  
+
   read_template(stream);
 }
 /**
@@ -142,10 +142,10 @@ string TemplateParser::get_val(const string& name) {
 }
 /**
  * @brief the high-level render method controls the render process
- * @return the fully rendered template 
+ * @return the fully rendered template
  */
 string& TemplateParser::render() {
-  if (!is_rendered) {
+  if(!is_rendered) {
     output = "";
     delete root_node;
     root_node = new ASTNode;
@@ -345,7 +345,7 @@ bool TemplateParser::save_to_file() {
   XString xs(tmpl_filename);
   if(!xs.endswith(".tmpl"))
     throw SaveFilenameAmbigous("got: " + tmpl_filename + \
-        " need either .tmpl suffix or pass target file to save_to_file()");
-  
+                               " need either .tmpl suffix or pass target file to save_to_file()");
+
   return save_to_file(xs.subs(".tmpl", ""));
 }

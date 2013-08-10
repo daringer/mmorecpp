@@ -62,7 +62,7 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
 
     // if executing choosen test
     if(only_test != "" && i->second.res.id.find(only_test) == string::npos)
-        continue;
+      continue;
 
     i->second.res.run = true;
 

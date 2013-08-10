@@ -74,9 +74,9 @@ void ConfigManager::parse(tStringList* args) {
   // catch boolean value as this doesn't need an arg
   if(tmp->same_data_types<bool>()) {
     if(members[id]->has_default)
-        set<bool>(id, !get<bool>(id));
+      set<bool>(id, !get<bool>(id));
     else
-        set<bool>(id, true);
+      set<bool>(id, true);
     args->erase(args->begin());
     return;
   }

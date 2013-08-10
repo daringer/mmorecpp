@@ -49,20 +49,20 @@ class ASTNode {
  * Usage example:
  * ----------------------------------------------------------------------
  * TemplateParser p("mytemplatefile.tmpl");      // init template parser
- * 
+ *
  * p.set_key("title", "my_fancy_title");         // fill a key with a string
  *
  * p.add_to_key("mylist", "item1");              // automaticly declare "mylist"
  * p.add_to_key("mylist", "item2");              // as a list of strings
- * 
+ *
  * p.save_to_file();                             // save rendered file
  *
  * p.replace_template("other_file");             // replace internal template
  *                                               // while keeping keys
- * p.save_to_file("/tmp/my_choosen_filename");   // re-render with new template 
+ * p.save_to_file("/tmp/my_choosen_filename");   // re-render with new template
  *                                               // and save to given filename
  * -----------------------------------------------------------------------
- * If the template filename ends with ".tmpl", save_to_file() without a 
+ * If the template filename ends with ".tmpl", save_to_file() without a
  * parameter leads to a filename without the ".tmpl" suffix - is the suffix
  * and the save_to_file()-argument missing an exception is thrown.
  *
@@ -131,10 +131,10 @@ class TemplateParser {
     void add_to_key(const std::string& name, const std::string& val);   /// <--- then this should fail on non-boxes
 
     std::string& render();
-    
+
     bool save_to_file();
     bool save_to_file(const std::string& filename);
-    
+
     void show_ast();
 };
 }

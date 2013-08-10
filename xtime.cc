@@ -1,5 +1,5 @@
 #include "strings.h"
-#include "time.h" 
+#include "time.h"
 
 #include "xtime.h"
 
@@ -7,25 +7,25 @@ using namespace TOOLS;
 using namespace std;
 
 XTime::XTime(bool auto_start) {
-    if (auto_start)
-        start();
+  if(auto_start)
+    start();
 }
 
 void XTime::start() {
-    gettimeofday(&raw_start, NULL);
+  gettimeofday(&raw_start, NULL);
 }
 
 void XTime::stop() {
-    gettimeofday(&raw_end, NULL);
+  gettimeofday(&raw_end, NULL);
 }
 
 long XTime::diff_s() {
-    return raw_end.tv_sec - raw_start.tv_sec;
+  return raw_end.tv_sec - raw_start.tv_sec;
 }
 
 long XTime::diff_us() {
-    // tv_usec is % 1e6
-    return (raw_end.tv_usec - raw_start.tv_usec) + diff_s()*1e6;
+  // tv_usec is % 1e6
+  return (raw_end.tv_usec - raw_start.tv_usec) + diff_s()*1e6;
 }
 
 XDateTime::XDateTime(const XDateTime& obj) : rawtime(obj.rawtime), timeinfo(obj.timeinfo), fmt_template(obj.fmt_template) {

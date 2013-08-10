@@ -23,7 +23,7 @@ tMemoryMap MEMORY_MAP;
 tMemoryDataMap MEMORY_DATA_MAP;
 
 
-void* __handle_new_request(size_t size, const char* fn, size_t line) _GLIBCXX_THROW (std::bad_alloc) {
+void* __handle_new_request(size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc) {
   if(USE_MEM_TRACKER) {
     CALL_COUNT_NEW++;
     MEMORY_COUNT_NEW += size;
@@ -41,11 +41,11 @@ void* __handle_new_request(size_t size, const char* fn, size_t line) _GLIBCXX_TH
 
 /** Globally overloads the "new" (and "new[]") operator,
     USE_MEM_TRACKER can be false to disable the mechanism */
-void* operator new(size_t size, const char* fn, size_t line) _GLIBCXX_THROW (std::bad_alloc) {
+void* operator new(size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc) {
   return __handle_new_request(size, fn, line);
 }
 
-void* operator new[](size_t size, const char* fn, size_t line) _GLIBCXX_THROW (std::bad_alloc) {
+void* operator new[](size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc) {
   return __handle_new_request(size, fn, line);
 }
 
@@ -74,31 +74,31 @@ string show_memory_tracker_results() {
   ss << endl;
   ss << "[STATS] Showing new/delete statistics..." << endl;
   ss << "[i] Called new: " << CALL_COUNT_NEW << \
-       " delete: " << CALL_COUNT_DELETE << endl;
+     " delete: " << CALL_COUNT_DELETE << endl;
   ss << "[i] Allocated memory: " <<  MEMORY_COUNT_NEW <<
-       " Bytes freed memory: " << MEMORY_COUNT_DELETE << " Bytes" << endl;
+     " Bytes freed memory: " << MEMORY_COUNT_DELETE << " Bytes" << endl;
   ss << "[i] (Minimum) leaked memory: " << m_diff <<
-       " Bytes within: " << ptr_diff << " allocations." << endl;
+     " Bytes within: " << ptr_diff << " allocations." << endl;
 
-  if (MEMORY_DATA_MAP.size() == 0) 
+  if(MEMORY_DATA_MAP.size() == 0)
     return ss.str();
-  
+
   ss << endl;
   ss << "[LEAK DATA] showing not deleted pointers [size] and their file origin:" << endl;
   tMemoryDataBackMap pos2ptr;
-  for(tMemoryDataIter i=MEMORY_DATA_MAP.begin(); i!=MEMORY_DATA_MAP.end(); ++i) 
+  for(tMemoryDataIter i=MEMORY_DATA_MAP.begin(); i!=MEMORY_DATA_MAP.end(); ++i)
     pos2ptr[i->second].push_back(i->first);
 
   for(tMemoryDataBackIter i=pos2ptr.begin(); i!=pos2ptr.end(); ++i) {
-  //for(tPointerIter& i : pos2ptr) {
+    //for(tPointerIter& i : pos2ptr) {
     ss << "[E] " << i->first.first << " - line: " << i->first.second << " leaking ptrs: (#" << i->second.size() << ")" << endl;
     ss << "[E]    ";
-    
+
     // find widest size (written size string length)
     //size_t max_size = *max_element(i->second.begin(), i->second.end());
     size_t max_size = 123456;
     size_t max_width = 1;
-    while((max_size = max_size/10.0) > 0.0) 
+    while((max_size = max_size/10.0) > 0.0)
       max_width++;
 
     // pretty print leaked pointer[size]
@@ -106,7 +106,7 @@ string show_memory_tracker_results() {
     for(tPointerIter p=i->second.begin(); p!=i->second.end(); ++p, col++) {
       ss << *p << "[" << setw(max_width) << MEMORY_MAP[*p] << "]";
       ss << (((p+1) != i->second.end()) ? ", " : "\n");
-      if (col%6 == 5)
+      if(col%6 == 5)
         ss << endl << "       ";
     }
   }
@@ -137,7 +137,7 @@ void init_memory_tracker() {
   MEMORY_MAP.clear();
   MEMORY_DATA_MAP.clear();
 
-  // remain off 
+  // remain off
   //USE_MEM_TRACKER = true;
 }
 

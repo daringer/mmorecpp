@@ -49,7 +49,7 @@ class BaseLoggerBackend {
     virtual void write(const std::string& text) = 0;
     virtual void init();
     virtual void cleanup();
-}; 
+};
 
 class FileBackend : public BaseLoggerBackend {
   public:
@@ -89,7 +89,7 @@ class XLogger {
     static XLogger* get(const std::string& id) throw(NoSuchXLoggerAvailable);
 
     void add_backend(BaseLoggerBackend* back);
-  
+
     void set_logging_template(const std::string& tmpl);
     void set_time_format(const std::string& format);
 
@@ -101,7 +101,7 @@ class XLogger {
     std::string log_template;
     std::string time_format;
     std::string id;
-    
+
     std::string render_msg(const std::string& data, int loglevel, int line, const std::string& fn, const std::string& func);
     std::string get_fancy_level(int lvl);
 };
@@ -119,7 +119,7 @@ class LogStream {
   public:
     LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn, const std::string& func);
     ~LogStream();
- 
+
     template<class T>
     LogStream& operator<<(T obj) {
       msg << obj;

@@ -43,7 +43,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 #define CHECK_EXC(exc, func) do { \
     if(!do_checks) \
-        break; \
+      break; \
     bool _res = false; \
     try { \
       func; \

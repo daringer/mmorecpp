@@ -13,7 +13,7 @@ void TOOLS::tools_lib_exception_handler() {
   try {
     std::exception_ptr exc = std::current_exception();
     std::rethrow_exception(exc);
-  } catch (std::exception& e) {
+  } catch(std::exception& e) {
     cout << "[E] Exception description following:" << endl;
     cout << "[E] " << e.what() << endl;
   }
