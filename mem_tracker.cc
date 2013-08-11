@@ -16,10 +16,10 @@ using namespace std;
 
 /** actually define the global (extern-ed) variables here
  *  and do some initialization directly at the beginning of main() */
-long CALL_COUNT_NEW;
-long CALL_COUNT_DELETE;
-long MEMORY_COUNT_NEW;
-long MEMORY_COUNT_DELETE;
+unsigned long long CALL_COUNT_NEW;
+unsigned long long CALL_COUNT_DELETE;
+unsigned long long MEMORY_COUNT_NEW;
+unsigned long long MEMORY_COUNT_DELETE;
 
 /** this flag activates the tracking */
 bool USE_MEM_TRACKER;
@@ -73,7 +73,6 @@ void __handle_delete_meta_data(const char* fn, const size_t& line) {
 /** handle delete-call */
 void __handle_delete_request(void* ptr) {
   if(USE_MEM_TRACKER) {
-    CALL_COUNT_DELETE++;
     tPtrDataStorageIter i = ALLOCATED_PTRS.find(ptr);
     if(i != ALLOCATED_PTRS.end()) {
       USE_MEM_TRACKER = false;
@@ -86,6 +85,7 @@ void __handle_delete_request(void* ptr) {
       ARCHIVED_PTRS.back().delete_call = \
             make_pair(string(____DELETE_FILENAME____), ____DELETE_LINE____);
       
+      CALL_COUNT_DELETE++;
       MEMORY_COUNT_DELETE += ARCHIVED_PTRS.back().size;
 
       USE_MEM_TRACKER = true;
@@ -151,7 +151,7 @@ string __print_memory_details(bool delete_mode, bool verbose) {
   // go over generated map and gen. results
   for(tOpPtrDataIter i=pos2ptr.begin(); i!=pos2ptr.end(); ++i) {
     // calculate sum of bytes alloced/deleted
-    size_t sum = 0;
+    unsigned long long sum = 0;
     std::for_each(i->second.begin(), i->second.end(), \
         [&](const PtrData& x) { sum += x.size; }
     );
@@ -198,12 +198,14 @@ string get_memory_tracker_results(bool verbose) {
   ss << setw(hline) << setfill('-') << "" << setfill(' ') << endl;
   
   ss << setw(loff) << "NEW" << setw(pad) << CALL_COUNT_NEW << sep << 
-        setw(pad) << MEMORY_COUNT_NEW << sep << setw(pad) << "n/a" << sep << setw(pad) << "n/a" << sep << endl;
+        setw(pad) << MEMORY_COUNT_NEW << sep << setw(pad) << "n/a" << sep << 
+        setw(pad) << "n/a" << sep << endl;
 
   ss << setw(hline) << setfill('-') << "" << setfill(' ') << endl;
   
   ss << setw(loff) << "DELETE" << setw(pad) << CALL_COUNT_DELETE << sep << 
-        setw(pad) << MEMORY_COUNT_DELETE << sep << setw(pad) << ptr_diff << sep << setw(pad) << m_diff << sep << endl;
+        setw(pad) << MEMORY_COUNT_DELETE << sep << setw(pad) << ptr_diff << sep << 
+        setw(pad) << m_diff << sep << endl;
 
   if(m_diff > 0) {
     ss << endl;

@@ -45,12 +45,12 @@ extern tPtrDataList ARCHIVED_PTRS;
 
 /** Global counters for new/delete */
 // caller count for tracked new/delete
-extern long CALL_COUNT_NEW;
-extern long CALL_COUNT_DELETE;
+extern unsigned long long CALL_COUNT_NEW;
+extern unsigned long long CALL_COUNT_DELETE;
 
 /** byte count for tracked new/delete */
-extern long MEMORY_COUNT_NEW;
-extern long MEMORY_COUNT_DELETE;
+extern unsigned long long MEMORY_COUNT_NEW;
+extern unsigned long long MEMORY_COUNT_DELETE;
 
 /** Is true, if new/delete journaling should be enabled! */
 extern bool USE_MEM_TRACKER;
@@ -87,8 +87,6 @@ void __handle_delete_meta_data(const char* fn, const size_t& line);
 
 void __handle_delete_request(void* ptr);
 
-#endif
-
 // avoid definition of macros for mem_tracker.cc
 #ifndef NO_ALLOC_MACRO_OVERRIDE
 #define OVERRIDE_DELETE __handle_delete_meta_data(__FILE__, __LINE__); delete
@@ -98,3 +96,4 @@ void __handle_delete_request(void* ptr);
 #define new OVERRIDE_NEW
 #endif
 
+#endif
