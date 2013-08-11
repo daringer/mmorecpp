@@ -3,12 +3,8 @@
 using namespace std;
 using namespace TOOLS;
 
-
-BaseException* BaseException::last_exception = NULL;
-
 void TOOLS::tools_lib_exception_handler() {
   std::cout << endl << "[E] An uncaught exception occurred!" << std::endl;
-  //BaseException::last_exception->show();
   print_stacktrace();
   try {
     std::exception_ptr exc = std::current_exception();
@@ -21,6 +17,13 @@ void TOOLS::tools_lib_exception_handler() {
   cout << "[i] exiting now..." << std::endl;
   abort();
 }
+
+void TOOLS::signal_handler(int sig) {
+  cout << "DAAAAAAAAAAAAAAAMNNNNN SEGFAUUUUULT!!!!" << endl;
+  print_stacktrace();
+  exit(1);
+}
+
 
 /**
 * @brief constructor global BaseException (without additional information)
@@ -59,7 +62,6 @@ void BaseException::what() {
  */
 void BaseException::init() {
   set_message(message);
-  BaseException::last_exception = this;
 }
 /**
 * @brief explicitly set the message

@@ -1,8 +1,11 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
+#include <signal.h>
 #include <execinfo.h>
 #include <cxxabi.h>
+#include <stdio.h>
+#include <unistd.h>
 
 #include <string>
 #include <sstream>
@@ -18,8 +21,6 @@ class BaseException : public std::exception {
     std::string output;
     std::string exception_name;
     std::string message;
-
-    static BaseException* last_exception;
 
     template<class T>
     BaseException(const std::string& exc_name, const T& msg)
@@ -39,15 +40,16 @@ class BaseException : public std::exception {
 
     void set_message(const std::string& input);
     void show();
-    void what(); // keep compatibility to c++
+    void what(); // keep compatibility to c++ default
   private:
     void init();
 };
 
-// better exception handler - feed this to set_terminate and
-// derive your exceptions from BaseException
+// better exception handler - feed this to set_terminate 
 void tools_lib_exception_handler();
 
+// better signal (SIGSEGV) handler, check tests for usage
+void signal_handler(int sig);
 }
 
 // print a stacktrace

@@ -13,6 +13,14 @@ using namespace std;
 using namespace TOOLS;
 
 int main(int argc, char* argv[]) {
+  // so in die richtung
+  struct sigaction act;
+  act.sa_handler = TOOLS::signal_handler;
+  sigemptyset(&act.sa_mask);
+  act.sa_flags = 0;
+  sigaction(SIGSEGV, &act, 0);
+  //act.sa_flags = SA_SIGINFO;
+  //sa.sa_sigaction = segfault_sigaction;
 
   set_terminate(TOOLS::tools_lib_exception_handler);
 

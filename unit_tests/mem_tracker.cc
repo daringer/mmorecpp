@@ -72,7 +72,7 @@ class MemTrackerToolsTestSuite : public TestSuite {
       CHECK(CALL_COUNT_DELETE == mem_calls);
       CHECK(MEMORY_COUNT_NEW == mem_taken);
       CHECK(MEMORY_COUNT_DELETE == mem_taken);
-      cout << get_memory_tracker_results() << endl;
+      //cout << get_memory_tracker_results() << endl;
     }
 
     MAKE_TEST(many_new_delete_leaking) {
@@ -105,7 +105,7 @@ class MemTrackerToolsTestSuite : public TestSuite {
       CHECK(MEMORY_COUNT_NEW == mem_taken);
       CHECK(MEMORY_COUNT_DELETE == mem_freed);
 
-      cout << get_memory_tracker_results() << endl;
+      //cout << get_memory_tracker_results() << endl;
     }
 
 };
