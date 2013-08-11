@@ -23,7 +23,6 @@ class MemTrackerToolsTestSuite : public TestSuite {
 
     virtual void setup() { 
       many = 3000;
-    
     }
 
     virtual void tear_down() { }

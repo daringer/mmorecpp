@@ -64,7 +64,7 @@ void* __handle_new_request(size_t size, const char* fn, size_t line) _GLIBCXX_TH
   return out;
 }
 
-/** save meta-data (filename, lineno) into tmp-vars for __handle_delete_request
+/** save meta-data (filename, lineno) into tmp-vars for __handle_delete_request */
 void __handle_delete_meta_data(const char* fn, const size_t& line) {
   ____DELETE_FILENAME____ = fn;
   ____DELETE_LINE____ = line;
