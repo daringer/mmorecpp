@@ -22,7 +22,7 @@ class MemTrackerToolsTestSuite : public TestSuite {
     size_t many;
 
     virtual void setup() { 
-      many = 30;
+      many = 3000;
     
     }
 
@@ -35,8 +35,8 @@ class MemTrackerToolsTestSuite : public TestSuite {
       CHECK(CALL_COUNT_DELETE == 0);
       CHECK(MEMORY_COUNT_NEW == 0);
       CHECK(MEMORY_COUNT_DELETE == 0);
-      CHECK(MEMORY_NOT_JOURNALED == 0);
-      CHECK(MEMORY_MAP.size() == 0);
+      CHECK(ALLOCATED_PTRS.size() == 0);
+      CHECK(ARCHIVED_PTRS.size() == 0);
       CHECK(USE_MEM_TRACKER == false);
     };
 
@@ -70,10 +70,10 @@ class MemTrackerToolsTestSuite : public TestSuite {
 
       USE_MEM_TRACKER = false;
       CHECK(CALL_COUNT_NEW == mem_calls);
-      cout << CALL_COUNT_DELETE << endl;
       CHECK(CALL_COUNT_DELETE == mem_calls);
       CHECK(MEMORY_COUNT_NEW == mem_taken);
       CHECK(MEMORY_COUNT_DELETE == mem_taken);
+      cout << get_memory_tracker_results() << endl;
     }
 
     MAKE_TEST(many_new_delete_leaking) {
@@ -91,7 +91,7 @@ class MemTrackerToolsTestSuite : public TestSuite {
 
         mem_taken += i+1 + (i+3)*4 + sizeof(std::map<int, int>);
         mem_calls += 3;
-        if ((i%3) == 0 || (i*7)%16 == 2) {
+        if ((i%3) == 2 || (i*7)%11 == 2) {
           mem_freed += i+1 + (i+3)*4 + sizeof(std::map<int, int>);
           del_calls += 3;
           delete ptr;
@@ -105,10 +105,8 @@ class MemTrackerToolsTestSuite : public TestSuite {
       CHECK(CALL_COUNT_DELETE == del_calls);
       CHECK(MEMORY_COUNT_NEW == mem_taken);
       CHECK(MEMORY_COUNT_DELETE == mem_freed);
-      string output = show_memory_tracker_results();
-      CHECK(output.length() > 0); 
 
-      cout << show_memory_tracker_results() << endl;
+      cout << get_memory_tracker_results() << endl;
     }
 
 };
