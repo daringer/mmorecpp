@@ -3,8 +3,8 @@ AR = ar
 RANLIB = ranlib
 RM = rm -f
 
-TESTSUITS = fs xstring xregex executor mem_tracker
-SOURCES.cc = run_tests.cc $(addsuffix .cc,$(TESTSUITS))
+PARTS=fs xtime template_parser
+SOURCES.cc = run_tests.cc $(addsuffix .cc,$(PARTS))
 
 LIBOBJ =  ../libtools.a
 SOURCES = $(SOURCES.cc) $(LIBOBJ)
@@ -23,7 +23,7 @@ targets: $(SOURCES)
 clean:
 	$(RM) $(OBJECTS) $(PROGRAM)
 
-$(PROGRAM): $(SOURCES) 
+$(PROGRAM): $(SOURCES)
 	$(CCC) $(CCFLAGS) $(LDFLAGS) -o $@ $(SOURCES)
 
 #%.o: $(SOURCES)

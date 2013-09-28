@@ -10,31 +10,18 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-class TemplateParserToolsTestSuite : public TestSuite {
-  public:
-    TemplateParserToolsTestSuite() {
-      REG_TEST(&TemplateParserToolsTestSuite::test_simple_substitution)
-      REG_TEST(&TemplateParserToolsTestSuite::test_for_simple)
-      REG_TEST(&TemplateParserToolsTestSuite::test_for_first_last)
-      REG_TEST(&TemplateParserToolsTestSuite::test_if_simple)
-      REG_TEST(&TemplateParserToolsTestSuite::test_if_else)
-      REG_TEST(&TemplateParserToolsTestSuite::test_if_not)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_list_container)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_map_container)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_map_and_list)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_key_fail)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_index_fail)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_update)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_nested_loops)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_symbol_resolving)
-      //REG_TEST(&TemplateParserToolsTestSuite::test_get_item_type)
+START_SUITE(TemplateParserToolsTestSuite) {
+      REG_TEST(simple_substitution)
+      REG_TEST(for_simple)
+      REG_TEST(for_first_last)
+      REG_TEST(if_simple)
+      REG_TEST(if_else)
+      REG_TEST(if_not)
     }
 
-    virtual void setup() {
-    }
+    virtual void setup() { }
 
-    virtual void tear_down() {
-    }
+    virtual void tear_down() { }
 
     MAKE_TEST(simple_substitution) {
       string s("{{ foo }}");
@@ -110,4 +97,4 @@ class TemplateParserToolsTestSuite : public TestSuite {
       CHECK(p.render() == "was false");
     }
 
-};
+END_SUITE()

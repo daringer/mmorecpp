@@ -77,10 +77,19 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   } while(0)
 
 #define REG_TEST(method) \
-  add_test(#method, method);
+  add_test(#method, &tTestSuite :: test_ ## method);
 
 #define MAKE_TEST(name) \
   void test_ ## name(bool do_checks=true, bool return_on_fail=true)
+
+#define START_SUITE(name) \
+  class name : public TestSuite { \
+    public: \
+    typedef name tTestSuite; \
+      name() \
+
+#define END_SUITE() \
+  };
 
 #define PREPARE_WITH(fnc) \
   test_ ## fnc(false);
@@ -137,7 +146,7 @@ class TestSuite {
 
     template<class T>
     void add_test(XString name, void (T::*f)(bool, bool)) {
-      XString desc = XString(name).subs("test_", "").split("::")[1];
+      XString desc = name; //XString(name).subs("test_", "").split("::")[1];
       tests[desc] = Test(desc, static_cast<tMethod>(f), this);
     }
   private:

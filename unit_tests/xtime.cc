@@ -10,18 +10,16 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-class XTimeToolsTestSuite : public TestSuite {
-  public:
-    string own_fmt;
-    int sleep_duration;
-
-    XTimeToolsTestSuite() {
-      REG_TEST(&XTimeToolsTestSuite::test_interval)
-      REG_TEST(&XTimeToolsTestSuite::test_interval_autostart)
-      REG_TEST(&XTimeToolsTestSuite::test_date_default_format)
-      REG_TEST(&XTimeToolsTestSuite::test_own_format)
+START_SUITE(XTimeToolsTestSuite) {
+      REG_TEST(interval)
+      REG_TEST(interval_autostart)
+      REG_TEST(date_default_format)
+      REG_TEST(own_format)
     }
 
+    string own_fmt;
+    int sleep_duration;
+    
     virtual void setup() {
       own_fmt = "%R %T";
       sleep_duration = 1;
@@ -57,4 +55,4 @@ class XTimeToolsTestSuite : public TestSuite {
       CHECK(t.diff_us() >= sleep_duration*1e6);
       CHECK(t.diff_s() >= sleep_duration);
     }
-};
+END_SUITE()

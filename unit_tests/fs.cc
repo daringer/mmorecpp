@@ -5,29 +5,26 @@
 
 #include "testing_suite.h"
 
-
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-class FSToolsTestSuite : public TestSuite {
-  public:
-    string fn, morefn, realdir, realfn, torealfn, realfile;
-
-    FSToolsTestSuite() {
-      REG_TEST(&FSToolsTestSuite::test_path_init)
-      REG_TEST(&FSToolsTestSuite::test_copy_constructor)
-      REG_TEST(&FSToolsTestSuite::test_exists)
-      REG_TEST(&FSToolsTestSuite::test_move)
-      REG_TEST(&FSToolsTestSuite::test_create_dir)
-      REG_TEST(&FSToolsTestSuite::test_isdir)
-      REG_TEST(&FSToolsTestSuite::test_isnotdir)
-      REG_TEST(&FSToolsTestSuite::test_isfile)
-      REG_TEST(&FSToolsTestSuite::test_isnotfile)
-      REG_TEST(&FSToolsTestSuite::test_exists)
-      REG_TEST(&FSToolsTestSuite::test_notexists)
+START_SUITE(FSToolsTestSuite) {
+      REG_TEST(path_init)
+      REG_TEST(copy_constructor)
+      REG_TEST(exists)
+      REG_TEST(move)
+      REG_TEST(create_dir)
+      REG_TEST(isdir)
+      REG_TEST(isnotdir)
+      REG_TEST(isfile)
+      REG_TEST(isnotfile)
+      REG_TEST(exists)
+      REG_TEST(notexists)
     }
 
+    string fn, morefn, realdir, realfn, torealfn, realfile;
+    
     virtual void setup() {
       fn = "/tmp/test_test_foo";
       morefn = "/tmp/test_test_bar";
@@ -98,4 +95,5 @@ class FSToolsTestSuite : public TestSuite {
       FS::Path p2(torealfn);
       CHECK(p2.exists());
     }
-};
+
+END_SUITE()

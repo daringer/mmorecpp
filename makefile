@@ -12,7 +12,7 @@ AR = ar
 RANLIB = ranlib
 RM = rm -f
 
-LIBS=
+LIBS=""
 CCFLAGS = -ggdb -I. -I.. -Wall -pedantic -rdynamic -g -w -c -std=c++11
 #CCFLAGS = -I. -Wall -O3 -w -c -std=c++11 -pedantic -w -c 
 
@@ -22,9 +22,8 @@ ARFLAGS = ruv
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
-targets: $(SOURCES)
 
-.PHONY: all
+.PHONY: all clean
 
 clean:
 	$(RM) $(OBJECTS) $(LIB)
