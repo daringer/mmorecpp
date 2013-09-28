@@ -6,8 +6,8 @@ RM = rm -f
 TESTSUITS = fs xstring xregex executor mem_tracker
 SOURCES.cc = run_tests.cc $(addsuffix .cc,$(TESTSUITS))
 
-SOURCES = $(SOURCES.cc)
 LIBOBJ =  ../libtools.a
+SOURCES = $(SOURCES.cc) $(LIBOBJ)
 
 CCFLAGS = -w -I. -I.. -ggdb -g -Wall -pedantic -rdynamic -std=c++0x
 PROGRAM = run_tests
