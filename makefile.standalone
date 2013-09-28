@@ -1,0 +1,42 @@
+PROGRAM = 
+LIB = libtools.a
+
+TOOLS = exception xstring xsocket fs template_parser xregex io testing_suite threading
+SOURCES.cc = $(addsuffix .cc,$(TOOLS))
+SOURCES.h = $(addsuffix .h,$(TOOLS))
+
+
+SOURCES = $(SOURCES.h) $(SOURCES.cc)
+OBJECTS = $(SOURCES.cc:%.cc=%.o)
+
+LIBS += -lm -ltools -L.. 
+
+CCC = g++
+AR = ar
+RANLIB = ranlib
+RM = rm -f
+
+CCFLAGS = -w -g -I..
+LDFLAGS = -static -pthread
+ARFLAGS = ruv
+
+all:	 $(PROGRAM)
+objects: $(SOURCES) $(OBJECTS)
+sources: $(SOURCES)
+targets: $(SOURCES)
+
+clean:
+	$(RM) $(OBJECTS) core $(LIB)
+
+.PARALLEL: $(OBJECTS)
+
+%.o: %.cc $(SOURCES.H)
+	$(CCC) $(CCFLAGS) -c -g $(@:%.o=%.cc) -o $@
+
+$(PROGRAM): $(SOURCES) $(OBJECTS) 
+	$(CCC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+
+# building/linking library 
+$(LIB): $(SOURCES) $(OBJECTS)
+	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
+	$(RANLIB) $(LIB)
