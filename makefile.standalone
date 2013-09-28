@@ -1,42 +1,42 @@
-PROGRAM = 
 LIB = libtools.a
 
-TOOLS = exception xstring xsocket fs template_parser xregex io testing_suite threading
-SOURCES.cc = $(addsuffix .cc,$(TOOLS))
-SOURCES.h = $(addsuffix .h,$(TOOLS))
+PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
+SOURCES.cc = $(addsuffix .cc,$(PARTS))
+SOURCES.h = $(addsuffix .h,$(PARTS))
 
-
-SOURCES = $(SOURCES.h) $(SOURCES.cc)
+SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%.o)
-
-LIBS += -lm -ltools -L.. 
 
 CCC = g++
 AR = ar
 RANLIB = ranlib
 RM = rm -f
 
-CCFLAGS = -w -g -I..
+LIBS=
+ORGCCFLAGS += -w -I.. -g -c
+CCFLAGS = -ggdb -I. -Wall -pedantic -rdynamic -g -w -c -std=c++11
+#CCFLAGS = -I. -Wall -O3 -w -c -std=c++11 -pedantic -w -c 
+
 LDFLAGS = -static -pthread
 ARFLAGS = ruv
 
-all:	 $(PROGRAM)
+all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
+.PHONY: all
+
 clean:
-	$(RM) $(OBJECTS) core $(LIB)
+	$(RM) $(OBJECTS) $(LIB)
 
-.PARALLEL: $(OBJECTS)
-
-%.o: %.cc $(SOURCES.H)
+%.o: $(SOURCES)
 	$(CCC) $(CCFLAGS) -c -g $(@:%.o=%.cc) -o $@
 
-$(PROGRAM): $(SOURCES) $(OBJECTS) 
-	$(CCC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
+#$(PROGRAM): $(SOURCES) $(OBJECTS) 
+#	$(CCC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
 
 # building/linking library 
-$(LIB): $(SOURCES) $(OBJECTS)
+$(LIB): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
 	$(RANLIB) $(LIB)

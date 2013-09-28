@@ -1,48 +1,41 @@
-include $(AMV_HOME)/templates/makefile.libs
-include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
+LIB = libtools.a
 
-LIB = libtools$(EXTENSION).a
-
-TOOLS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
-SOURCES.cc = $(addsuffix .cc,$(TOOLS))
-SOURCES.h = $(addsuffix .h,$(TOOLS))
+PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
+SOURCES.cc = $(addsuffix .cc,$(PARTS))
+SOURCES.h = $(addsuffix .h,$(PARTS))
 
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
-OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
+OBJECTS = $(SOURCES.cc:%.cc=%.o)
 
-ORGCCFLAGS += -w -I.. -g -c
-CCFLAGS = -ggdb -I. -I.. -I$(ANTLR_H) -I$(TOOLS_DIR) -DLINUX -Wall -pedantic -rdynamic -g -w -c -std=c++11
-#CCFLAGS = -I. -I.. -I$(ANTLR_H) -DLINUX -Wall -O3 -w -c -std=c++11 -pedantic -w -c 
+CCC = g++
+AR = ar
+RANLIB = ranlib
+RM = rm -f
+
+LIBS=
+CCFLAGS = -ggdb -I. -I.. -Wall -pedantic -rdynamic -g -w -c -std=c++11
+#CCFLAGS = -I. -Wall -O3 -w -c -std=c++11 -pedantic -w -c 
+
+LDFLAGS = -static -pthread
+ARFLAGS = ruv
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
-tests: unit_tests
-	make -C unit_tests/
+.PHONY: all
 
 clean:
-	# Removing libs from $(LAPACKDIR_OHNE_PERF)!!!
-	$(RM) $(OBJECTS) core $(LIB)
-	make -C unit_tests/ clean
+	$(RM) $(OBJECTS) $(LIB)
 
-.PARALLEL: $(OBJECTS)
+%.o: $(SOURCES)
+	$(CCC) $(CCFLAGS) -c -g $(@:%.o=%.cc) -o $@
 
-#CCC=clang
+#$(PROGRAM): $(SOURCES) $(OBJECTS) 
+#	$(CCC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
 
-
-# building object files here
-%$(EXTENSION).o: %.cc $(SOURCES.h) $(MAKEFILE) $(MAKEFILEINC)
-	@rm -f $@
-	$(CCC) $(CCFLAGS) -c -g $(@:%$(EXTENSION).o=%.cc) -o $@
-	@chmod g+w,a+r $@
-
-# building/linking library
-$(LIB): $(SOURCES) $(OBJECTS) $(MAKEFILE) $(MAKEFILEINC)
-	# Compiling $(LIB)
-	@rm -f $(LIB)
+# building/linking library 
+$(LIB): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
 	$(RANLIB) $(LIB)
-
-incl_file: $(INCL_LIB)

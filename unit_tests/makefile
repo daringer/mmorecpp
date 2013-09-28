@@ -1,20 +1,19 @@
-include $(AMV_HOME)/templates/makefile.libs
-include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
-
-
+CCC = g++
+AR = ar
+RANLIB = ranlib
+RM = rm -f
 
 TESTSUITS = fs xstring xregex executor mem_tracker
 SOURCES.cc = run_tests.cc $(addsuffix .cc,$(TESTSUITS))
 
 SOURCES = $(SOURCES.cc)
-OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
-LIBOBJ =  ../libtools$(EXTENSION).a
+LIBOBJ =  ../libtools.a
 
-CCFLAGS = -w -c -I. -I.. -ggdb -g -Wall -pedantic -DLINUX -I$(TOOLS_DIR) -rdynamic -std=c++0x
+CCFLAGS = -w -I. -I.. -ggdb -g -Wall -pedantic -rdynamic -std=c++0x
 PROGRAM = run_tests
 LDFLAGS = -ggdb -rdynamic -g -w
 
-LIBS += -lm -ltools$(EXTENSION) -L$(AMV_HOME)/c/tools_lib
+LIBS = -lm
 
 all:	 $(PROGRAM)
 objects: $(SOURCES) $(OBJECTS)
@@ -22,19 +21,10 @@ sources: $(SOURCES)
 targets: $(SOURCES)
 
 clean:
-	$(RM) $(OBJECTS) core $(LIB)
+	$(RM) $(OBJECTS) $(PROGRAM)
 
-.PARALLEL: $(OBJECTS)
+$(PROGRAM): $(SOURCES) 
+	$(CCC) $(CCFLAGS) $(LDFLAGS) -o $@ $(SOURCES)
 
-$(PROGRAM): $(SOURCES) $(OBJECTS) $(OBJVHDL) $(MAKEFILE) $(MAKEFILEINC)
-	@echo "\n - Linking $(PROGRAM) -\n"
-	$(LINK_PRE) $(LD) $(LDFLAGS)  -o $@ $(OBJECTS) $(OBJVHDL) $(LIBS)
-	@chmod 755 $@
-
-# building object files here
-%$(EXTENSION).o: %.cc $(SOURCES.h) $(MAKEFILE) $(MAKEFILEINC) $(LIBOBJ)
-	@rm -f $@
-	$(CCC) $(CCFLAGS) -c -g $(@:%$(EXTENSION).o=%.cc) -o $@
-	@chmod g+w,a+r $@
-
-incl_file: $(INCL_LIB)
+#%.o: $(SOURCES)
+#	$(CCC) $(CCFLAGS) $(LDFLAGS) -c -g $(@:%.o=%.cc) -o $@ 
