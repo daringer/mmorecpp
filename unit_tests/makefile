@@ -6,7 +6,7 @@ RM = rm -f
 PARTS=fs xtime template_parser
 SOURCES.cc = run_tests.cc $(addsuffix .cc,$(PARTS))
 
-LIBOBJ =  ../libtools.a
+LIBOBJ =  ../*.a
 SOURCES = $(SOURCES.cc) $(LIBOBJ)
 
 CCFLAGS = -w -I. -I.. -ggdb -g -Wall -pedantic -rdynamic -std=c++0x
