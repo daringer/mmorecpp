@@ -9,22 +9,20 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-class ExecutorToolsTestSuite : public TestSuite {
-  public:
+START_SUITE(ExecutorToolsTestSuite) {
+      REG_TEST(system_like)
+      REG_TEST(nonblocking_wait)
+      REG_TEST(bash_and_output)
+      REG_TEST(bash_again)
+      REG_TEST(bash_third_time)
+      REG_TEST(simple_output)
+      REG_TEST(non_path_constructor)
+      REG_TEST(constructor_and_defaults)
+      REG_TEST(initialization)
+    }
+
     string example_cmd;
     char* c_cmd;
-
-    ExecutorToolsTestSuite() {
-      REG_TEST(&ExecutorToolsTestSuite::test_system_like)
-      REG_TEST(&ExecutorToolsTestSuite::test_nonblocking_wait)
-      REG_TEST(&ExecutorToolsTestSuite::test_bash_and_output)
-      REG_TEST(&ExecutorToolsTestSuite::test_bash_again)
-      REG_TEST(&ExecutorToolsTestSuite::test_bash_third_time)
-      REG_TEST(&ExecutorToolsTestSuite::test_simple_output)
-      REG_TEST(&ExecutorToolsTestSuite::test_non_path_constructor)
-      REG_TEST(&ExecutorToolsTestSuite::test_constructor_and_defaults)
-      REG_TEST(&ExecutorToolsTestSuite::test_initialization)
-    }
 
     virtual void setup() {
       example_cmd = "cat /proc/cpuinfo";
@@ -97,4 +95,5 @@ class ExecutorToolsTestSuite : public TestSuite {
       res = e.check_for_exit();
       CHECK(res >= 0);
     }
-};
+
+END_SUITE()

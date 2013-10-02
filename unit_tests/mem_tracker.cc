@@ -9,14 +9,11 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-
-class MemTrackerToolsTestSuite : public TestSuite {
-  public:
-    MemTrackerToolsTestSuite() {
-      REG_TEST(&MemTrackerToolsTestSuite::test_init)
-      REG_TEST(&MemTrackerToolsTestSuite::test_one_new_delete)
-      REG_TEST(&MemTrackerToolsTestSuite::test_many_new_delete)
-      REG_TEST(&MemTrackerToolsTestSuite::test_many_new_delete_leaking)
+START_SUITE(MemTrackerToolsTestSuite) {
+      REG_TEST(init)
+      REG_TEST(one_new_delete)
+      REG_TEST(many_new_delete)
+      REG_TEST(many_new_delete_leaking)
     }
 
     size_t many;
@@ -108,4 +105,4 @@ class MemTrackerToolsTestSuite : public TestSuite {
       //cout << get_memory_tracker_results() << endl;
     }
 
-};
+END_SUITE()

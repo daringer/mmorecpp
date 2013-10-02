@@ -12,14 +12,12 @@ using namespace std;
 
 #define LOGID "system"
 
-class XLoggerToolsTestSuite : public TestSuite {
-  public:
+START_SUITE(XLoggerToolsTestSuite) {
+      REG_TEST(simple)
+    }
+    
     XLogger* xlog;
     MemoryBackend* mb;
-
-    XLoggerToolsTestSuite() {
-      REG_TEST(&XLoggerToolsTestSuite::test_simple)
-    }
 
     virtual void setup() {
       XLogger* xlog = new XLogger(LOGID);
@@ -41,5 +39,4 @@ class XLoggerToolsTestSuite : public TestSuite {
     MAKE_TEST(endl) {
 
     }
-
-};
+END_SUITE()

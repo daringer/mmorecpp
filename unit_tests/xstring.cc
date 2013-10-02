@@ -9,28 +9,24 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-class XStringToolsTestSuite : public TestSuite {
-  public:
+START_SUITE(XStringToolsTestSuite) {
+      REG_TEST(constructor)
+      REG_TEST(subs)
+      REG_TEST(split)
+      REG_TEST(strip)
+      REG_TEST(real)
+      REG_TEST(real_error)
+      REG_TEST(integer)
+      REG_TEST(integer_error)
+      REG_TEST(lower_case)
+      REG_TEST(upper_case)
+      REG_TEST(empty_string_split)
+      REG_TEST(string_no_delim)
+    }
+
     XString s1, s2, s3, foo, realstr, intstr, s3_big, s3_small;
     double decimal;
     int number;
-
-    XStringToolsTestSuite() {
-      REG_TEST(&XStringToolsTestSuite::test_constructor)
-      REG_TEST(&XStringToolsTestSuite::test_subs)
-      REG_TEST(&XStringToolsTestSuite::test_split)
-      REG_TEST(&XStringToolsTestSuite::test_strip)
-      REG_TEST(&XStringToolsTestSuite::test_real)
-      REG_TEST(&XStringToolsTestSuite::test_real_error)
-      REG_TEST(&XStringToolsTestSuite::test_integer)
-      REG_TEST(&XStringToolsTestSuite::test_integer_error)
-      REG_TEST(&XStringToolsTestSuite::test_lower_case)
-      REG_TEST(&XStringToolsTestSuite::test_upper_case)
-      REG_TEST(&XStringToolsTestSuite::test_empty_string_split)
-      REG_TEST(&XStringToolsTestSuite::test_string_no_delim)
-    }
-
-
 
     virtual void setup() {
       s1 = "teststring";
@@ -117,4 +113,5 @@ class XStringToolsTestSuite : public TestSuite {
       tStringList sl = s1.split(" ");
       CHECK(sl.size() == 1 && sl[0] == s1);
     }
-};
+
+END_SUITE()

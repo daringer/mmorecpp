@@ -8,16 +8,14 @@ using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
 
-class XRegexToolsTestSuite : public TestSuite {
-  public:
-    string haystack, regexp, repl, replaced;
-
-    XRegexToolsTestSuite() {
-      REG_TEST(&XRegexToolsTestSuite::test_compile_pattern)
-      REG_TEST(&XRegexToolsTestSuite::test_match)
-      REG_TEST(&XRegexToolsTestSuite::test_search)
-      REG_TEST(&XRegexToolsTestSuite::test_replace)
+START_SUITE(XRegexToolsTestSuite) {
+      REG_TEST(compile_pattern)
+      REG_TEST(match)
+      REG_TEST(search)
+      REG_TEST(replace)
     }
+    
+    string haystack, regexp, repl, replaced;
 
     virtual void setup() {
       haystack = "xxxabcXxxxx123abcX321yyyyabcXyyyy";
@@ -52,4 +50,4 @@ class XRegexToolsTestSuite : public TestSuite {
       Regex pat(regexp);
       CHECK(pat.replace(haystack, repl) == replaced);
     }
-};
+END_SUITE()
