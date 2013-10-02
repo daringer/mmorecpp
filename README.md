@@ -14,54 +14,54 @@ goals:
 
 Currently the following functionalities exist:
 
-* config_manager 
-** Configuration manager with declaritive interface
-** Config-file parser
-** Commandline parser
+*config_manager*
+* Configuration manager with declaritive interface
+* Config-file parser
+* Commandline parser
 
-* exception
-** BaseException - advanced exception
-** print_stacktrace() - shows stacktrace
-** DEFINE_EXCEPTION macro
-** alternative terminate handler
-** alternative signal handler
+*exception*
+* BaseException - advanced exception
+* print_stacktrace() - shows stacktrace
+* DEFINE_EXCEPTION macro
+* alternative terminate handler
+* alternative signal handler
 
-* executor 
-** Execute commands and control stdout/-in/-err
+*executor*
+* Execute commands and control stdout/-in/-err
 
-* fs
-** Filesystem tools mainly inside the class Path
+*fs*
+* Filesystem tools mainly inside the class Path
 
-* io
-** io helper
+*io*
+* io helper
 
-* mem_tracker
-** trace memory leaks from inside your code
-** start/stop memory journaling anywhere inside your code!
-** fast/transparent/easy
+*mem_tracker*
+* trace memory leaks from inside your code
+* start/stop memory journaling anywhere inside your code!
+* fast/transparent/easy
 
-* template_parser
-** simple string template engine (jinja2/django like)
+*template_parser*
+* simple string template engine (jinja2/django like)
 
-* testing_suite
-** very might testing suite with extremly small overhead
+*testing_suite*
+* very might testing suite with extremly small overhead
 
-* threading
-** thread manager/control/abstraction
+*threading*
+* thread manager/control/abstraction
 
-* xlogger
-** highly comfortable, easy logger 
+*xlogger*
+* highly comfortable, easy logger 
 
-* xregex
-** regex abstraction 
+*xregex*
+* regex abstraction 
 
-* xsocket 
-** socket abstraction including multiselect 
+*xsocket* 
+* socket abstraction including multiselect 
 
-* xstring
-** stringhelper methods
-** .startswith() .endswith() .subs()
+*xstring*
+* stringhelper methods
+* .startswith() .endswith() .subs()
 
-* xtime
-** date/time formating info/output
-** measure time
+*xtime*
+* date/time formating info/output
+* measure time
