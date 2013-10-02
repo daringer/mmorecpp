@@ -10,7 +10,7 @@ SOURCES.h = $(addsuffix .h,$(TOOLS))
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
-CCFLAGS += -w -I.. -g
+CCFLAGS += -w -I.. -g -std=c++11
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
