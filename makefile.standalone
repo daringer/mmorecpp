@@ -33,10 +33,9 @@ clean:
 %.o: $(SOURCES)
 	$(CCC) $(CCFLAGS) -c -g $(@:%.o=%.cc) -o $@
 
-#$(PROGRAM): $(SOURCES) $(OBJECTS) 
-#	$(CCC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
-
 # building/linking library 
 $(LIB): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
 	$(RANLIB) $(LIB)
+
+include makefile.inc

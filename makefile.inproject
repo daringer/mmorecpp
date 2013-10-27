@@ -10,7 +10,7 @@ SOURCES.h = $(addsuffix .h,$(PARTS))
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
-CCFLAGS += -w -I.. -g -std=c++11
+CCFLAGS = -gdwarf-2 -w -I.. -std=c++11
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
@@ -38,3 +38,5 @@ $(LIB): $(SOURCES) $(OBJECTS) $(MAKEFILE) $(MAKEFILEINC)
 	$(RANLIB) $(LIB)
 
 incl_file: $(INCL_LIB)
+
+include makefile.inc
