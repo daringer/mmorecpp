@@ -45,7 +45,7 @@ class BaseException : public std::exception {
     void init();
 };
 
-// better exception handler - feed this to set_terminate 
+// better exception handler - feed this to set_terminate
 void tools_lib_exception_handler();
 
 // better signal (SIGSEGV) handler, check tests for usage

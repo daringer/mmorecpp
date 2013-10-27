@@ -85,9 +85,9 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 #define START_SUITE(name) \
   class name : public TestSuite { \
     public: \
-    typedef name tTestSuite; \
+      typedef name tTestSuite; \
       name() \
-
+       
 #define END_SUITE() \
   };
 
@@ -133,8 +133,8 @@ class TestSuite {
     virtual void setup();
     void after_setup();
 
-    void execute_tests(const std::string& suite_name, 
-        const std::string& only_test, const bool& return_on_fail);
+    void execute_tests(const std::string& suite_name,
+                       const std::string& only_test, const bool& return_on_fail);
 
   protected:
     Test* active_test;

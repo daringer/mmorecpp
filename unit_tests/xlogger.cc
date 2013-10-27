@@ -13,30 +13,30 @@ using namespace std;
 #define LOGID "system"
 
 START_SUITE(XLoggerToolsTestSuite) {
-      REG_TEST(simple)
-    }
-    
-    XLogger* xlog;
-    MemoryBackend* mb;
+  REG_TEST(simple)
+}
 
-    virtual void setup() {
-      XLogger* xlog = new XLogger(LOGID);
-      //xlog->add_backend(new ConsoleBackend());
-      mb = new MemoryBackend("mem");
-      xlog->add_backend(mb);
-    }
+XLogger* xlog;
+MemoryBackend* mb;
 
-    virtual void tear_down() {
-      delete xlog;
-    }
+virtual void setup() {
+  XLogger* xlog = new XLogger(LOGID);
+  //xlog->add_backend(new ConsoleBackend());
+  mb = new MemoryBackend("mem");
+  xlog->add_backend(mb);
+}
 
-    MAKE_TEST(simple) {
-      CHECK(mb->log_msgs.size() == 1);
-      INFO << "WHHHOOOOT" << " MOREEEEE" << ": " << 1234 << "\n"; // not yet working ----> endl;
-      CHECK(mb->log_msgs.size() == 2);
-    }
+virtual void tear_down() {
+  delete xlog;
+}
 
-    MAKE_TEST(endl) {
+MAKE_TEST(simple) {
+  CHECK(mb->log_msgs.size() == 1);
+  INFO << "WHHHOOOOT" << " MOREEEEE" << ": " << 1234 << "\n"; // not yet working ----> endl;
+  CHECK(mb->log_msgs.size() == 2);
+}
 
-    }
+MAKE_TEST(endl) {
+
+}
 END_SUITE()
