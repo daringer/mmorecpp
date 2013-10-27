@@ -26,8 +26,6 @@ objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
-#include makefile.inc
-
 .PHONY: all
 
 clean:
