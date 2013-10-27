@@ -8,7 +8,7 @@ SOURCES.h = $(addsuffix .h,$(PARTS))
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%.o)
 
-CCC = clang #g++
+CCC = g++ #clang #g++
 AR = ar
 RANLIB = ranlib
 RM = rm -f
