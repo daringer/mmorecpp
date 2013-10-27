@@ -1,40 +1,42 @@
-include $(AMV_HOME)/templates/makefile.libs
-include $(AMV_HOME)/templates/makefile$(EXTENSION_LONG)
-
-LIB = libtools$(EXTENSION).a
+LIB = libtools.a
 
 PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
 SOURCES.cc = $(addsuffix .cc,$(PARTS))
 SOURCES.h = $(addsuffix .h,$(PARTS))
 
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
-OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
+OBJECTS = $(SOURCES.cc:%.cc=%.o)
 
-CCFLAGS += -w -I.. -g -std=c++11
+CCC = g++
+AR = ar
+RANLIB = ranlib
+RM = rm -f
+
+LIBS=
+ORGCCFLAGS += -w -I.. -g -c
+CCFLAGS = -ggdb -I. -Wall -pedantic -rdynamic -g -w -c -std=c++11
+#CCFLAGS = -I. -Wall -O3 -w -c -std=c++11 -pedantic -w -c 
+
+LDFLAGS = -static -pthread
+ARFLAGS = ruv
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
+.PHONY: all
+
 clean:
-	# Removing libs from $(LAPACKDIR_OHNE_PERF)!!!
-	$(RM) $(OBJECTS) core $(LIB)
+	$(RM) $(OBJECTS) $(LIB)
 
-.PARALLEL: $(OBJECTS)
+%.o: $(SOURCES)
+	$(CCC) $(CCFLAGS) -c -g $(@:%.o=%.cc) -o $@
 
-
-# building object files here
-%$(EXTENSION).o: %.cc $(SOURCES.h) $(MAKEFILE) $(MAKEFILEINC)
-	@rm -f $@
-	$(CCC) $(CCFLAGS) -c -g $(@:%$(EXTENSION).o=%.cc) -o $@
-	@chmod g+w,a+r $@
+#$(PROGRAM): $(SOURCES) $(OBJECTS) 
+#	$(CCC) $(LDFLAGS) -o $@ $(OBJECTS) $(LIBS)
 
 # building/linking library 
-$(LIB): $(SOURCES) $(OBJECTS) $(MAKEFILE) $(MAKEFILEINC)
-	# Compiling $(LIB)
-	@rm -f $(LIB)
+$(LIB): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
 	$(RANLIB) $(LIB)
-
-incl_file: $(INCL_LIB)
