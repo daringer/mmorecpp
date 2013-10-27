@@ -1,3 +1,4 @@
+
 LIB = libtools.a
 
 PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
@@ -38,4 +39,5 @@ $(LIB): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
 	$(RANLIB) $(LIB)
 
-include makefile.inc
+
+include ./makefile.inc

@@ -15,7 +15,7 @@
 #define LOG(lvl, LOGID)  \
   TOOLS::LogStream(TOOLS::XLogger::get(LOGID), lvl,__LINE__,__FILE__,__FUNCTION__)
 
-// Some examples for special loggers
+// Some ready-to-use examples for special loggers
 // all can be used like this:
 // WARN << "my message goes here" << "another one" << 123 << " and add formatting";
 #define DEBUG \
@@ -43,8 +43,9 @@ typedef std::map<std::string, XLogger*> tXLoggerMap;
 class BaseLoggerBackend {
   public:
     std::string id;
+    std::string name;
 
-    BaseLoggerBackend(const std::string& my_id);
+    BaseLoggerBackend(const std::string& my_id, const std::string& my_name);
 
     virtual void write(const std::string& text) = 0;
     virtual void init();
@@ -76,11 +77,13 @@ class MemoryBackend : public BaseLoggerBackend {
     void write(const std::string& msg);
 };
 
-
 class XLogger {
   public:
     typedef std::vector<BaseLoggerBackend*> tBackendList;
     typedef tBackendList::iterator tBackendIter;
+    typedef void (*tLogActionPtr)(void);
+    typedef std::map<int, tLogActionPtr> tLevelActionMap;
+    typedef std::map<int, std::string> tLevelDescMap;
 
     XLogger(const std::string& id);
     ~XLogger();
@@ -92,12 +95,16 @@ class XLogger {
 
     void set_logging_template(const std::string& tmpl);
     void set_time_format(const std::string& format);
+    void set_loglvl_action(int loglvl, tLogActionPtr func);
+    void set_loglvl_desc(int loglvl, const std::string& desc);
 
     void log_msg(const std::string data, int loglevel, int line, const std::string fn, const std::string func);
-    void log_msg(const std::string data, int loglevel);
+    void log_msg(const std::string data);
 
   private:
     tBackendList backends;
+    tLevelActionMap lvl2action;
+    tLevelDescMap lvl2desc;
     std::string log_template;
     std::string time_format;
     std::string id;
@@ -105,7 +112,6 @@ class XLogger {
     std::string render_msg(const std::string& data, int loglevel, int line, const std::string& fn, const std::string& func);
     std::string get_fancy_level(int lvl);
 };
-
 
 class LogStream {
   private:
@@ -125,16 +131,8 @@ class LogStream {
       msg << obj;
       return *this;
     }
-
-    /* something like this to allow << endl
-    template<std::ostream&>
-    LogStream& operator<<(std::ostream& os) {
-      msg << os;
-      return *this;
-    }*/
 };
 
-// namepace TOOLS end
 }
 
 #endif
