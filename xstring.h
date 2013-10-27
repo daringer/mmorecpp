@@ -65,6 +65,7 @@ class XString : public std::string {
     // just a "forwarding-constructor" to maintain string compatibility
     virtual ~XString();
     /** @brief just a "forwarding-constructor" to maintain string compatibility */
+    
     template<class T>
     XString(const T& val) : std::string(val) {}
 
