@@ -14,28 +14,32 @@ tXLoggerMap XLogger::log_map;
 // Make sure you place a instance of this logger inside the heap! No STACK use!
 XLogger::XLogger(const string& id) :
   id(id),
-  log_template("(%%FANCYLVL%%) %%TIME%% || %%MSG%% (%%FILE%%, line: %%LINE%%, caller: %%FUNC%%)\n"),
-  time_format("%d.%m.%Y - %T") {
-  backends.clear();
+  log_template("[%%FANCYLVL%%] %%TIME%% (%%FILE%%:%%LINE%% call: %%FUNC%%) || %%MSG%%\n"),
+  time_format("%d.%m - %T") {
+  
   if(log_map.find(id) != log_map.end())
     throw LoggerIDAlreadyRegistered(id);
+  
+  backends.clear();
   log_map[id] = this;
+  set_loglvl_desc(0, "?");
 }
 
 // cleaning up / deleting backends
 XLogger::~XLogger() {
-  log_msg("Exiting logger: " + id, 5);
+  log_msg("[XLogger] Exiting logger: " + id + "\n");
   for(tBackendIter i=backends.begin(); i!=backends.end(); ++i) {
     (*i)->cleanup();
-    delete(*i);
+    delete *i;
   }
+  log_map.erase(id);
 }
 
 // adding a backend
 void XLogger::add_backend(BaseLoggerBackend* back) {
   backends.push_back(back);
   back->init();
-  back->write(render_msg("Initializing backend for logger: " + id, 5, 0, "---", "---"));
+  back->write("[XLogger] Initializing backend (" + back->name + ") for logger: " + id + "\n");
 }
 
 // static global getter for the registered XLoggers
@@ -55,26 +59,23 @@ void XLogger::set_time_format(const string& format) {
   time_format = format;
 }
 
-// decoration
-string XLogger::get_fancy_level(int lvl) {
-  switch(lvl) {
-    case 10:
-      return "E";
-      break;;
-    case 7:
-      return "W";
-      break;;
-    case 5:
-      return "i";
-      break;;
-    case 3:
-      return "o";
-      break;;
-    default:
-      return "?";
-      break;;
-  }
+// set action for loglvl == 10
+void XLogger::set_loglvl_action(int loglvl, tLogActionPtr func) {
+  lvl2action[loglvl] = func;
 }
+
+// set description to be used for loglvl 
+void XLogger::set_loglvl_desc(int loglvl, const string& desc) {
+  lvl2desc[loglvl] = desc;
+}
+
+// get loglvl description, decrease lvl gradually to 0, if not found.
+string XLogger::get_fancy_level(int lvl) {
+  while (lvl2desc.find(lvl) == lvl2desc.end())
+    lvl--;
+  return lvl2desc[lvl];
+}
+
 
 // render the message
 string XLogger::render_msg(const string& data, int loglevel, int line, const string& fn, const string& func) {
@@ -88,60 +89,78 @@ string XLogger::render_msg(const string& data, int loglevel, int line, const str
          subs("%%FUNC%%", func);
 }
 
-// log give message and related data to _all_ backends
+// log message (including meta data)
 void XLogger::log_msg(const string data, int loglevel, int line, const string fn, const string func) {
+  log_msg(render_msg(data, loglevel, line, fn, func));
+  
+  // check for action with given loglvl
+  //if (error_action != NULL)
+  //  error_action();
+  if (lvl2action.find(loglevel) != lvl2action.end())
+    lvl2action[loglevel]();
+}
+
+// log raw string
+void XLogger::log_msg(const string data) {
   // just to be sure to avoid empty log msgs
   if(data.length() == 0)
     return;
 
+  // write data to all backends
   for(tBackendIter i=backends.begin(); i!=backends.end(); ++i)
-    (*i)->write(render_msg(data, loglevel, line, fn, func));
+    (*i)->write(data);
 }
 
-// short-cut method for not source-code related logging
-void XLogger::log_msg(const string data, int loglevel) {
-  log_msg(data, loglevel, 0, "---", "---");
-}
 
-// LogStream magic happens here
-// - get an instance of LogStream
-// - stream data into it
-// - destruct it
-// - save the streamed data for the logger (during object destruction)
+// LogStream provides the interface for logging
 LogStream::LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn, const std::string& func)
   : obj(logobj), loglvl(loglvl), line(line), fn(fn), func(func) { }
 
+// Save the streamed data for the logger (during object destruction)
 LogStream::~LogStream() {
   obj->log_msg(string(msg.str()), loglvl, line, string(fn), string(func));
 }
 
+
 // BaseLoggerBackend abstract class
-BaseLoggerBackend::BaseLoggerBackend(const string& my_id)
-  : id(my_id) { }
+BaseLoggerBackend::BaseLoggerBackend(const string& my_id, const string& my_name)
+  : id(my_id), name(my_name) { }
+
+// Hook for custom initialization 
 void BaseLoggerBackend::init() { }
+
+// Hook for custom destructor/cleanup
 void BaseLoggerBackend::cleanup() { }
+
 
 // FileBackend realization
 FileBackend::FileBackend(const string& my_id, const string& fn)
-  : filename(fn), BaseLoggerBackend(my_id) { }
+  : filename(fn), BaseLoggerBackend(my_id, "file-append") { }
 
+// writing to file: opening - appending message - closing 
 void FileBackend::write(const string& msg) {
   ofstream fd(filename.c_str(), ios::app);
   fd.write(msg.c_str(), msg.size());
   fd.close();
 }
 
+
 // ConsoleBackend realization
-ConsoleBackend::ConsoleBackend(const string& my_id)
-  : BaseLoggerBackend(my_id) {}
+ConsoleBackend::ConsoleBackend(const string& my_id) 
+  : BaseLoggerBackend(my_id, "stdout") {}
+
+// write to stdout through "cout"
 void ConsoleBackend::write(const string& msg) {
   cout << msg;
 }
 
+
 // MemoryBackend
-MemoryBackend::MemoryBackend(const string& my_id) : BaseLoggerBackend(my_id) {
+MemoryBackend::MemoryBackend(const string& my_id) : BaseLoggerBackend(my_id, "memory") {
   log_msgs.clear();
 }
+
+// save data to logger vector
 void MemoryBackend::write(const string& msg) {
   log_msgs.push_back(msg);
 }

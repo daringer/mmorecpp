@@ -130,7 +130,7 @@ void print_stacktrace(uint max_frames) {
       if(status == 0) {
         funcname = ret; // use possibly realloc()-ed string
         cerr << "[BT] " << symlist[i] << " " \
-             << funcname << "+" << begin_offset << endl;
+             << ret << "+" << begin_offset << endl;
       } else { // demangle failes
         cerr << "[BT] " << symlist[i] << " " \
              << begin_name << "+" << begin_offset << endl;
