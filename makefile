@@ -26,6 +26,8 @@ objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
+#include makefile.inc
+
 .PHONY: all
 
 clean:
@@ -39,5 +41,9 @@ $(LIB): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIB) $(OBJECTS)
 	$(RANLIB) $(LIB)
 
+analyze:
+	scan-build -V -o /tmp/clang_sca make -j4 CCC="scan-build -o /tmp/clang_sca/ $(CCC)"
 
-include ./makefile.inc
+cldoc:
+	cldoc $(CCFLAGS) -- --output doc --report *.cc *.h
+

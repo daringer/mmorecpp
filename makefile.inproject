@@ -39,4 +39,8 @@ $(LIB): $(SOURCES) $(OBJECTS) $(MAKEFILE) $(MAKEFILEINC)
 
 incl_file: $(INCL_LIB)
 
-include makefile.inc
+analyze:
+	scan-build -V -o /tmp/clang_sca make -j4 CCC="scan-build -o /tmp/clang_sca/ $(CCC)"
+
+cldoc:
+	cldoc $(CCFLAGS) -- --output doc --report *.cc *.h
