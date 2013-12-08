@@ -16,6 +16,9 @@
 
 #define NO_ALLOC_MACRO_OVERRIDE
 
+// NEED TWO MEM_TRACKER header files
+// one for this .cc file 
+// another one for the target source files
 #include "mem_tracker.h"
 
 using namespace std;
