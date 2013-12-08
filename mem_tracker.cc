@@ -240,16 +240,13 @@ string get_memory_tracker_results(bool verbose) {
   return ss.str();
 }
 
-// saving pointer to original ::exit() function call
-auto original_exit = &::exit;
-
 /** To avoid a segfault on exit, if MEM_TRACKER is used.
  *  (Segfault due to the automated cleanup of MemTracker datastructures on leaving scope) */
 void exit(int status) throw() {
   ALLOCATED_PTRS.clear();
   ARCHIVED_PTRS.clear();
   // calling "real" exit()
-  original_exit(status);
+  _exit(status);
 }
 
 /** initilize the memory tracker variables */
