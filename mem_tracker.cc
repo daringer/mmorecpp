@@ -1,3 +1,10 @@
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <stdlib.h>
+#include <unistd.h>
+//#include "atexit.h"
+//#include "thread_private.h"
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -230,15 +237,16 @@ string get_memory_tracker_results(bool verbose) {
   return ss.str();
 }
 
+// saving pointer to original ::exit() function call
+auto original_exit = &::exit;
+
 /** To avoid a segfault on exit, if MEM_TRACKER is used.
- *  (Segfault due to the automated cleanup of std::map on leaving scope) */
+ *  (Segfault due to the automated cleanup of MemTracker datastructures on leaving scope) */
 void exit(int status) throw() {
   ALLOCATED_PTRS.clear();
   ARCHIVED_PTRS.clear();
-  // abort() is not entirely correct here -
-  // FIXME: How to call the "original" exit() after overriding it?
-  // (Save a funtion pointer to the original function?)
-  abort();
+  // calling "real" exit()
+  original_exit(status);
 }
 
 /** initilize the memory tracker variables */
