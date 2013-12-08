@@ -1,3 +1,7 @@
+// have to globally activate it, 
+// FIXME: testing suite should separate and compile each TestSuite on its own 
+#define MEMORY_TRACKER_ACTIVE 1
+
 #include "testing_suite.h"
 
 #include "fs.cc"

@@ -7,6 +7,18 @@
 #include <unordered_map>
 #include <map>
 
+/** Set to 1 to activate global memory leak tracker. Attention: activating
+ *  this leads to a lot of overhead. Default is 0 -> off!
+ *  prefereably activate the memory tracker during compiletime via 
+ *  -DMEMORY_TRACKER_ACTIVE */
+#ifndef MEMORY_TRACKER_ACTIVE
+#define MEMORY_TRACKER_ACTIVE 0
+#else
+#define MEMORY_TRACKER_ACTIVE 1
+#endif 
+
+#if MEMORY_TRACKER_ACTIVE 
+
 // allocation/deletion position (filename, lineno)
 typedef std::pair<std::string, size_t> tMemOpPos;
 
@@ -96,4 +108,6 @@ void __handle_delete_request(void* ptr);
 #define new OVERRIDE_NEW
 #endif
 
-#endif
+#endif // if MEMORY_TRACKER_ACTIVE
+
+#endif // if header already included

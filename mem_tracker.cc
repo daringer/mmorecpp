@@ -2,8 +2,6 @@
 #include <sys/mman.h>
 #include <stdlib.h>
 #include <unistd.h>
-//#include "atexit.h"
-//#include "thread_private.h"
 
 #include <iostream>
 #include <vector>
@@ -14,8 +12,6 @@
 
 #include "xstring.h"
 
-#define NO_ALLOC_MACRO_OVERRIDE
-
 // NEED TWO MEM_TRACKER header files
 // one for this .cc file 
 // another one for the target source files
@@ -23,6 +19,8 @@
 
 using namespace std;
 
+// fully remove MemoryTracker, if not needed
+#if MEMORY_TRACKER_ACTIVE
 
 /** actually define the global (extern-ed) variables here
  *  and do some initialization directly at the beginning of main() */
@@ -265,3 +263,5 @@ void init_memory_tracker() {
   ALLOCATED_PTRS.clear();
   ARCHIVED_PTRS.clear();
 }
+
+#endif // MEMORY_TRACKER_ACTIVE
