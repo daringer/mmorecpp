@@ -15,7 +15,7 @@ void TOOLS::tools_lib_exception_handler() {
   }
 
   cout << "[i] exiting now..." << std::endl;
-  abort();
+  exit(1);
 }
 
 void TOOLS::signal_handler(int sig) {
