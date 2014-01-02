@@ -80,8 +80,13 @@ void BaseException::set_message(const string& msg="") {
  */
 
 void print_stacktrace(uint max_frames) {
-  cerr << "[BT] Showing stacktrace: " << endl;
+  cout << "[BT] Showing stacktrace: " << endl;
+//  for(string& s : get_stackdata(max_frames)) {
+//    cout << "[BT] " << s << endl;
+//  }
+}
 
+void get_stackdata(uint max_frames) {
   void* addrlist[max_frames+1];
   int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
@@ -94,7 +99,7 @@ void print_stacktrace(uint max_frames) {
   char** symlist = backtrace_symbols(addrlist, addrlen);
 
   size_t funcnamesize = 256;
-  char* funcname = (char*)malloc(funcnamesize);
+  char* funcname = (char*) malloc(funcnamesize);
 
   // demangle all functionnames
   for(int i=1; i<addrlen; ++i) {
@@ -114,9 +119,9 @@ void print_stacktrace(uint max_frames) {
         break;
       }
     }
-
-    if(begin_name && begin_offset && end_offset
-        && begin_name < begin_offset) {
+    
+    string tmp;
+    if(begin_name && begin_offset && end_offset && begin_name < begin_offset) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
       *end_offset++ = '\0';
@@ -126,18 +131,30 @@ void print_stacktrace(uint max_frames) {
       // __cxa_demangle():
 
       int status;
-      char* ret = abi::__cxa_demangle(begin_name,
-                                      funcname, &funcnamesize, &status);
+      char* ret = abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
+      cout << "status: " << status << endl;
+      // use possibly realloc()-ed string
       if(status == 0) {
-        funcname = ret; // use possibly realloc()-ed string
-        cerr << "[BT] " << symlist[i] << " " \
-             << ret << "+" << begin_offset << end_offset << endl;
-      } else { // demangle failes
-        cerr << "[BT] " << symlist[i] << " " \
-             << begin_name << "+" << begin_offset << end_offset << endl;
+        funcname = ret; 
+        cout << funcname << endl;
+        //tmp = string(funcname);
+      // demangle failed
+      } else {
+        cout << symlist[i] << endl;
+       //tmp = string(symlist[i]); 
       }
-    } else // parsing failed
-      cerr << "[BT]" << symlist[i] << endl;
+      cout << " EVER HERE???" << endl;
+    // parsing failed
+    } else {
+        cout << symlist[i] << endl;
+
+      //tmp = string(symlist[i]);
+    }
+
+    // move into vector
+    //cout << tmp << endl;
+    //cout << out.size() << endl;
+    //out.push_back(tmp);
   }
   free(funcname);
   free(symlist);

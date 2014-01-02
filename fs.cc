@@ -54,6 +54,7 @@ vector<Path> Path::listdir(bool recursive) {
         out.push_back(Path(entry->d_name) + *i);
     }
   }
+  free(dir);
   return out;
 }
 

@@ -34,8 +34,8 @@ unsigned long long MEMORY_COUNT_DELETE;
 bool USE_MEM_TRACKER;
 
 /** temporary save variables provided during "delete" call " */
-const char* ____DELETE_FILENAME____;
-size_t ____DELETE_LINE____;
+//const char* ____DELETE_FILENAME____;
+//size_t ____DELETE_LINE____;
 
 /** the two main "databases" for the pointers */
 tPtrDataStorage ALLOCATED_PTRS;
@@ -73,14 +73,8 @@ void* __handle_new_request(size_t size, const char* fn, size_t line) _GLIBCXX_TH
   return out;
 }
 
-/** save meta-data (filename, lineno) into tmp-vars for __handle_delete_request */
-void __handle_delete_meta_data(const char* fn, const size_t& line) {
-  ____DELETE_FILENAME____ = fn;
-  ____DELETE_LINE____ = line;
-}
-
 /** handle delete-call */
-void __handle_delete_request(void* ptr) {
+void __handle_delete_request(void* ptr, const char* fn, size_t line) {
   if(USE_MEM_TRACKER) {
     tPtrDataStorageIter i = ALLOCATED_PTRS.find(ptr);
     if(i != ALLOCATED_PTRS.end()) {
@@ -91,8 +85,7 @@ void __handle_delete_request(void* ptr) {
       ALLOCATED_PTRS.erase(ptr);
 
       ARCHIVED_PTRS.back().deleted = true;
-      ARCHIVED_PTRS.back().delete_call = \
-                                         make_pair(string(____DELETE_FILENAME____), ____DELETE_LINE____);
+      ARCHIVED_PTRS.back().delete_call = make_pair(string(fn), line);
 
       CALL_COUNT_DELETE++;
       MEMORY_COUNT_DELETE += ARCHIVED_PTRS.back().size;
@@ -103,21 +96,7 @@ void __handle_delete_request(void* ptr) {
   free(ptr);
 }
 
-/** Global "new" operator overload */
-void* operator new(size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc) {
-  return __handle_new_request(size, fn, line);
-}
-void* operator new[](size_t size, const char* fn, size_t line) _GLIBCXX_THROW(std::bad_alloc) {
-  return __handle_new_request(size, fn, line);
-}
 
-/** Global "delete" operator overload */
-void operator delete(void* ptr) _GLIBCXX_USE_NOEXCEPT {
-  __handle_delete_request(ptr);
-}
-void operator delete[](void* ptr) _GLIBCXX_USE_NOEXCEPT {
-  __handle_delete_request(ptr);
-}
 
 /** return delete or new statistics */
 string __print_memory_details(bool delete_mode, bool verbose) {
@@ -254,9 +233,6 @@ void init_memory_tracker() {
   CALL_COUNT_DELETE = 0;
   MEMORY_COUNT_NEW = 0;
   MEMORY_COUNT_DELETE = 0;
-
-  ____DELETE_FILENAME____ = "";
-  ____DELETE_LINE____ = 0;
 
   // set to true to start tracking!
   USE_MEM_TRACKER = false;
