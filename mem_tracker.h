@@ -11,6 +11,7 @@
  *  this leads to a lot of overhead. Default is 0 -> off!
  *  prefereably activate the memory tracker during compiletime via 
  *  -DMEMORY_TRACKER_ACTIVE */
+#define MEMORY_TRACKER_ACTIVE
 #ifndef MEMORY_TRACKER_ACTIVE
 #define MEMORY_TRACKER_ACTIVE 0
 #else

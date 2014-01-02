@@ -4,7 +4,6 @@
 #include <signal.h>
 #include <execinfo.h>
 #include <cxxabi.h>
-#include <stdio.h>
 #include <unistd.h>
 
 #include <string>
@@ -54,6 +53,7 @@ void signal_handler(int sig);
 
 // print a stacktrace
 void print_stacktrace(uint max_frames = 63);
+
 
 
 #define DEFINE_EXCEPTION(CLASS,PARENT) \

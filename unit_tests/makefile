@@ -3,17 +3,21 @@ AR = ar
 RANLIB = ranlib
 RM = rm -f
 
-PARTS=fs xtime template_parser
+#PARTS=fs xtime template_parser
+PARTS=
 SOURCES.cc = run_tests.cc $(addsuffix .cc,$(PARTS))
 
-LIBOBJ =  ../*.a
+LIBOBJ = #../libtools.*.a
 SOURCES = $(SOURCES.cc) $(LIBOBJ)
 
-CCFLAGS = -w -I. -I.. -ggdb -g -Wall -pedantic -rdynamic -std=c++0x
+CCFLAGS = -w -g -Wall -pedantic -rdynamic -std=c++0x
 PROGRAM = run_tests
-LDFLAGS = -ggdb -rdynamic -g -w
+LDFLAGS = -g -rdynamic 
 
-LIBS = -lm
+INCS = -I.. -I. -I/usr/include/libdwarf -I/usr/include/elfutils
+LIBS = -L.. -ltools.lin64 -ldwarf -ldw -lm -lelf -pthread 
+#LIBS = ../libtools.lin64.a -ldwarf -ldw -lm -lelf -pthread 
+
 
 all:	 $(PROGRAM)
 objects: $(SOURCES) $(OBJECTS)
@@ -24,7 +28,7 @@ clean:
 	$(RM) $(OBJECTS) $(PROGRAM)
 
 $(PROGRAM): $(SOURCES)
-	$(CCC) $(CCFLAGS) $(LDFLAGS) -o $@ $(SOURCES)
+	$(CCC) $(INCS) $(CCFLAGS) $(LDFLAGS) -o $@ $(SOURCES) $(LIBS)
 
 #%.o: $(SOURCES)
 #	$(CCC) $(CCFLAGS) $(LDFLAGS) -c -g $(@:%.o=%.cc) -o $@ 
