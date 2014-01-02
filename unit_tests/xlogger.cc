@@ -12,9 +12,11 @@ using namespace std;
 
 #define LOGID "system"
 
+#ifndef GENERATE_HEADER
 void loglvl_action() {
   INFO << "Loglvl action successful!";
 }
+#endif
 
 START_SUITE(XLoggerToolsTestSuite) {
       REG_TEST(simple)

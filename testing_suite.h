@@ -34,6 +34,8 @@ typedef tTestMap::iterator tTestIter;
 typedef tTestResultMap::iterator tTestResultIter;
 typedef tTestSuiteMap::iterator tTestSuiteIter;
 
+// selects either .h file generation or .cc 
+//#define GENERATE_HEADER
 
 #define CHECK(expr) \
   if(do_checks) \
@@ -76,20 +78,43 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
     add_iter_check(errs.empty(), _count, errs, __LINE__); \
   } while(0)
 
-#define REG_TEST(method) \
-  add_test(#method, &tTestSuite :: test_ ## method);
 
-#define MAKE_TEST(name) \
-  void test_ ## name(bool do_checks=true, bool return_on_fail=true)
+// generating header code
+/*#ifdef GENERATE_HEADER
+
+#define REG_TEST(method) \
+  public: method(bool do_checks=true, bool return_on_fail=true);
+
+#define START_SUITE(name) \
+  class name : public TestSuite
+
+#define MAKE_TEST(name) {}
+
+#define END_SUITE() \
+  typedef name tTestSuite; \
+  name(); \
+  };
+
+// generating sourcefile
+#else*/
 
 #define START_SUITE(name) \
   class name : public TestSuite { \
     public: \
       typedef name tTestSuite; \
       name() \
-       
+
+#define MAKE_TEST(name) \
+  void test_ ## name(bool do_checks=true, bool return_on_fail=true)
+
+#define REG_TEST(method) \
+  add_test(#method, &tTestSuite :: test_ ## method);
+
 #define END_SUITE() \
   };
+
+//#endif
+
 
 #define PREPARE_WITH(fnc) \
   test_ ## fnc(false);

@@ -6,6 +6,7 @@ using namespace TOOLS;
 void TOOLS::tools_lib_exception_handler() {
   std::cout << endl << "[E] An uncaught exception occurred!" << std::endl;
   print_stacktrace();
+  cout << "after stacktrace" << endl;
   try {
     std::exception_ptr exc = std::current_exception();
     std::rethrow_exception(exc);
@@ -118,7 +119,7 @@ void print_stacktrace(uint max_frames) {
         && begin_name < begin_offset) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
-      *end_offset = '\0';
+      *end_offset++ = '\0';
 
       // mangled name is now in [begin_name, begin_offset) and caller
       // offset in [begin_offset, end_offset). now apply
@@ -130,10 +131,10 @@ void print_stacktrace(uint max_frames) {
       if(status == 0) {
         funcname = ret; // use possibly realloc()-ed string
         cerr << "[BT] " << symlist[i] << " " \
-             << ret << "+" << begin_offset << endl;
+             << ret << "+" << begin_offset << end_offset << endl;
       } else { // demangle failes
         cerr << "[BT] " << symlist[i] << " " \
-             << begin_name << "+" << begin_offset << endl;
+             << begin_name << "+" << begin_offset << end_offset << endl;
       }
     } else // parsing failed
       cerr << "[BT]" << symlist[i] << endl;
@@ -141,4 +142,5 @@ void print_stacktrace(uint max_frames) {
   free(funcname);
   free(symlist);
 }
+
 
