@@ -7,6 +7,9 @@ using namespace TOOLS;
  * @brief empty constructor
  */
 XString::XString() : string() { }
+
+XString::~XString() { }
+
 /**
  * @brief strip all leading and trailing occurences of the given char(s)
  * @param s the char(s) to be stripped

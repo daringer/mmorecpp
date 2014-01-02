@@ -2,8 +2,6 @@
 
 #include "xregex.h"
 
-
-
 using namespace std;
 using namespace TOOLS;
 
@@ -18,9 +16,6 @@ RegexException::RegexException(int errcode, const regex_t* pattern) : BaseExcept
 Regex::Regex(const std::string& query) : raw_pattern(query), pattern(new regex_t) {
   bzero(pattern, sizeof(regex_t));
 
-  /*char* buf = new char[2048];
-  bzero(buf, 2048);
-  strncpy(buf, raw_pattern.c_str(), 2048);*/
   int ret = regcomp(pattern, query.c_str(), REG_EXTENDED);
   if(ret != 0)
     throw RegexException(ret, pattern);
@@ -28,6 +23,7 @@ Regex::Regex(const std::string& query) : raw_pattern(query), pattern(new regex_t
 
 Regex::~Regex() {
   regfree(pattern);
+  free(pattern);
 }
 
 void Regex::apply_pattern(const string& s, int max_results) {
@@ -46,7 +42,6 @@ void Regex::apply_pattern(const string& s, int max_results) {
       group_data.push_back(s.substr(res[group].rm_so + offset, res[group].rm_eo - res[group].rm_so));
     results.push_back(group_data);
 
-    //int len = (res[0].rm_eo - res[0].rm_so);
     ptr += res[0].rm_eo;
     offset += res[0].rm_eo;
 

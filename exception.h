@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 
 namespace TOOLS {
 /* @brief The global (abstract) exception-base-class for all
@@ -53,7 +54,7 @@ void signal_handler(int sig);
 
 // print a stacktrace
 void print_stacktrace(uint max_frames = 63);
-
+void get_stackdata(uint max_frames = 63);
 
 
 #define DEFINE_EXCEPTION(CLASS,PARENT) \

@@ -40,7 +40,7 @@ class Regex {
     std::string raw_pattern;
 
     Regex(const std::string& pattern);
-    ~Regex();
+    virtual ~Regex();
 
     bool match(const std::string& s);
     Matchinglist& search(const std::string& s);
