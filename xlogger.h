@@ -84,6 +84,7 @@ class XLogger {
     typedef void (*tLogActionPtr)(void);
     typedef std::map<int, tLogActionPtr> tLevelActionMap;
     typedef std::map<int, std::string> tLevelDescMap;
+    typedef std::map<BaseLoggerBackend*, std::string> tBackendTemplateMap;
 
     XLogger(const std::string& id);
     ~XLogger();
@@ -91,9 +92,9 @@ class XLogger {
     static tXLoggerMap log_map;
     static XLogger* get(const std::string& id) throw(NoSuchXLoggerAvailable);
 
-    void add_backend(BaseLoggerBackend* back);
+    void add_backend(BaseLoggerBackend* back, const std::string& tmpl="");
 
-    void set_logging_template(const std::string& tmpl);
+    void set_logging_template(BaseLoggerBackend* back, const std::string& tmpl);
     void set_time_format(const std::string& format);
     void set_loglvl_action(int loglvl, tLogActionPtr func);
     void set_loglvl_desc(int loglvl, const std::string& desc);
@@ -105,11 +106,11 @@ class XLogger {
     tBackendList backends;
     tLevelActionMap lvl2action;
     tLevelDescMap lvl2desc;
-    std::string log_template;
+    tBackendTemplateMap back2tmpl;
     std::string time_format;
     std::string id;
 
-    std::string render_msg(const std::string& data, int loglevel, int line, const std::string& fn, const std::string& func);
+    std::string render_msg(BaseLoggerBackend* back, const std::string& data, int loglevel, int line, const std::string& fn, const std::string& func);
     std::string get_fancy_level(int lvl);
 };
 

@@ -14,7 +14,6 @@ tXLoggerMap XLogger::log_map;
 // Make sure you place a instance of this logger inside the heap! No STACK use!
 XLogger::XLogger(const string& id) :
   id(id),
-  log_template("[%%FANCYLVL%%] %%TIME%% (%%FILE%%:%%LINE%% call: %%FUNC%%) || %%MSG%%\n"),
   time_format("%d.%m - %T") {
   
   if(log_map.find(id) != log_map.end())
@@ -36,7 +35,9 @@ XLogger::~XLogger() {
 }
 
 // adding a backend
-void XLogger::add_backend(BaseLoggerBackend* back) {
+void XLogger::add_backend(BaseLoggerBackend* back, const string& tmpl) {
+  if(tmpl == "")
+    back2tmpl[back] = "[%%FANCYLVL%%] %%TIME%% (%%FILE%%:%%LINE%% call: %%FUNC%%) || %%MSG%%\n";
   backends.push_back(back);
   back->init();
   back->write("[XLogger] Initializing backend (" + back->name + ") for logger: " + id + "\n");
@@ -50,8 +51,8 @@ XLogger* XLogger::get(const string& id) throw(NoSuchXLoggerAvailable) {
 }
 
 // accept %%MSG%% , %%TIME%%, %%FANCYLVL%%, %%LOGLVL%%, %%FILE%% , %%FUNC%% , %%LINE%%
-void XLogger::set_logging_template(const string& tmpl) {
-  log_template = tmpl;
+void XLogger::set_logging_template(BaseLoggerBackend* back, const string& tmpl) {
+  back2tmpl[back] = tmpl;
 }
 
 // %%TIME%% is formated according to set_time_format() and strftime()
@@ -78,8 +79,8 @@ string XLogger::get_fancy_level(int lvl) {
 
 
 // render the message
-string XLogger::render_msg(const string& data, int loglevel, int line, const string& fn, const string& func) {
-  XString msg(log_template);
+string XLogger::render_msg(BaseLoggerBackend* back, const string& data, int loglevel, int line, const string& fn, const string& func) {
+  XString msg(back2tmpl[back]);
   return msg.subs("%%MSG%%", data).\
          subs("%%TIME%%", XDateTime(time_format).format()).\
          subs("%%LOGLVL%%", TOOLS::str(loglevel)).\
@@ -91,7 +92,9 @@ string XLogger::render_msg(const string& data, int loglevel, int line, const str
 
 // log message (including meta data)
 void XLogger::log_msg(const string data, int loglevel, int line, const string fn, const string func) {
-  log_msg(render_msg(data, loglevel, line, fn, func));
+  // render and write to all backends
+  for(BaseLoggerBackend* back : backends)
+    back->write(render_msg(back, data, loglevel, line, fn, func));
   
   // check for action with given loglvl
   //if (error_action != NULL)
@@ -107,8 +110,8 @@ void XLogger::log_msg(const string data) {
     return;
 
   // write data to all backends
-  for(tBackendIter i=backends.begin(); i!=backends.end(); ++i)
-    (*i)->write(data);
+  for(BaseLoggerBackend* back : backends)
+    back->write(data);
 }
 
 
