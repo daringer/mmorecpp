@@ -38,6 +38,9 @@ XLogger::~XLogger() {
 void XLogger::add_backend(BaseLoggerBackend* back, const string& tmpl) {
   if(tmpl == "")
     back2tmpl[back] = "[%%FANCYLVL%%] %%TIME%% (%%FILE%%:%%LINE%% call: %%FUNC%%) || %%MSG%%\n";
+  else
+    back2tmpl[back] = tmpl;
+
   backends.push_back(back);
   back->init();
   back->write("[XLogger] Initializing backend (" + back->name + ") for logger: " + id + "\n");
