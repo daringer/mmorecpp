@@ -172,17 +172,18 @@ void ConfigManager::parse(tStringList* args) {
         explicit_set = true;
         set<bool>(id, false);
       }
-      if(explicit_set) 
+      if(explicit_set) {
         args->erase(args->begin(), args->begin()+2);
-       
-    } else {
-      // if not passed, just toggle or set to true
-      if(members[id]->has_default)
-        set<bool>(id, !get<bool>(id));
-      else
-        set<bool>(id, true);
-      args->erase(args->begin());
+        return;
+      }
     }
+       
+    // if not passed, just toggle or set to true
+    if(members[id]->has_default)
+      set<bool>(id, !get<bool>(id));
+    else
+      set<bool>(id, true);
+    args->erase(args->begin());
     return;
   }
 
