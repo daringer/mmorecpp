@@ -3,6 +3,8 @@
 
 #include <pthread.h>
 
+#include <exception.h>
+
 namespace TOOLS {
 /**
  * @brief An abstract class to derive from to implement a thread.
@@ -14,6 +16,8 @@ namespace TOOLS {
  *        And implement your threadtask/job/... inside the overloaded worker()
  */
 
+DEFINE_EXCEPTION(ForkError, BaseException);
+
 class BaseParallel {
   public:
     int* retval;
@@ -22,6 +26,7 @@ class BaseParallel {
     virtual void run() = 0;
     virtual void join(bool blocking=true) = 0;
     virtual bool try_join() = 0;
+    virtual void kill() = 0;
 
     BaseParallel();
     virtual ~BaseParallel();
@@ -32,9 +37,10 @@ class BaseParallel {
 
 class BaseThread : public BaseParallel {
   public:
-    void run();
-    void join(bool blocking=true);
-    bool try_join();
+    virtual void run();
+    virtual void join(bool blocking=true);
+    virtual bool try_join();
+    virtual void kill();
 
     BaseThread();
     virtual ~BaseThread();
@@ -48,14 +54,15 @@ class BaseThread : public BaseParallel {
 
 class BaseProcess : public BaseParallel {
   public:
-    void run();
-    void join(bool blocking=true);
-    bool try_join();
+    virtual void run();
+    virtual void join(bool blocking=true);
+    virtual bool try_join();
+    virtual void kill();
 
     BaseProcess();
     virtual ~BaseProcess();
   protected:
-    int pid;  
+    int pid;
     
     virtual void worker() = 0;
 };
