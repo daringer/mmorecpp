@@ -140,3 +140,11 @@ bool Path::move(const string& to) {
 bool TOOLS::FS::change_dir(const string& path) {
   return (chdir(path.c_str()) == 0);
 }
+
+string TOOLS::FS::current_dir() {
+  char buf[1024];
+  char* dir = getcwd((char*) &buf, 1024);
+  string out;
+  out += dir;
+  return out;
+}
