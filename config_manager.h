@@ -217,8 +217,9 @@ class ConfigManager {
     void parse_config_file(const std::string& fn);
     // write configfile to file
     void write_config_file(std::ostream& fd, bool shorter=false);
-
-
+    
+    // show/get all configuration settings
+    void show_config(std::ostream& ss);
     // print fancy help/usage 
     void usage(std::ostream& ss);
 };

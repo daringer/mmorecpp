@@ -39,6 +39,8 @@ string ConfigDataKeeper::verbose_data(void* raw_data) const {
   else
     cdk = this;
 
+  cout << verbose_type() << endl;
+    
   if(tinfo == typeid(int).name())
     out = str(cdk->get<int>());
   else if(tinfo == typeid(double).name())
@@ -73,7 +75,12 @@ string ConfigOption::verbose_type() const {
 }
 
 string ConfigOption::verbose_data() const {
-  return data.verbose_data();
+  if(was_set)
+    return data.verbose_data();
+  else if(has_default)
+    return verbose_default();
+  else
+    return "<no data>";
 }
 
 string ConfigOption::verbose_default() const {
@@ -334,6 +341,17 @@ bool ConfigManager::is_group_active(const std::string& name) {
 
 bool ConfigManager::is_option_set(const std::string& id) {
   return (get_option(id).was_set || get_option(id).has_default);
+}
+
+void ConfigManager::show_config(ostream& ss) {
+  ss << "Showing all ConfigManager settings:" << endl << endl;
+  for(tGroupPair& grp : groups) {
+    ss << "[Group] -> " << grp.first << endl;
+    for(tOptionPair& opt : grp.second->members) {
+      ss << "[Option] " << opt.first << " = " << \
+            opt.second->verbose_data() << endl;
+    }
+  }
 }
 
 void ConfigManager::usage(ostream& ss) {
