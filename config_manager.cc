@@ -50,7 +50,7 @@ string ConfigDataKeeper::verbose_data(void* raw_data) const {
   else if(tinfo == typeid(tStringMap).name()) {
     tStringList tmp;
     for(auto& key_val : cdk->get<tStringMap>())
-      tmp.push_back(key_val.first + "=" + key_val.second);
+      tmp.push_back(key_val.first + ":" + key_val.second);
     out = XString(",").join(tmp);
   } else if(tinfo == typeid(bool).name())
     out = (cdk->get<bool>()) ? "true" : "false";
@@ -162,12 +162,27 @@ void ConfigManager::parse(tStringList* args) {
 
   // catch boolean value as this doesn't need an arg
   if(tmp->same_data_types<bool>()) {
+    // even if possible, a arg for bools may be passed
+    bool explicit_set = false;
+    if(args->at(1) == "true") {
+      explicit_set = true;
+      set<bool>(id, true);
+    } else if(args->at(1) == "false") {
+      explicit_set = true;
+      set<bool>(id, false);
+      
+    }
+    if(explicit_set) {
+      args->erase(args->begin(), args->begin()+2);
+      return;
+    }
+
+    // if not passed, just toggle or set to true
     if(members[id]->has_default)
       set<bool>(id, !get<bool>(id));
     else
       set<bool>(id, true);
     args->erase(args->begin());
-    return;
   }
 
   if(args->size() < 2)
@@ -202,13 +217,13 @@ void ConfigManager::parse(tStringList* args) {
     set<tStringList>(id, XString(arg).split(","));
     args->erase(args->begin(), args->begin()+2);
     return;
-    // build tStringMap from "," and "=" separated input
+    // build tStringMap from "," and ":" separated input
   }
   if(tmp->same_data_types<tStringMap>()) {
     tStringList tmp = XString(arg).split(",");
     tStringMap tmpmap;
     for(tStringIter i=tmp.begin(); i!=tmp.end(); ++i) {
-      tStringList two = XString(*i).split("=");
+      tStringList two = XString(*i).split(":");
       tmpmap[two[0]] = two[1];
     }
     set<tStringMap>(id, tmpmap);
@@ -236,6 +251,8 @@ void ConfigManager::write_config_file(ostream& fd, bool shorter) {
   for(tGroupPair& grp : groups) {
     if(!shorter)
       fd << "####################################################" << endl;
+    else
+      fd << endl;
     fd << "# [ " << grp.first << " ]" << endl;
     for(tOptionPair& opt : *grp.second) {
       const ConfigOption* c = opt.second;
@@ -296,8 +313,9 @@ void ConfigManager::parse_config_file(const string& fn) {
   fd.close();
 
   try {
-    while(tokens.size() > 0)
+    while(tokens.size() > 0) 
       parse(&tokens);
+    
   } catch(IncompatibleDataTypes& e) {
     e.message += " (inside configfile)";
     throw e;
