@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 
 #include "threading.h"
+#include "xstring.h"
 
 using namespace TOOLS;
 using namespace std;
@@ -40,6 +41,10 @@ bool BaseThread::try_join() {
   return (pthread_tryjoin_np(thread, &retdata) == 0) ? true : false;
 }
 
+void BaseThread::kill() {
+  throw std::exception();
+}
+
 BaseProcess::BaseProcess() : BaseParallel() { }
 
 BaseProcess::~BaseProcess() { }
@@ -48,12 +53,14 @@ void BaseProcess::run() {
   pid = fork();
   int out = -1;
   if(pid < 0) {
-    perror("Could not fork");
+    throw ForkError(pid);
   } else if(pid == 0) {
+    // child
     worker();
     exit(0);
-  } else
-    cout << "[i] child started - pid: " << pid << endl;
+  } else {
+    // parent
+  }
 }
 
 void BaseProcess::join(bool blocking) {
@@ -86,6 +93,11 @@ bool BaseProcess::try_join() {
   return (*retval == 0);
 }
 
+void BaseProcess::kill() {
+  // worst realization ever!!!
+  system((string("killall ") + str(pid)).c_str());
+  system((string("killall -9 ") + str(pid)).c_str());
+}
 
 Mutex::Mutex() {
   pthread_mutex_init(&mutex, NULL);
