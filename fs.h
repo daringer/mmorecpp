@@ -60,6 +60,7 @@ class Path {
 };
 
 bool change_dir(const std::string& path);
+std::string current_dir();
 }
 }
 #endif
