@@ -14,7 +14,8 @@ tXLoggerMap XLogger::log_map;
 // Make sure you place a instance of this logger inside the heap! No STACK use!
 XLogger::XLogger(const string& id) :
   id(id),
-  time_format("%d.%m - %T") {
+  time_format("%d.%m - %T"),
+  min_loglvl(0) {
   
   if(log_map.find(id) != log_map.end())
     throw LoggerIDAlreadyRegistered(id);
@@ -80,6 +81,9 @@ string XLogger::get_fancy_level(int lvl) {
   return lvl2desc[lvl];
 }
 
+void XLogger::set_min_loglvl(int loglvl) {
+  min_loglvl = loglvl;
+}
 
 // render the message
 string XLogger::render_msg(BaseLoggerBackend* back, const string& data, int loglevel, int line, const string& fn, const string& func) {
@@ -94,14 +98,18 @@ string XLogger::render_msg(BaseLoggerBackend* back, const string& data, int logl
 }
 
 // log message (including meta data)
-void XLogger::log_msg(const string data, int loglevel, int line, const string fn, const string func) {
+void XLogger::log_msg(const string data, int loglevel, int line, 
+    const string fn, const string func) {
+
+  // if loglvl below min_loglvl, discard!
+  if(loglevel < min_loglvl)
+    return;
+
   // render and write to all backends
   for(BaseLoggerBackend* back : backends)
     back->write(render_msg(back, data, loglevel, line, fn, func));
   
   // check for action with given loglvl
-  //if (error_action != NULL)
-  //  error_action();
   if (lvl2action.find(loglevel) != lvl2action.end())
     lvl2action[loglevel]();
 }

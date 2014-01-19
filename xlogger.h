@@ -28,7 +28,6 @@
 #define ERROR \
   LOG(10, LOGID)
 
-
 namespace TOOLS {
 
 DEFINE_EXCEPTION(BackendFailedToWrite, BaseException)
@@ -100,6 +99,8 @@ class XLogger {
     void set_loglvl_action(int loglvl, tLogActionPtr func);
     void set_loglvl_desc(int loglvl, const std::string& desc);
 
+    void set_min_loglvl(int loglvl);
+
     void log_msg(const std::string data, int loglevel, int line, 
                  const std::string fn, const std::string func);
     void log_msg(const std::string data);
@@ -111,6 +112,7 @@ class XLogger {
     tBackendTemplateMap back2tmpl;
     std::string time_format;
     std::string id;
+    int min_loglvl;
 
     std::string render_msg(BaseLoggerBackend* back, const std::string& data, 
                            int loglevel, int line, const std::string& fn, 
