@@ -163,18 +163,19 @@ void ConfigManager::parse(tStringList* args) {
   // catch boolean value as this doesn't need an arg
   if(tmp->same_data_types<bool>()) {
     // even if possible, a arg for bools may be passed
-    bool explicit_set = false;
-    if(args->size() > 1 && args->at(1) == "true") {
-      explicit_set = true;
-      set<bool>(id, true);
-    } else if(args->at(1) == "false") {
-      explicit_set = true;
-      set<bool>(id, false);
-    }
-    if(explicit_set) {
-      args->erase(args->begin(), args->begin()+2);
+    if(args->size() > 1) {
+      bool explicit_set = false;
+      if(args->at(1) == "true") {
+        explicit_set = true;
+        set<bool>(id, true);
+      } else if(args->at(1) == "false") {
+        explicit_set = true;
+        set<bool>(id, false);
+      }
+      if(explicit_set) 
+        args->erase(args->begin(), args->begin()+2);
+       
     } else {
-      cout << "ELSE: " << cmd << " - " << args->at(1) << endl;
       // if not passed, just toggle or set to true
       if(members[id]->has_default)
         set<bool>(id, !get<bool>(id));
