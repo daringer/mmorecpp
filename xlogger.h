@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <ostream>
 #include <vector>
 #include <map>
 
@@ -99,7 +100,8 @@ class XLogger {
     void set_loglvl_action(int loglvl, tLogActionPtr func);
     void set_loglvl_desc(int loglvl, const std::string& desc);
 
-    void log_msg(const std::string data, int loglevel, int line, const std::string fn, const std::string func);
+    void log_msg(const std::string data, int loglevel, int line, 
+                 const std::string fn, const std::string func);
     void log_msg(const std::string data);
 
   private:
@@ -110,7 +112,9 @@ class XLogger {
     std::string time_format;
     std::string id;
 
-    std::string render_msg(BaseLoggerBackend* back, const std::string& data, int loglevel, int line, const std::string& fn, const std::string& func);
+    std::string render_msg(BaseLoggerBackend* back, const std::string& data, 
+                           int loglevel, int line, const std::string& fn, 
+                           const std::string& func);
     std::string get_fancy_level(int lvl);
 };
 
@@ -124,11 +128,17 @@ class LogStream {
     std::stringstream msg;
 
   public:
-    LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn, const std::string& func);
+    LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn, 
+              const std::string& func);
     ~LogStream();
 
+    // STILL NO endl support here, weird error:
+    // template argument deduction/substitution failed:
+    // note: ‘TOOLS::LogStream’ is not derived from 
+    //       ‘std::basic_ostream<_CharT, _Traits>’
+    // AGGRGRRRRr
     template<class T>
-    LogStream& operator<<(T obj) {
+    LogStream& operator<<(const T& obj) {
       msg << obj;
       return *this;
     }

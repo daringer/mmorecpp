@@ -127,7 +127,6 @@ LogStream::~LogStream() {
   obj->log_msg(string(msg.str()), loglvl, line, string(fn), string(func));
 }
 
-
 // BaseLoggerBackend abstract class
 BaseLoggerBackend::BaseLoggerBackend(const string& my_id, const string& my_name)
   : id(my_id), name(my_name) { }
