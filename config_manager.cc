@@ -39,8 +39,6 @@ string ConfigDataKeeper::verbose_data(void* raw_data) const {
   else
     cdk = this;
 
-  cout << verbose_type() << endl;
-    
   if(tinfo == typeid(int).name())
     out = str(cdk->get<int>());
   else if(tinfo == typeid(double).name())
