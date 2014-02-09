@@ -54,7 +54,7 @@ class BaseThread : public BaseParallel {
 
 class BaseProcess : public BaseParallel {
   public:
-    virtual void run();
+    virtual void run(const std::string stdout_fn="", const std::string stderr_fn="");
     virtual void join(bool blocking=true);
     virtual bool try_join();
     virtual void kill();

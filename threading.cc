@@ -49,12 +49,20 @@ BaseProcess::BaseProcess() : BaseParallel() { }
 
 BaseProcess::~BaseProcess() { }
 
-void BaseProcess::run() {
+void BaseProcess::run(const string stdout_fn, const string stderr_fn) {
   pid = fork();
   int out = -1;
   if(pid < 0) {
     throw ForkError(pid);
   } else if(pid == 0) {
+    // if stdout_fn or stderr_fn are != "",
+    //  redirect stdout/err to this/these file(s)
+    if(stdout_fn != "")
+      freopen(stdout_fn.c_str(), "w", stdout); 
+
+    if(stderr_fn != "")
+      freopen(stderr_fn.c_str(), "w", stderr); 
+
     // child
     worker();
     exit(0);
