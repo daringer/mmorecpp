@@ -15,7 +15,7 @@ PROGRAM = run_tests
 LDFLAGS = -g -rdynamic 
 
 INCS = -I.. -I. -I/usr/include/libdwarf -I/usr/include/elfutils
-LIBS = -L.. -ltools.lin64 -ldwarf -ldw -lm -lelf -pthread 
+LIBS = -L.. -ltools.lin64 -lm -pthread 
 #LIBS = ../libtools.lin64.a -ldwarf -ldw -lm -lelf -pthread 
 
 
