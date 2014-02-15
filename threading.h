@@ -23,7 +23,7 @@ class BaseParallel {
     int* retval;
     void* retdata;
 
-    virtual void run() = 0;
+    virtual void run(const std::string stdout_fn="", const std::string stderr_fn="") = 0;
     virtual void join(bool blocking=true) = 0;
     virtual bool try_join() = 0;
     virtual void kill() = 0;
