@@ -17,6 +17,7 @@ START_SUITE(TemplateParserToolsTestSuite) {
   REG_TEST(if_simple)
   REG_TEST(if_else)
   REG_TEST(if_not)
+  REG_TEST(subtemplate)
 }
 
 virtual void setup() { }
@@ -96,5 +97,37 @@ MAKE_TEST(if_not) {
   p.set_key("bool_var", "false");
   CHECK(p.render() == "was false");
 }
+
+MAKE_TEST(subtemplate) {
+  string s("{% subtemplate mysub %}\n");
+  s += "begin:{{ single_var }}:endline\n";
+  s += "{% if bool_var %}is true{% else %}is false{% end %}\n";
+  s += "{% for i to 5 %}i:{{ i }}\n{% end %}\n";
+  s += "A last one: {{ foobar }}\n";
+  s += "{% end %}\n";
+  s += "Something after the subtemplate: {{ myvar }}\n";
+  s += "{% for i to #subs %}i:{{ subs.i }}\n{% end %}\n";
+  s += "And finally, a place to insert the subtemplate:\n{{ single_sub_target }}\n";
+  istringstream ss(s);
+  TemplateParser p(ss);
+
+  p.set_key("myvar", "Something interesting here, whoooot?");
+  tStringList sl = p.get_subtemplates();
+
+  CHECK(sl.size() == 1);
+  
+  TemplateParser* tp = p.new_subtemplate(sl[0]);
+  tp->set_key("single_var", "my perfect single variable inside the subtemplate");
+  tp->set_key("bool_var", "true");
+  tp->set_key("foobar", "wohooo");
+  p.add_to_key("subs", tp);
+  p.add_to_key("subs", tp);
+  p.add_to_key("subs", tp);
+  p.set_key("single_sub_target", tp);
+  string out(p.render());
+
+  CHECK(out.size() == 582);
+}
+
 
 END_SUITE()

@@ -11,7 +11,7 @@
 #include "executor.cc"
 #include "xstring.cc"
 #include "xlogger.cc"
-#include "mem_tracker.cc"
+//#include "mem_tracker.cc"
 
 using namespace std;
 using namespace TOOLS;
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
   f.add_suite<ExecutorToolsTestSuite>("TOOLS::Executor");
   f.add_suite<XStringToolsTestSuite>("TOOLS::XString");
   f.add_suite<XLoggerToolsTestSuite>("TOOLS::XLogger");
-  f.add_suite<MemTrackerToolsTestSuite>("TOOLS::MemTracker");
+  //f.add_suite<MemTrackerToolsTestSuite>("TOOLS::MemTracker");
   f.run();
   f.show_result_overview();
 
