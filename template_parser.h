@@ -79,12 +79,16 @@ class ASTNode {
  *
  * The provided set of functionalities at this moment:
  *   - simple replacement of variables {{ simple }}
+ *
  *   - simple sub-template (its content is handled as a separate template)
  *     {% subtemplate myname1 %}
  *       Something {{ my var }} Something else ...
  *     {% end %}
+ *
  *   - simple resolved replacement of vector variables {{ my_vector.i }}
+ *
  *   - length of a filled vector {{ #my_vector }} (also usable in for/if)
+ *
  *   - 'if-else-end' control-structure, only one variable and no
  *     expression allowed. There is an exception for 'not', which simply
  *     does what you expect with the expression/variable:
@@ -101,6 +105,9 @@ class ASTNode {
  *       Write Line {{ i }} - some content outputted every iteration
  *       {% if not i.last_loop %}everytime except in the last loop{% end %}
  *     {% end %}
+ *
+ *   - "{% end %}" may be any of: {% end[for|if|subtemplate] %} 
+ *     (is not sematically verified a.t.m.)
  *     \endcode
  *
  * @todo better error handling and catching
@@ -146,12 +153,12 @@ class TemplateParser {
     void replace_template(const std::string& template_path);
 
     void set_key(const std::string& name, const std::string& val);
-    void set_key(const std::string& name, const TemplateParser& tp);
+    void set_key(const std::string& name, TemplateParser* tp);
     // set_key() could also understand things like elems.width, which would make this a (2D) array
     // this would mean elems.i.width.j would access the 2-dimensional array
     // void set_key(const std::string& name);                           /// <--- this could mean: "I'm an array"
     void add_to_key(const std::string& name, const std::string& val);   /// <--- then this should fail on non-boxes
-    void add_to_key(const std::string& name, const TemplateParser& tp);
+    void add_to_key(const std::string& name, TemplateParser* tp);
 
     TemplateParser* new_subtemplate(const std::string& tmpl_name);
     tStringList get_subtemplates();

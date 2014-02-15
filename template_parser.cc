@@ -46,10 +46,11 @@ void TemplateParser::read_template(istream& stream) {
  */
 TemplateParser::TemplateParser(const string& template_path)
   : is_rendered(false), no_cleanup(false),
-    tmpl_filename(template_path), root_node(new ASTNode) {
+    tmpl_filename(template_path), root_node(nullptr) {
 
   ifstream stream(template_path.c_str());
   read_template(stream);
+  generate_ast();
 }
 /**
  * @brief constructor, to directly handle a stream
@@ -57,9 +58,10 @@ TemplateParser::TemplateParser(const string& template_path)
  */
 TemplateParser::TemplateParser(istream& stream)
   : is_rendered(false), no_cleanup(false), 
-    tmpl_filename(""), root_node(new ASTNode) {
+    tmpl_filename(""), root_node(nullptr) {
 
   read_template(stream);
+  generate_ast();
 }
 /**
  * @brief constructor, to directly handle a stream
@@ -86,7 +88,13 @@ void TemplateParser::replace_template(const string& template_path) {
   ifstream stream(template_path.c_str());
   tmpl_filename = template_path;
   read_template(stream);
+
+  if(root_node != nullptr)
+    delete root_node;
+  
+  generate_ast();
 }
+
 /**
  * @brief destructor just deletes the root node, which triggers the chain
  *        reaction that deletes all children below the root_node
@@ -123,6 +131,11 @@ void TemplateParser::set_key(const string& name, const string& val) {
   is_rendered = false;
   string_vars[name] = val;
 }
+
+void TemplateParser::set_key(const string& name, TemplateParser* tp) {
+  is_rendered = false;
+  string_vars[name] = tp->render();
+}
 /**
  * @brief push a specific value to the back of the named vector
  * @param name the vector's key/name/variable that gets an item appended
@@ -131,6 +144,11 @@ void TemplateParser::set_key(const string& name, const string& val) {
 void TemplateParser::add_to_key(const string& name, const string& val) {
   is_rendered = false;
   vector_vars[name].push_back(val);
+}
+
+void TemplateParser::add_to_key(const string& name, TemplateParser* tp) {
+  is_rendered = false;
+  vector_vars[name].push_back(tp->render());
 }
 /**
  * @brief resolve a given variable, look it up in the tables and
@@ -185,9 +203,11 @@ string TemplateParser::get_val(const string& name) {
 string& TemplateParser::render() {
   if(!is_rendered) {
     output = "";
-    delete root_node;
-    root_node = new ASTNode;
-    generate_ast();
+    if (root_node == nullptr) {
+      delete root_node;
+      root_node = new ASTNode;
+      generate_ast();
+    }
     parse_children(root_node);
     is_rendered = true;
   }
@@ -200,6 +220,7 @@ void TemplateParser::generate_ast() {
   string::size_type pos, size;
   string::size_type offset = 0;
 
+  root_node = new ASTNode;
   ASTNode* active_node = root_node;
   while((pos = content.find("{%", offset)) != string::npos) {
     // regular text (also containing variables) is handled here
@@ -214,25 +235,26 @@ void TemplateParser::generate_ast() {
     string::size_type end_pos = content.find("%}", pos+2);
     XString raw_cmd = XString(content.substr(pos+2, end_pos-pos-2));
     XString cmd = XString(raw_cmd).strip().subs_all("  ", " ");
-    if(cmd.substr(0, 11) == "subtemplate") {
+    tStringList tokens = cmd.split(" ");
+    if(tokens[0] == "subtemplate") {
       active_node->children.push_back(new ASTNode("subtemplate", active_node, cmd));
       active_node = active_node->children.back();
 
-      // do actual SubTemplating directly duringt AST generation
+      // do actual SubTemplating directly duringt AST generation - a little hackish
       vector<string> tokens = cmd.split(" ");
       assert(tokens.size() == 2);
       subtemplates[XString(tokens[1]).strip(" ")] = new TemplateParser(active_node);
-
-    } else if(cmd.substr(0, 2) == "if") {
+    } else if(tokens[0] == "if") {
       active_node->children.push_back(new ASTNode("if", active_node, cmd));
       active_node = active_node->children.back();
-    } else if(cmd.substr(0, 3) == "for") {
+    } else if(tokens[0] == "for") {
       active_node->children.push_back(new ASTNode("for", active_node, cmd));
       active_node = active_node->children.back();
-    } else if(cmd.substr(0, 4) == "else") {
+    } else if(tokens[0] == "else") {
       active_node->children.push_back(new ASTNode("else", active_node, cmd));
       active_node = active_node->children.back();
-    } else if(cmd.substr(0, 3) == "end") {
+    } else if(tokens[0] == "end" || tokens[0] == "endfor" || 
+              tokens[0] == "endif" || tokens[0] == "endsubtemplate") {
       if(active_node->type == "else")
         active_node = active_node->parent;
       active_node = active_node->parent;
@@ -380,8 +402,12 @@ bool TemplateParser::save_to_file(const string& filename) {
     cerr << "Could not open file: " << filename << endl;
     return false;
   }
+  if(root_node == nullptr)
+    generate_ast();
+
   if(!is_rendered)
     render();
+
   fd << output;
   fd.close();
   return true;
