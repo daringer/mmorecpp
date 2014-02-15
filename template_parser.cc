@@ -45,7 +45,8 @@ void TemplateParser::read_template(istream& stream) {
  * @param template_path the path to the template file to be used
  */
 TemplateParser::TemplateParser(const string& template_path)
-  : is_rendered(false), tmpl_filename(template_path), root_node(new ASTNode) {
+  : is_rendered(false), no_cleanup(false),
+    tmpl_filename(template_path), root_node(new ASTNode) {
 
   ifstream stream(template_path.c_str());
   read_template(stream);
@@ -55,10 +56,28 @@ TemplateParser::TemplateParser(const string& template_path)
  * @param stream the input-stream, which should be read to get the template
  */
 TemplateParser::TemplateParser(istream& stream)
-  : is_rendered(false), tmpl_filename(""), root_node(new ASTNode) {
+  : is_rendered(false), no_cleanup(false), 
+    tmpl_filename(""), root_node(new ASTNode) {
 
   read_template(stream);
 }
+/**
+ * @brief constructor, to directly handle a stream
+ * @param root_node is a already parsed root_node, so no more parsing necassary ...
+ */
+TemplateParser::TemplateParser(ASTNode* root_node)
+  : is_rendered(false), no_cleanup(true),
+    tmpl_filename(""), root_node(root_node) { }
+
+/** Copy constructor */
+TemplateParser::TemplateParser(const TemplateParser& cobj) 
+  : content(cobj.content), output(cobj.output), 
+    is_rendered(cobj.is_rendered), no_cleanup(cobj.no_cleanup),
+    string_vars(cobj.string_vars), vector_vars(cobj.vector_vars),
+    iter_vars(cobj.iter_vars), first_loop(cobj.first_loop),
+    last_loop(cobj.last_loop), subtemplates(cobj.subtemplates),
+    tmpl_filename(cobj.tmpl_filename), root_node(cobj.root_node) {}
+
 /**
  * @brief replace the used template with the given one
  * @param template_path the path to the template file
@@ -73,8 +92,27 @@ void TemplateParser::replace_template(const string& template_path) {
  *        reaction that deletes all children below the root_node
  */
 TemplateParser::~TemplateParser() {
-  delete root_node;
+  if(!no_cleanup)
+    delete root_node;
+
+  for(auto item : subtemplates)
+    delete item.second;
 }
+
+TemplateParser* TemplateParser::new_subtemplate(const std::string& tmpl_name) {
+  if(subtemplates.find(tmpl_name) == subtemplates.end())
+    throw SubTemplateNameNotFound(tmpl_name);
+  TemplateParser* out = new TemplateParser(*subtemplates.at(tmpl_name));
+  return out;
+}
+
+tStringList TemplateParser::get_subtemplates() {
+  tStringList out;
+  for(auto it_pair : subtemplates)
+    out.push_back(it_pair.first);
+  return out;
+}
+
 /**
  * @brief assign a specific value to a given key to be used during rendering
  * @param name the key/name/variable to get an assignment
@@ -156,7 +194,7 @@ string& TemplateParser::render() {
   return output;
 }
 /**
- * @brief scanning the template and generating the abstract syntax tree
+ * @brief scanning the template and generating the abstract syntax tree (lexxer?)
  */
 void TemplateParser::generate_ast() {
   string::size_type pos, size;
@@ -172,11 +210,20 @@ void TemplateParser::generate_ast() {
       offset += size;
       continue;
     }
-    // here we handle control strutures (if, for, else, end)
+    // here we handle control strutures (if, for, else, end, subtemplate)
     string::size_type end_pos = content.find("%}", pos+2);
     XString raw_cmd = XString(content.substr(pos+2, end_pos-pos-2));
     XString cmd = XString(raw_cmd).strip().subs_all("  ", " ");
-    if(cmd.substr(0, 2) == "if") {
+    if(cmd.substr(0, 11) == "subtemplate") {
+      active_node->children.push_back(new ASTNode("subtemplate", active_node, cmd));
+      active_node = active_node->children.back();
+
+      // do actual SubTemplating directly duringt AST generation
+      vector<string> tokens = cmd.split(" ");
+      assert(tokens.size() == 2);
+      subtemplates[XString(tokens[1]).strip(" ")] = new TemplateParser(active_node);
+
+    } else if(cmd.substr(0, 2) == "if") {
       active_node->children.push_back(new ASTNode("if", active_node, cmd));
       active_node = active_node->children.back();
     } else if(cmd.substr(0, 3) == "for") {
@@ -240,7 +287,11 @@ void TemplateParser::show_ast(ASTNode* node, int level) {
  * @param node the node inside the tree, which is processed at the moment
  */
 void TemplateParser::parse(ASTNode* node) {
-  if(node->type == "if") {
+  if(node->type == "subtemplate") {
+    // do nothing while parsing for subtemplates,
+    // all is handled inside the subtemplate TemplateParser instance...
+
+  } else if(node->type == "if") {
     vector<string> tokens = node->content.split();
 
     // 2 tokens or 3 with the second = "not"

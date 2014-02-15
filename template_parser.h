@@ -15,6 +15,7 @@ namespace TOOLS {
 
 DEFINE_EXCEPTION(SaveFilenameAmbigous, BaseException);
 DEFINE_EXCEPTION(NoTemplateProvided, BaseException);
+DEFINE_EXCEPTION(SubTemplateNameNotFound, BaseException);
 
 /**
  * @brief Represents one node inside the constructed abstract syntax tree
@@ -55,6 +56,16 @@ class ASTNode {
  * p.add_to_key("mylist", "item1");              // automaticly declare "mylist"
  * p.add_to_key("mylist", "item2");              // as a list of strings
  *
+ * tStringList sl = p.get_subtemplates();        // list of sub-templates (names)
+ *
+ * TemplateParser sub = 
+ *     p.new_subtemplate("mysubtemplate");       // (Sub)TemplateParser instance 
+ * sub.set_key("subkey", "datastring");
+ * sub.set_key("anotherkey", "datafoo");
+ *
+ * p.add_to_key("multi_lvl_array", sub);         // add SubTemplateParser instance
+ *                                                  to parent TemplateParser
+ *
  * p.save_to_file();                             // save rendered file
  *
  * p.replace_template("other_file");             // replace internal template
@@ -68,6 +79,10 @@ class ASTNode {
  *
  * The provided set of functionalities at this moment:
  *   - simple replacement of variables {{ simple }}
+ *   - simple sub-template (its content is handled as a separate template)
+ *     {% subtemplate myname1 %}
+ *       Something {{ my var }} Something else ...
+ *     {% end %}
  *   - simple resolved replacement of vector variables {{ my_vector.i }}
  *   - length of a filled vector {{ #my_vector }} (also usable in for/if)
  *   - 'if-else-end' control-structure, only one variable and no
@@ -97,12 +112,15 @@ class TemplateParser {
     std::string content;
     std::string output;
     bool is_rendered;
+    bool no_cleanup;
 
     std::map<std::string, std::string> string_vars;
     std::map<std::string, tStringList> vector_vars;
     std::map<std::string, int> iter_vars;
     std::map<std::string, bool> first_loop;
     std::map<std::string, bool> last_loop;
+
+    std::map<std::string, TemplateParser*> subtemplates;
 
     ASTNode* root_node;
 
@@ -120,15 +138,23 @@ class TemplateParser {
 
     TemplateParser(const std::string& template_path);
     TemplateParser(std::istream& stream);
+    TemplateParser(ASTNode* root_node);
+    TemplateParser(const TemplateParser& cobj);
+    
     virtual ~TemplateParser();
 
     void replace_template(const std::string& template_path);
 
     void set_key(const std::string& name, const std::string& val);
+    void set_key(const std::string& name, const TemplateParser& tp);
     // set_key() could also understand things like elems.width, which would make this a (2D) array
     // this would mean elems.i.width.j would access the 2-dimensional array
     // void set_key(const std::string& name);                           /// <--- this could mean: "I'm an array"
     void add_to_key(const std::string& name, const std::string& val);   /// <--- then this should fail on non-boxes
+    void add_to_key(const std::string& name, const TemplateParser& tp);
+
+    TemplateParser* new_subtemplate(const std::string& tmpl_name);
+    tStringList get_subtemplates();
 
     std::string& render();
 
