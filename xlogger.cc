@@ -54,6 +54,12 @@ XLogger* XLogger::get(const string& id) throw(NoSuchXLoggerAvailable) {
   throw NoSuchXLoggerAvailable(id);
 }
 
+// static to check, if loglevel is high enough to log the msg
+bool XLogger::check_loglevel(const int& lvl, const string& id) throw(NoSuchXLoggerAvailable) {
+  return (XLogger::get(id)->min_loglvl >= lvl);
+}
+
+
 // accept %%MSG%% , %%TIME%%, %%FANCYLVL%%, %%LOGLVL%%, %%FILE%% , %%FUNC%% , %%LINE%%
 void XLogger::set_logging_template(BaseLoggerBackend* back, const string& tmpl) {
   back2tmpl[back] = tmpl;

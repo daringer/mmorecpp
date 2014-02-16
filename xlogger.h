@@ -12,21 +12,54 @@
 #include "exception.h"
 #include "xstring.h"
 
+// default shows it all 
+// (set this before you include xlogger.h)
+#ifndef XLOG_MIN_LOG_LVL
+#define XLOG_MIN_LOG_LVL 1
+#endif
+
 // This is the main #DEFINE - do not change!
-#define LOG(lvl, LOGID)  \
-  TOOLS::LogStream(TOOLS::XLogger::get(LOGID), lvl,__LINE__,__FILE__,__FUNCTION__)
+#define LOG(lvl, LOGID) \
+  if(TOOLS::XLogger::check_loglevel(lvl, LOGID)) \
+    TOOLS::LogStream(TOOLS::XLogger::get(LOGID), lvl,__LINE__,__FILE__,__FUNCTION__)
 
 // Some ready-to-use examples for special loggers
 // all can be used like this:
 // WARN << "my message goes here" << "another one" << 123 << " and add formatting";
-#define DEBUG \
-  LOG(3, LOGID)
-#define INFO \
-  LOG(5, LOGID)
-#define WARN \
-  LOG(7, LOGID)
-#define ERROR \
-  LOG(10, LOGID)
+
+#define _XLOG_DEF_SLASH(s) /##s
+//#define _XLOG_MACRO2COMMENT _XLOG_DEF_HACK_SLASH(/)
+
+#if XLOG_MIN_LOG_LVL <= 1
+#define PROFILING LOG(1, LOGID)
+#else
+#define PROFILING _XLOG_DEF_SLASH(/)
+#endif 
+
+#if XLOG_MIN_LOG_LVL <= 3
+#define DEBUG LOG(3, LOGID)
+#else
+#define DEBUG _XLOG_DEF_SLASH(/)
+#endif 
+
+#if XLOG_MIN_LOG_LVL <= 5
+#define INFO LOG(5, LOGID)
+#else
+#define INFO _XLOG_DEF_SLASH(/)
+#endif 
+
+#if XLOG_MIN_LOG_LVL <= 7
+#define WARN LOG(7, LOGID)
+#else
+#define WARN _XLOG_DEF_SLASH(/)
+#endif 
+
+#if XLOG_MIN_LOG_LVL <= 10
+#define ERROR LOG(10, LOGID)
+#else
+#define ERROR _XLOG_DEF_SLASH(/)
+#endif 
+
 
 namespace TOOLS {
 
@@ -91,6 +124,7 @@ class XLogger {
 
     static tXLoggerMap log_map;
     static XLogger* get(const std::string& id) throw(NoSuchXLoggerAvailable);
+    static bool check_loglevel(const int& lvl, const std::string& id) throw(NoSuchXLoggerAvailable);
 
     void add_backend(BaseLoggerBackend* back, const std::string& tmpl="");
 
