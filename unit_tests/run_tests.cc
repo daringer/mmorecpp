@@ -2,6 +2,8 @@
 // FIXME: testing suite should separate and compile each TestSuite on its own 
 #define MEMORY_TRACKER_ACTIVE 1
 
+#define XLOG_MIN_LOG_LVL 1
+
 #include "testing_suite.h"
 
 #include "fs.cc"

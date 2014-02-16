@@ -1,8 +1,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "xlogger.h"
+#define XLOG_MIN_LOG_LVL 3
 
+#include "xlogger.h"
 #include "testing_suite.h"
 
 
@@ -30,6 +31,7 @@ START_SUITE(XLoggerToolsTestSuite) {
       xlog = new XLogger(LOGID);
       //xlog->add_backend(new ConsoleBackend(LOGID));
       mb = new MemoryBackend(LOGID);
+      xlog->set_min_loglvl(1);
       xlog->add_backend(mb);
     }
 
@@ -43,16 +45,15 @@ START_SUITE(XLoggerToolsTestSuite) {
       DEBUG << "starting logger testing!";
       INFO << "more info logging, let's log an integer: " << tmp;
       WARN << "oh oh, this is a warning - this could end bad!";
-      ERROR << "NOOOOO!!! ERRRORRRR!!!!";
-      if(XLOG_MIN_LOG_LVL > 5)
-        CHECK(mb->log_msgs.size() == 5);
+
+      CHECK(mb->log_msgs.size() == 4);
     }
 
     MAKE_TEST(loglvl_action) {
       INFO << "STARTING";
       xlog->set_loglvl_action(10, loglvl_action);
       ERROR << "ERRRRORRRRR, should trigger action";
-      CHECK(mb->log_msgs.size() == 3);
+      CHECK(mb->log_msgs.size() == 4);
     }
 
 END_SUITE()
