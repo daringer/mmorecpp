@@ -2,6 +2,11 @@
 #define THREADING_H
 
 #include <pthread.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <mqueue.h>
+
+#include <deque>
 
 #include "exception.h"
 
@@ -67,9 +72,6 @@ class BaseProcess : public BaseParallel {
     virtual void worker() = 0;
 };
 
-/**
- * @brief Simple wrapper for the unix pthread mutex mechanism
- */
 class Mutex {
   public:
     Mutex();
@@ -81,6 +83,38 @@ class Mutex {
   private:
     pthread_mutex_t mutex;
     
+};
+
+class MessageQueue {
+  public:
+    MessageQueue(const std::string& id, uint maxsize=1024);
+
+  protected:
+    const std::string name;
+    mqd_t mq;
+    char* buffer;
+    const uint maxsize;
+};
+
+class MessageQueueServer : public MessageQueue {
+  public:
+    MessageQueueServer(const std::string& id, uint maxsize=1024, bool blocking=false);
+    ~MessageQueueServer();
+
+    bool check_for_msg();
+    std::string get_msg();
+
+  private:
+    struct mq_attr attr;
+    std::deque<std::string> local_queue;
+    bool blocking;
+};
+
+class MessageQueueClient : public MessageQueue {
+  public:
+    MessageQueueClient(const std::string& id, uint maxsize=1024);
+
+    void send_msg(const std::string& s);
 };
 
 }
