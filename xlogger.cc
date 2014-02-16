@@ -56,7 +56,7 @@ XLogger* XLogger::get(const string& id) throw(NoSuchXLoggerAvailable) {
 
 // static to check, if loglevel is high enough to log the msg
 bool XLogger::check_loglevel(const int& lvl, const string& id) throw(NoSuchXLoggerAvailable) {
-  return (XLogger::get(id)->min_loglvl >= lvl);
+  return (XLogger::get(id)->min_loglvl <= lvl);
 }
 
 
@@ -88,7 +88,7 @@ string XLogger::get_fancy_level(int lvl) {
 }
 
 void XLogger::set_min_loglvl(int loglvl) {
-  min_loglvl = loglvl;
+  XLogger::min_loglvl = loglvl;
 }
 
 // render the message
