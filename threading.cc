@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <string.h>
 
 #include "threading.h"
 #include "xstring.h"
@@ -124,4 +125,74 @@ void Mutex::lock() {
 void Mutex::unlock() {
   pthread_mutex_unlock(&mutex);
 }
+
+
+MessageQueue::MessageQueue(const std::string& id, uint maxsize) 
+  : name(id), buffer(new char[maxsize+1]), maxsize(maxsize) { }
+ 
+
+MessageQueueServer::MessageQueueServer(const string& id, uint maxsize, bool blocking) 
+  : MessageQueue(id, maxsize), blocking(blocking) {
+
+  attr.mq_flags = (blocking) ? O_NONBLOCK : 0;
+  attr.mq_maxmsg = 10;
+  attr.mq_msgsize = maxsize;
+  attr.mq_curmsgs = 0;
+
+  mq = mq_open(id.c_str(), O_CREAT | O_RDONLY, 0644, &attr);
+  if((mqd_t) -1 == mq) {
+    cerr << "Could not init MessageQueue: " << id << endl;
+    perror("err: ");
+    exit(1);
+  }
+}
+
+bool MessageQueueServer::check_for_msg() {
+ string out;
+ bzero(buffer, maxsize);
+ size_t bytes_read = mq_receive(mq, buffer, maxsize, NULL);
+
+ // ret -1 on empty queue && non-blocking
+ if(bytes_read == -1) {
+   if(!blocking)
+     return (local_queue.size() > 0);
+   // err?!
+    perror("err: ");
+ }
+
+ buffer[bytes_read] = '\0';
+
+ out += buffer;
+ local_queue.push_back(out);
+ return true;
+}
+
+string MessageQueueServer::get_msg() {
+  string out = local_queue.front();
+  local_queue.pop_front();
+  return out;
+}
+
+MessageQueueClient::MessageQueueClient(const string& id, uint maxsize) 
+  : MessageQueue(id, maxsize) {
+  
+  mq = mq_open(id.c_str(), O_WRONLY);
+  if((mqd_t)-1 != mq) {
+    cerr << "Could not open MessageQueue: " << id << endl;
+    perror("err: ");
+    exit(1);
+  }
+}
+
+
+void MessageQueueClient::send_msg(const std::string& s) {
+   mq = mq_send(mq, s.c_str(), maxsize, 0);
+   if(mq < 0) {
+     cerr << "Could not send to MessageQueue: " << name << endl;
+     perror("err: ");
+     exit(1);
+   }
+}
+
+
 
