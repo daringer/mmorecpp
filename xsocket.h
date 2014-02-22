@@ -91,6 +91,7 @@ class StreamSelecter {
 
   public:
     void add_stream(SocketStream* stream);
+    void remove_stream(SocketStream* stream);
     SocketStream* select();
     SocketStream* select(unsigned int usecs);
 };
