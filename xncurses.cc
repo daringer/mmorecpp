@@ -102,8 +102,7 @@ void XNCHeadline::update() {
 XNCTable::XNCTable(const uint& cols, const tCoords& pos, const tCoords& size) 
   : XNCBaseWindow(pos, size), content_cols(cols) {
   
-  data.clear();
-  data.resize(cols);
+  data.clear();  // data[ROWIDX][COLIDX]
 }
 
 XNCTable::~XNCTable() { }
@@ -134,9 +133,9 @@ void XNCTable::del_data(const uint& idx) {
 
 void XNCTable::update() {
   //set_layout();
-  map<uint, uint> who_wide;
-  for(uint x=0; x<data.size(); ++x)
-    who_wide[x] = 0;
+  map<uint, uint> who_wide, col_pos;
+  for(uint x=0; x<head.size(); ++x)
+    who_wide[x] = head[x].length();
 
   // first, find widest col-members
   for(uint y=0; y<data.size(); ++y)
@@ -144,20 +143,19 @@ void XNCTable::update() {
       if(data[y][x].length() > who_wide[x])
         who_wide[x] = data[y][x].length();
 
-  // write headers first
-  uint sum = 0;
-  for(uint i=0; i<head.size(); ++i) {
-    mvwaddstr(_win, 0, sum + who_wide[i], head[i].c_str());
-    sum += who_wide[i];
-    who_wide[i+1] = sum;
-  }
-  
+  // set col positions
+  col_pos[0] = 0;
+  for(uint x=1; x<who_wide.size(); ++x)
+    col_pos[x] = col_pos[x-1] + who_wide[x-1] + 1;
 
+  // write headers first
+  for(uint i=0; i<head.size(); ++i) 
+    mvwaddstr(_win, 0, col_pos[i], head[i].c_str());
+  
   // now write that shit
-  for(uint x=0; x<data.size(); ++x)
-    for(uint y=0; y<data[y].size(); ++y) {
-      mvwaddstr(_win, y+1, who_wide[x], data[y][x].c_str());
-    }
+  for(uint y=0; y<data.size(); ++y)
+    for(uint x=0; x<data[y].size(); ++x) 
+      mvwaddstr(_win, y+1, col_pos[x], data[y][x].c_str());
 
   wrefresh(_win);
 }
@@ -259,8 +257,8 @@ int main() {
 
   XNCHeadline h("FAATS - Synthesis Status Monitor");
   XNCStatusBar s(3, make_coords(0, LINES-2), make_coords(COLS, LINES));
-  XNCTable t(4, make_coords(4, 2), make_coords(10, 40));
-  XNCScrolling sc(8, make_coords(40, 5), make_coords(75, 15));
+  XNCTable t(4, make_coords(4, 4), make_coords(40, 10));
+  XNCScrolling sc(8, make_coords(45, 5), make_coords(25, 15));
 
   s.set_content({"abc", "--", "15:44:01 16.02.2014"});
 
@@ -270,7 +268,7 @@ int main() {
   x.add_window("scr", &sc);
 
 
-  t.set_headers({"Läuft seit", "Typ", "Schaltung", "Kekse"});
+  t.set_headers({"Laeuft seit", "Typ", "Schaltung", "Kekse"});
   t.push_data({"12m 44s", "Maple", "bi0_0op0_4", "check"});
   t.push_data({"1h",     "WiCkeD", "bi0_0op34_12", "check"});
   

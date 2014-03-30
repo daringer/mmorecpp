@@ -10,6 +10,7 @@ SOURCES.h = $(addsuffix .h,$(PARTS))
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%$(EXTENSION).o)
 
+CCC=g++
 CCFLAGS = -gdwarf-2 -w -I.. -std=c++11
 
 all:	 $(LIB)
@@ -44,3 +45,8 @@ analyze:
 
 cldoc:
 	cldoc $(CCFLAGS) -- --output doc --report *.cc *.h
+
+nc: $(LIB) xncurses.cc xncurses.h
+	#g++-4.8 $(CCFLAGS) libtools.lin64.a exception.cc xncurses.cc -lrt -pthread -lncurses -o nc
+	g++ $(CCFLAGS) libtools.lin64.a exception.cc xncurses.cc -lrt -pthread -lncurses -o nc
+

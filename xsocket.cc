@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include <unistd.h>
 
 #include "xsocket.h"
@@ -97,7 +99,6 @@ ClientSocket::ClientSocket(SOCKET_TYPE type, int port, const std::string& target
   if(connect(fd, (struct sockaddr*) &addr, sizeof(addr))) {
     perror("connect:");
     throw SocketException("Could not connect to given target");
-
   }
 
   stream = new SocketStream(fd);
@@ -110,14 +111,19 @@ void StreamSelecter::add_stream(SocketStream* stream) {
   streams.push_back(stream);
 }
 
+void StreamSelecter::remove_stream(SocketStream* stream) {
+  std::remove(streams.begin(), streams.end(), stream);
+}
+
 SocketStream* StreamSelecter::select() {
   return this->select(250000);
 }
 
 SocketStream* StreamSelecter::select(unsigned int usecs) {
   FD_ZERO(&socks);
-  for(vector<SocketStream*>::iterator i=streams.begin(); i!=streams.end(); ++i)
-    FD_SET((*i)->fd, &socks);
+  //for(vector<SocketStream*>::iterator i=streams.begin(); i!=streams.end(); ++i)
+  for(SocketStream* stream : streams)
+    FD_SET(stream->fd, &socks);
 
   struct timeval timeout;
   timeout.tv_sec = 0;
@@ -129,9 +135,10 @@ SocketStream* StreamSelecter::select(unsigned int usecs) {
   if(readsocks == 0)
     return NULL;
 
-  for(vector<SocketStream*>::iterator i=streams.begin(); i!=streams.end(); ++i)
-    if(FD_ISSET((*i)->fd, &socks))
-      return (*i);
+  //for(vector<SocketStream*>::iterator i=streams.begin(); i!=streams.end(); ++i)
+  for(SocketStream* stream : streams)
+    if(FD_ISSET(stream->fd, &socks))
+      return stream;
 
   return NULL;
 }

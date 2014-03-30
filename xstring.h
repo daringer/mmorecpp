@@ -63,6 +63,7 @@ class XString : public std::string {
   public:
     XString();
     // just a "forwarding-constructor" to maintain string compatibility
+    // TODO USE C++11 here and do a using foo::foo();
     virtual ~XString();
     /** @brief just a "forwarding-constructor" to maintain string compatibility */
     

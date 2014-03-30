@@ -1,4 +1,4 @@
-CCC = g++
+CCC = g++ #clang++ #g++
 AR = ar
 RANLIB = ranlib
 RM = rm -f

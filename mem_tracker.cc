@@ -2,11 +2,8 @@
 #include <sys/mman.h>
 #include <stdlib.h>
 #include <unistd.h>
-<<<<<<< HEAD
-=======
 //#include "atexit.h"
 //#include "thread_private.h"
->>>>>>> makefile
 
 #include <iostream>
 #include <vector>
@@ -232,7 +229,11 @@ void exit(int status) throw() {
   ALLOCATED_PTRS.clear();
   ARCHIVED_PTRS.clear();
   // calling "real" exit()
+<<<<<<< HEAD
   original_exit(status);
+=======
+  _exit(status);
+>>>>>>> 40f2e8892616ce4d4ce6225c713a6e6c39293b2d
 }
 
 /** initilize the memory tracker variables */
