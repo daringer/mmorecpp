@@ -139,6 +139,9 @@ class XLogger {
                  const std::string fn, const std::string func);
     void log_msg(const std::string data);
 
+    void set_msg_stripping(const bool& strip_msg);
+    void set_msg_stripping(const bool& strip_msg, const tStringList& trims);
+
   private:
     tBackendList backends;
     tLevelActionMap lvl2action;
@@ -147,6 +150,9 @@ class XLogger {
     std::string time_format;
     std::string id;
     int min_loglvl;
+
+    bool strip_msg;
+    tStringList to_strip;
 
     std::string render_msg(BaseLoggerBackend* back, const std::string& data, 
                            int loglevel, int line, const std::string& fn, 

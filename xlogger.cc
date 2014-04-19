@@ -15,7 +15,8 @@ tXLoggerMap XLogger::log_map;
 XLogger::XLogger(const string& id) :
   id(id),
   time_format("%d.%m - %T"),
-  min_loglvl(0) {
+  min_loglvl(0),
+  strip_msg(true), to_strip({"\n", "\t", " ", "\r"}) {
   
   if(log_map.find(id) != log_map.end())
     throw LoggerIDAlreadyRegistered(id);
@@ -33,6 +34,15 @@ XLogger::~XLogger() {
     delete *i;
   }
   log_map.erase(id);
+}
+
+void XLogger::set_msg_stripping(const bool& yesno) {
+  strip_msg = yesno;
+}
+
+void XLogger::set_msg_stripping(const bool& yesno, const tStringList& trims) {
+  set_msg_stripping(yesno);
+  to_strip = trims;
 }
 
 // adding a backend
@@ -94,7 +104,14 @@ void XLogger::set_min_loglvl(int loglvl) {
 // render the message
 string XLogger::render_msg(BaseLoggerBackend* back, const string& data, int loglevel, int line, const string& fn, const string& func) {
   XString msg(back2tmpl[back]);
-  return msg.subs("%%MSG%%", data).\
+
+  XString mymsg = data;
+  if(strip_msg) {
+    for(const string& s : to_strip)
+      mymsg.strip(s);
+  }
+
+  return msg.subs("%%MSG%%", mymsg).\
          subs("%%TIME%%", XDateTime(time_format).format()).\
          subs("%%LOGLVL%%", TOOLS::str(loglevel)).\
          subs("%%FANCYLVL%%", get_fancy_level(loglevel)). \
