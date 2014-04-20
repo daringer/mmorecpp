@@ -24,12 +24,13 @@ class BaseException : public std::exception {
 
     template<class T>
     BaseException(const std::string& exc_name, const T& msg)
-      : exception(), exception_name(exc_name) {
-      std::stringstream ss;
-      if(!(ss << msg)) {
+        : exception(), exception_name(exc_name) {
+      
+      _ss.clear();
+      if(!(_ss << msg)) {
         throw exception();
       }
-      message = ss.str();
+      message = _ss.str();
       init();
     }
 
@@ -41,7 +42,9 @@ class BaseException : public std::exception {
     void set_message(const std::string& input);
     void show();
     void what(); // keep compatibility to c++ default
+
   private:
+    std::stringstream _ss;
     void init();
 };
 

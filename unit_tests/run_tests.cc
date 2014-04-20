@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   //act.sa_flags = SA_SIGINFO;
   //sa.sa_sigaction = segfault_sigaction;
 
-  set_terminate(TOOLS::tools_lib_exception_handler);
+  //set_terminate(TOOLS::tools_lib_exception_handler);
 
   UNIT_TEST::TestFramework f(argc, argv);
   f.add_suite<FSToolsTestSuite>("TOOLS::FS::Path");

@@ -21,12 +21,14 @@ DEFINE_EXCEPTION(ConvertValueError, BaseException)
  */
 template <class T>
 std::string str(const T& val, int precision=0) {
-  std::stringstream out;
+  static std::stringstream inp1;
+  inp1.str("");
+  inp1.clear();
   if(precision == 0)
-    out << val;
+    inp1 << val;
   else
-    out << std::setprecision(precision) << val;
-  return out.str();
+    inp1 << std::setprecision(precision) << val;
+  return inp1.str();
 }
 
 /**
@@ -36,9 +38,13 @@ std::string str(const T& val, int precision=0) {
  */
 template <class T>
 int integer(const T& val) throw(ConvertValueError) {
-  std::istringstream inp(val);
+  static std::stringstream inp2;
+  inp2.str("");
+  inp2.clear();
+  inp2 << val;
   int out;
-  if(!(inp >> out))
+  bool ret = (!(inp2 >> out));
+  if(ret)
     throw ConvertValueError("Could not convert: '" + str(val) + "' to integer");
   return out;
 }
@@ -50,9 +56,13 @@ int integer(const T& val) throw(ConvertValueError) {
  */
 template <class T>
 double real(const T& val) throw(ConvertValueError) {
-  std::istringstream inp(val);
+  static std::stringstream inp3;
+  inp3.str("");
+  inp3.clear();
+  inp3 << val;
   double out;
-  if(!(inp >> out))
+  bool ret = (!(inp3 >> out));
+  if(ret)
     throw ConvertValueError("Could not convert: '" + str(val) + "' to double");
   return out;
 }
