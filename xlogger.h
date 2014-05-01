@@ -171,21 +171,14 @@ class LogStream {
     std::stringstream msg;
 
   public:
+    typedef std::basic_ostream<char, std::char_traits<char> > tCout;
+    typedef tCout& (*tEndl)(tCout&);
+
     LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn, 
               const std::string& func);
     ~LogStream();
 
-    // STILL NO endl support here, weird error:
-    // template argument deduction/substitution failed:
-    // note: ‘TOOLS::LogStream’ is not derived from 
-    //       ‘std::basic_ostream<_CharT, _Traits>’
-    // AGGRGRRRRr
-    
-    /*template<typename R, typename P>
-      LogStream& operator<<(R & (*pf)(P &)) {
-        msg << pf;
-        return *this;
-      }*/
+    LogStream& operator<<(tEndl fnc);
 
     template<class T>
       LogStream& operator<<(const T& obj) {

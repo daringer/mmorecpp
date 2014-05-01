@@ -58,8 +58,8 @@ START_SUITE(XLoggerToolsTestSuite) {
     }
   
     MAKE_TEST(endline) {
-      //INFO << "yiha" << std::endl;
-      CHECK(false);
+      INFO << "yiha" << std::endl;
+      CHECK(true);
     }
 
 END_SUITE()
