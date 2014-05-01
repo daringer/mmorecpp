@@ -14,9 +14,8 @@ namespace TOOLS {
 
 DEFINE_EXCEPTION(ConvertValueError, BaseException)
 
-/**
- * @brief convert any given parameter to a string
- * @param any parameter, which has a string representation
+/* convert any given parameter to a string
+ * @val any parameter, which has a string representation
  * @return the converted string
  */
 template <class T>
@@ -31,9 +30,8 @@ std::string str(const T& val, int precision=0) {
   return inp1.str();
 }
 
-/**
- * @brief convert any input to an integer, if possible
- * @param any parameter, which has a integer representation
+/* convert any input to an integer, if possible
+ * @val any parameter, which has a integer representation
  * @return the converted integer
  */
 template <class T>
@@ -49,9 +47,8 @@ int integer(const T& val) throw(ConvertValueError) {
   return out;
 }
 
-/**
- * @brief convert any input to an double, if possible
- * @param any parameter, which has a double representation
+/* convert any input to an double, if possible
+ * @val any parameter, which has a double representation
  * @return the converted integer
  */
 template <class T>
@@ -67,14 +64,10 @@ double real(const T& val) throw(ConvertValueError) {
   return out;
 }
 
-// add some helper/shortcut functions like:
-// contents = string((istreambuf_iterator<char>(spec_tmp)), istreambuf_iterator<char>());
-
-/**
- * @brief A string class fully compatible with std::string featuring some
- *        often used methods, to bring a little comfort into string handling
- *        Designed to be memory-friendly, thus all operations are done on
- *        the XString itself and simply returning a reference to the prior.
+/* A string class fully compatible with std::string.
+ * Featuring some often used methods, to bring a little comfort into string handling
+ * designed to be memory-friendly, thus all operations are done on
+ * the <XString> itself and simply returning a reference to the prior.
  */
 class XString : public std::string {
   public:
@@ -84,7 +77,10 @@ class XString : public std::string {
     template<class T>
     XString(const T& val) : std::string(val) {}
 
-    /** @brief just a "forwarding-constructor" to maintain string compatibility */
+    /* just a "forwarding-constructor" to maintain string compatibility 
+     * @val1 forwarded to std::string
+     * @val2 forwarded to std::string
+     */
     template<class T, class S>
     XString(const T& val1, const S& val2) : std::string(val1, val2) {}
 
