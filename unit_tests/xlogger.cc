@@ -22,6 +22,7 @@ void loglvl_action() {
 START_SUITE(XLoggerToolsTestSuite) {
       REG_TEST(simple)
       REG_TEST(loglvl_action)
+      REG_TEST(endline)
     }
     
     XLogger* xlog;
@@ -57,8 +58,8 @@ START_SUITE(XLoggerToolsTestSuite) {
     }
   
     MAKE_TEST(endline) {
-      INFO << "yiha" << std::endl;
-      CHECK(true);
+      //INFO << "yiha" << std::endl;
+      CHECK(false);
     }
 
 END_SUITE()
