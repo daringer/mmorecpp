@@ -55,5 +55,10 @@ START_SUITE(XLoggerToolsTestSuite) {
       ERROR << "ERRRRORRRRR, should trigger action";
       CHECK(mb->log_msgs.size() == 4);
     }
+  
+    MAKE_TEST(endline) {
+      INFO << "yiha" << std::endl;
+      CHECK(true);
+    }
 
 END_SUITE()

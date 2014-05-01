@@ -7,6 +7,7 @@
 #include <ostream>
 #include <vector>
 #include <map>
+#include <typeinfo>
 
 #include "general.h"
 #include "exception.h"
@@ -23,41 +24,41 @@
   if(TOOLS::XLogger::check_loglevel(lvl, LOGID)) \
     TOOLS::LogStream(TOOLS::XLogger::get(LOGID), lvl,__LINE__,__FILE__,__FUNCTION__)
 
+#define FAKELOG() \
+    TOOLS::FakeLogStream()
+
 // Some ready-to-use examples for special loggers
 // all can be used like this:
 // WARN << "my message goes here" << "another one" << 123 << " and add formatting";
 
-#define _XLOG_DEF_SLASH(s) /##s
-//#define _XLOG_MACRO2COMMENT _XLOG_DEF_HACK_SLASH(/)
-
 #if XLOG_MIN_LOG_LVL <= 1
 #define PROFILING LOG(1, LOGID)
 #else
-#define PROFILING _XLOG_DEF_SLASH(/)
+#define PROFILING FAKELOG()
 #endif 
 
 #if XLOG_MIN_LOG_LVL <= 3
 #define DEBUG LOG(3, LOGID)
 #else
-#define DEBUG _XLOG_DEF_SLASH(/)
+#define DEBUG FAKELOG() 
 #endif 
 
 #if XLOG_MIN_LOG_LVL <= 5
 #define INFO LOG(5, LOGID)
 #else
-#define INFO _XLOG_DEF_SLASH(/)
+#define INFO FAKELOG()
 #endif 
 
 #if XLOG_MIN_LOG_LVL <= 7
 #define WARN LOG(7, LOGID)
 #else
-#define WARN _XLOG_DEF_SLASH(/)
+#define WARN FAKELOG()
 #endif 
 
 #if XLOG_MIN_LOG_LVL <= 10
 #define ERROR LOG(10, LOGID)
 #else
-#define ERROR _XLOG_DEF_SLASH(/)
+#define ERROR FAKELOG()
 #endif 
 
 
@@ -179,13 +180,29 @@ class LogStream {
     // note: ‘TOOLS::LogStream’ is not derived from 
     //       ‘std::basic_ostream<_CharT, _Traits>’
     // AGGRGRRRRr
+    
+    /*template<typename R, typename P>
+      LogStream& operator<<(R & (*pf)(P &)) {
+        msg << pf;
+        return *this;
+      }*/
+
     template<class T>
-    LogStream& operator<<(const T& obj) {
-      msg << obj;
-      return *this;
-    }
+      LogStream& operator<<(const T& obj) {
+        msg << obj;
+        return *this;
+      }
+};
+
+class FakeLogStream {
+  public:
+    template<class T>
+      FakeLogStream& operator<<(const T& obj) {
+        return *this;
+      }
 };
 
 }
+
 
 #endif
