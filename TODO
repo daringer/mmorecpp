@@ -1,0 +1,13 @@
+######### mmorecpp TODOs
+
+
+- put str/real and related into separate .h file : converters.h
+
+- rename converters according this scheme:
+  - to_str(), to_int(), to_real()
+  - is_str(), is_int(), is_real()  ( <-- TO BE ADDED )
+
+- add unsigned integer to converters: to_uint(), is_uint()
+
+- add scientifiy notation as converter?: to_exp(), is_exp();
+
