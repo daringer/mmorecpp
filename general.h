@@ -31,6 +31,8 @@ typedef tIntList::iterator tIntIter;
 typedef std::map<std::string, std::string> tStringMap;
 typedef tStringMap::iterator tStringMapIter;
 
+typedef std::set<std::string> tStringSet;
+
 
 }
 
