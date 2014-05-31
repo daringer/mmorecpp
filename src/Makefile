@@ -1,13 +1,15 @@
 LIB = libtools.a
 
-#PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
-SOURCES.cc = $(wildcard *.cc) 
-SOURCES.h = $(wildcard *.h)
+PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker
+#SOURCES.cc = $(wildcard *.cc) 
+#SOURCES.h = $(wildcard *.h)
+SOURCES.cc = $(addsuffix .cc, $(PARTS))
+SOURCES.h = $(addsuffix .cc, $(PARTS))
 
 SOURCES = $(SOURCES.h)	$(SOURCES.cc)
 OBJECTS = $(SOURCES.cc:%.cc=%.o)
 
-CCC = g++
+CCC = clang++
 AR = ar
 RANLIB = ranlib
 RM = rm -f
