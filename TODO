@@ -1,0 +1,31 @@
+######### mmorecpp TODOs
+
+
+- put str/real and related into separate .h file : converters.h
+
+- rename converters according this scheme:
+  - to_str(), to_int(), to_real()
+  - is_str(), is_int(), is_real()  ( <-- TO BE ADDED )
+
+- add unsigned integer to converters: to_uint(), is_uint()
+
+- add scientifiy notation as converter?: to_exp(), is_exp();
+
+
+- config manager, create macro for easy/fast/slim config generation
+  example: (AT THE BEST WE ONLY USE INITLISTS AND NO MACROS!!!!)
+
+  ConfigManager conf = CONF_START(
+
+	  CONF_GROUP(mygroupname,
+		<data-type>(<long_cmdline_string>, <config description>, (<short_cmdline_string> || ""), [default-value]),
+		<int>("my-long-cmdline-string", "my fancy description also for help", "G", 20),
+		<int>("next-long-cmd", "my desc", "", 22),
+		<bool>("next-long-cmd-xxx", "my xxx desc", "x", true)
+	  ),
+
+	  CONF_GROUP(myothername,
+	  	<string>("oidfsj-efwewi", "odsjfij sdfij fdsofsd oifd", "j", "MY_DEFAULT_VALUE"),
+	  )
+  );
+

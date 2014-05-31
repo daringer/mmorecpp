@@ -92,6 +92,7 @@ class XString : public std::string {
     tStringList split(const std::string& s=" ");
 
     XString& join(const tStringList& list);
+    XString& join(const tStringSet& set);
 
     XString& subs(const std::string& what, const std::string& with, int max_replaces=1);
     XString& subs_all(const std::string& what, const std::string& with);

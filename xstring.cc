@@ -71,14 +71,28 @@ XString& XString::subs(const string& what, const string& with, int max_replaces)
  * @param the instance of the vector<string> to be joined
  * @return a string reference with the complete-joined string (*this)
  */
-XString& XString::join(const tStringList& pieces) {
+XString& XString::join(const tStringList& list) {
   XString delim(*this);
   clear();
 
-  for(tStringList::const_iterator i=pieces.begin(); i!=pieces.end(); ++i)
-    append((*i) + ((i != --pieces.end()) ? delim : ""));
+  for(tStringList::const_iterator i=list.begin(); i!=list.end(); ++i)
+    append((*i) + ((i != --list.end()) ? delim : ""));
   return *this;
 }
+/**
+ * @brief join a given vector<string> together using the string as glue
+ * @param the instance of the vector<string> to be joined
+ * @return a string reference with the complete-joined string (*this)
+ */
+XString& XString::join(const tStringSet& set) {
+  XString delim(*this);
+  clear();
+
+  for(tStringSet::const_iterator i=set.begin(); i!=set.end(); ++i)
+    append((*i) + ((i != --set.end()) ? delim : ""));
+  return *this;
+}
+
 /**
  * @brief convert all chars to lowercase
  * @return a string reference with the converted content
