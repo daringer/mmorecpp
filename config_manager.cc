@@ -282,7 +282,6 @@ void ConfigManager::write_config_file(ostream& fd, bool shorter) {
           fd << "# " << id << " = " << c->verbose_default() << endl;
       // ConfigOption was neither set nor has a default value
       } else {
-        if(!shorter)
           fd << "# " << id << " = " << "<not set>" << endl;
       }
       if(!shorter)
