@@ -37,6 +37,12 @@
 #define PROFILING FAKELOG()
 #endif 
 
+#if XLOG_MIN_LOG_LVL <= 2
+#define MORE_DEBUG LOG(2, LOGID)
+#else
+#define MORE_DEBUG FAKELOG() 
+#endif 
+
 #if XLOG_MIN_LOG_LVL <= 3
 #define DEBUG LOG(3, LOGID)
 #else
