@@ -7,15 +7,15 @@ RM = rm -f
 PARTS=
 SOURCES.cc = run_tests.cc $(addsuffix .cc,$(PARTS))
 
-LIBOBJ = #../libtools.*.a
+LIBOBJ = ../src/libtools.a
 SOURCES = $(SOURCES.cc) $(LIBOBJ)
 
 CCFLAGS = -w -g -Wall -pedantic -rdynamic -std=c++0x
 PROGRAM = run_tests
 LDFLAGS = -g -rdynamic 
 
-INCS = -I.. -I. -I/usr/include/libdwarf -I/usr/include/elfutils
-LIBS = -L.. -ltools.lin64 -lm -pthread 
+INCS = -I../src -I. -I/usr/include/libdwarf -I/usr/include/elfutils
+LIBS = -L../src -ltools -lm -pthread -L../src/libtools.a
 #LIBS = ../libtools.lin64.a -ldwarf -ldw -lm -lelf -pthread 
 
 
