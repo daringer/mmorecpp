@@ -39,9 +39,14 @@ class BaseException : public std::exception {
 
     virtual ~BaseException() throw();
 
+    // set message for exception
     void set_message(const std::string& input);
-    void show();
-    void what(); // keep compatibility to c++ default
+
+    // get_message
+    const std::string get_message() const;
+
+    // dump_message
+    void dump() const;
 
   private:
     std::stringstream _ss;

@@ -49,14 +49,14 @@ BaseException::~BaseException() throw() { }
 /**
 * @brief show full message through stderr
 */
-void BaseException::show() {
-  cerr << output << endl;
+const string BaseException::get_message() const {
+  return output;
 }
 /**
 * @brief show full message through stderr (C++ wrapper method)
 */
-void BaseException::what() {
-  show();
+void BaseException::dump() const {
+  cerr << output << endl;
 }
 /**
  * @brief actual initialization

@@ -139,7 +139,7 @@ TestFramework::TestFramework(int argc, char* argv[]) {
     conf.parse_cmdline(argc, argv);
     cout << "[+] Parsing commandline complete" << endl;
   } catch(ConfigManagerException& e) {
-    e.show();
+    e.dump();
     conf.usage(cout);
     exit(1);
   }

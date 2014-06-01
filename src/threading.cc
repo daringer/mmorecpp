@@ -15,8 +15,11 @@ BaseParallel::BaseParallel() : retval(new int), retdata(nullptr) { }
 BaseParallel::~BaseParallel() {
   delete retval;
   if(retdata != nullptr)
-    delete retdata;
+    delete (int*) retdata;
 }
+
+void BaseParallel::run() { }
+void BaseParallel::run(const string stdout_fn, const string stderr_fn) { }
 
 BaseThread::BaseThread() : BaseParallel() { }
 
@@ -52,7 +55,6 @@ BaseProcess::~BaseProcess() { }
 
 void BaseProcess::run(const string stdout_fn, const string stderr_fn) {
   pid = fork();
-  int out = -1;
   if(pid < 0) {
     throw ForkError(pid);
   } else if(pid == 0) {

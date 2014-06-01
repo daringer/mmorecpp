@@ -28,7 +28,8 @@ class BaseParallel {
     int* retval;
     void* retdata;
 
-    virtual void run(const std::string stdout_fn="", const std::string stderr_fn="") = 0;
+    virtual void run();
+    virtual void run(const std::string stdout_fn="", const std::string stderr_fn="");
     virtual void join(bool blocking=true) = 0;
     virtual bool try_join() = 0;
     virtual void kill() = 0;
@@ -42,10 +43,11 @@ class BaseParallel {
 
 class BaseThread : public BaseParallel {
   public:
-    virtual void run();
-    virtual void join(bool blocking=true);
-    virtual bool try_join();
-    virtual void kill();
+    void run();
+
+    void join(bool blocking=true);
+    bool try_join();
+    void kill();
 
     BaseThread();
     virtual ~BaseThread();
@@ -54,15 +56,16 @@ class BaseThread : public BaseParallel {
     pthread_t thread;
 
     static void* wrap_thread(void* instance);
-    virtual void worker() = 0;
+    void worker() = 0;
 };
 
 class BaseProcess : public BaseParallel {
   public:
-    virtual void run(const std::string stdout_fn="", const std::string stderr_fn="");
-    virtual void join(bool blocking=true);
-    virtual bool try_join();
-    virtual void kill();
+    void run(const std::string stdout_fn="", const std::string stderr_fn="");
+
+    void join(bool blocking=true);
+    bool try_join();
+    void kill();
 
     BaseProcess();
     virtual ~BaseProcess();
