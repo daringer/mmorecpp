@@ -64,7 +64,14 @@ void signal_handler(int sig);
 void print_stacktrace(uint max_frames = 63);
 void get_stackdata(uint max_frames = 63);
 
-
+/**
+ * Macro to easily define a exception.
+ * usage:
+ *
+ * DEFINE_EXCEPTION(MyNewException, TOOLS::BaseException);
+ * this defines a new exception, which allows one or no 
+ * argument for construction
+**/
 #define DEFINE_EXCEPTION(CLASS,PARENT) \
   class CLASS : public PARENT { \
     public: \
