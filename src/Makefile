@@ -23,12 +23,13 @@ CCFLAGS = $(DEV_CCFLAGS)
 LDFLAGS = -pthread -rdynamic
 ARFLAGS = ruv
 
+.PHONY: all
+
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
-.PHONY: all
 
 clean:
 	$(RM) $(OBJECTS) $(LIB)
