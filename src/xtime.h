@@ -10,36 +10,36 @@
 
 namespace TOOLS {
 class XTime {
-  private:
-    struct timeval raw_start;
-    struct timeval raw_end;
+ private:
+  struct timeval raw_start;
+  struct timeval raw_end;
 
-  public:
-    XTime(bool auto_start=false);
+ public:
+  XTime(bool auto_start = false);
 
-    void start();
-    void stop();
+  void start();
+  void stop();
 
-    long diff_us();
-    long diff_s();
+  long diff_us();
+  long diff_s();
 };
 
 class XDateTime {
-  private:
-    time_t rawtime;
-    struct tm* timeinfo;
-    char buf[BUFSIZE];
-    std::string fmt_template;
+ private:
+  time_t rawtime;
+  struct tm* timeinfo;
+  char buf[BUFSIZE];
+  std::string fmt_template;
 
-    void render();
+  void render();
 
-  public:
-    XDateTime(const XDateTime& obj);
-    XDateTime(const std::string& fmt="%c");
-    XDateTime(const time_t& stamp);
+ public:
+  XDateTime(const XDateTime& obj);
+  XDateTime(const std::string& fmt = "%c");
+  XDateTime(const time_t& stamp);
 
-    void set_format(const std::string& fmt);
-    std::string format() const;
+  void set_format(const std::string& fmt);
+  std::string format() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const XDateTime& dt);

@@ -10,7 +10,8 @@ void TOOLS::tools_lib_exception_handler() {
   try {
     std::exception_ptr exc = std::current_exception();
     std::rethrow_exception(exc);
-  } catch(std::exception& e) {
+  }
+  catch (std::exception& e) {
     cout << "[E] Exception description following:" << endl;
     cout << "[E] " << e.what() << endl;
   }
@@ -25,13 +26,12 @@ void TOOLS::signal_handler(int sig) {
   exit(1);
 }
 
-
 /**
 * @brief constructor global BaseException (without additional information)
 * @param exc_name the name of the exception to be shown to the user
 */
 BaseException::BaseException(const std::string& exc_name)
-  : exception(), exception_name(exc_name), message("") {
+    : exception(), exception_name(exc_name), message("") {
   init();
 }
 /**
@@ -39,39 +39,32 @@ BaseException::BaseException(const std::string& exc_name)
  * @param the object to be copied
  */
 BaseException::BaseException(const BaseException& obj)
-  : exception(), exception_name(obj.exception_name), message(obj.message) {
+    : exception(), exception_name(obj.exception_name), message(obj.message) {
   init();
 }
 /**
 * @brief descructor including very important throw declaration
 */
-BaseException::~BaseException() throw() { }
+BaseException::~BaseException() throw() {}
 /**
 * @brief show full message through stderr
 */
-const string BaseException::get_message() const {
-  return output;
-}
+const string BaseException::get_message() const { return output; }
 /**
 * @brief show full message through stderr (C++ wrapper method)
 */
-void BaseException::dump() const {
-  cerr << output << endl;
-}
+void BaseException::dump() const { cerr << output << endl; }
 /**
  * @brief actual initialization
  */
-void BaseException::init() {
-  set_message(message);
-}
+void BaseException::init() { set_message(message); }
 /**
 * @brief explicitly set the message
 * @param msg the message to be set
 */
-void BaseException::set_message(const string& msg="") {
+void BaseException::set_message(const string& msg = "") {
   output = "[" + exception_name + "]";
-  if(msg != "")
-    output += " " + msg;
+  if (msg != "") output += " " + msg;
 }
 
 /**
@@ -81,16 +74,16 @@ void BaseException::set_message(const string& msg="") {
 
 void print_stacktrace(uint max_frames) {
   cout << "[BT] Showing stacktrace: " << endl;
-//  for(string& s : get_stackdata(max_frames)) {
-//    cout << "[BT] " << s << endl;
-//  }
+  //  for(string& s : get_stackdata(max_frames)) {
+  //    cout << "[BT] " << s << endl;
+  //  }
 }
 
 void get_stackdata(uint max_frames) {
-  void* addrlist[max_frames+1];
+  void* addrlist[max_frames + 1];
   int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
-  if(addrlen == 0) {
+  if (addrlen == 0) {
     cerr << "[E] backtrace() returned 0 - Error!" << endl;
     return;
   }
@@ -99,29 +92,29 @@ void get_stackdata(uint max_frames) {
   char** symlist = backtrace_symbols(addrlist, addrlen);
 
   size_t funcnamesize = 256;
-  char* funcname = (char*) malloc(funcnamesize);
+  char* funcname = (char*)malloc(funcnamesize);
 
   // demangle all functionnames
-  for(int i=1; i<addrlen; ++i) {
+  for (int i = 1; i < addrlen; ++i) {
     char* begin_name = 0;
     char* begin_offset = 0;
     char* end_offset = 0;
 
     // find parentheses and +address offset surrounding the mangled name:
     // ./module(function+0x15c) [0x8048a6d]
-    for(char* p = symlist[i]; *p; ++p) {
-      if(*p == '(')
+    for (char* p = symlist[i]; *p; ++p) {
+      if (*p == '(')
         begin_name = p;
-      else if(*p == '+')
+      else if (*p == '+')
         begin_offset = p;
-      else if(*p == ')' && begin_offset) {
+      else if (*p == ')' && begin_offset) {
         end_offset = p;
         break;
       }
     }
-    
+
     string tmp;
-    if(begin_name && begin_offset && end_offset && begin_name < begin_offset) {
+    if (begin_name && begin_offset && end_offset && begin_name < begin_offset) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
       *end_offset++ = '\0';
@@ -131,33 +124,32 @@ void get_stackdata(uint max_frames) {
       // __cxa_demangle():
 
       int status;
-      char* ret = abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
+      char* ret =
+          abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
       cout << "status: " << status << endl;
       // use possibly realloc()-ed string
-      if(status == 0) {
-        funcname = ret; 
+      if (status == 0) {
+        funcname = ret;
         cout << funcname << endl;
-        //tmp = string(funcname);
-      // demangle failed
+        // tmp = string(funcname);
+        // demangle failed
       } else {
         cout << symlist[i] << endl;
-       //tmp = string(symlist[i]); 
+        // tmp = string(symlist[i]);
       }
       cout << " EVER HERE???" << endl;
-    // parsing failed
+      // parsing failed
     } else {
-        cout << symlist[i] << endl;
+      cout << symlist[i] << endl;
 
-      //tmp = string(symlist[i]);
+      // tmp = string(symlist[i]);
     }
 
     // move into vector
-    //cout << tmp << endl;
-    //cout << out.size() << endl;
-    //out.push_back(tmp);
+    // cout << tmp << endl;
+    // cout << out.size() << endl;
+    // out.push_back(tmp);
   }
   free(funcname);
   free(symlist);
 }
-
-
