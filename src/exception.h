@@ -64,7 +64,6 @@ void signal_handler(int sig);
 void print_stacktrace(uint max_frames = 63);
 void get_stackdata(uint max_frames = 63);
 
-<<<<<<< HEAD
 /**
  * Macro to easily define a exception.
  * usage:
