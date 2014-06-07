@@ -27,5 +27,10 @@ clean:
 $(PROGRAM): $(SOURCES.cc)
 	$(CCC) $(INCS) $(CCFLAGS) $(LDFLAGS) -o $@ $(SOURCES) $(LIBS)
 
+# run all tests
 tests: $(PROGRAM)
 	./run_tests 
+
+# format sourcecode with clang-format
+format:
+	clang-format -i -style=file *.cc

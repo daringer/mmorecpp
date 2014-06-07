@@ -28,12 +28,10 @@ virtual void setup() {
   example_cmd = "cat /proc/cpuinfo";
   c_cmd = new char[CMD_LEN];
   bzero(c_cmd, sizeof(char) * CMD_LEN);
-  strncpy(c_cmd, example_cmd.c_str(), CMD_LEN-1);
+  strncpy(c_cmd, example_cmd.c_str(), CMD_LEN - 1);
 }
 
-virtual void tear_down() {
-  delete [] c_cmd;
-}
+virtual void tear_down() { delete[] c_cmd; }
 
 MAKE_TEST(initialization) {
   Executor e("bash");
@@ -60,7 +58,8 @@ MAKE_TEST(simple_output) {
   e.communicate();
   string err = e.read_stderr();
   string out = e.read_stdout();
-  CHECK(out.find("bogomips") != string::npos && out.find("cpu") != string::npos);
+  CHECK(out.find("bogomips") != string::npos &&
+        out.find("cpu") != string::npos);
 }
 
 MAKE_TEST(bash_and_output) {
@@ -71,16 +70,13 @@ MAKE_TEST(bash_and_output) {
   string out = e.read_stdout();
 
   int ret = e.check_for_exit();
-  CHECK(ret == 0 && out.find("bogomips") != string::npos && out.find("cpu") != string::npos);
+  CHECK(ret == 0 && out.find("bogomips") != string::npos &&
+        out.find("cpu") != string::npos);
 }
 
-MAKE_TEST(bash_again) {
-  test_bash_and_output();
-}
+MAKE_TEST(bash_again) { test_bash_and_output(); }
 
-MAKE_TEST(bash_third_time) {
-  test_bash_and_output();
-}
+MAKE_TEST(bash_third_time) { test_bash_and_output(); }
 MAKE_TEST(nonblocking_wait) {
   Executor e("bash");
   e.communicate();

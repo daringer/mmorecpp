@@ -18,11 +18,9 @@ START_SUITE(MemTrackerToolsTestSuite) {
 
 size_t many;
 
-virtual void setup() {
-  many = 3000;
-}
+virtual void setup() { many = 3000; }
 
-virtual void tear_down() { }
+virtual void tear_down() {}
 
 MAKE_TEST(init) {
   init_memory_tracker();
@@ -57,9 +55,9 @@ MAKE_TEST(many_new_delete) {
 
   size_t mem_taken = 0;
   size_t mem_calls = 0;
-  for(size_t i=0; i<many; ++i) {
-    char* ptr = new char[i+1];
-    mem_taken += i+1;
+  for (size_t i = 0; i < many; ++i) {
+    char* ptr = new char[i + 1];
+    mem_taken += i + 1;
     mem_calls++;
     delete ptr;
   }
@@ -69,7 +67,7 @@ MAKE_TEST(many_new_delete) {
   CHECK(CALL_COUNT_DELETE == mem_calls);
   CHECK(MEMORY_COUNT_NEW == mem_taken);
   CHECK(MEMORY_COUNT_DELETE == mem_taken);
-  //cout << get_memory_tracker_results() << endl;
+  // cout << get_memory_tracker_results() << endl;
 }
 
 MAKE_TEST(many_new_delete_leaking) {
@@ -80,15 +78,15 @@ MAKE_TEST(many_new_delete_leaking) {
   size_t del_calls = 0;
   size_t mem_taken = 0;
   size_t mem_calls = 0;
-  for(size_t i=0; i<many; ++i) {
-    char* ptr = new char[i+1];
-    char* ptr2 = new char[(i+3)*4];
+  for (size_t i = 0; i < many; ++i) {
+    char* ptr = new char[i + 1];
+    char* ptr2 = new char[(i + 3) * 4];
     std::map<int, int>* complex_ptr = new std::map<int, int>;
 
-    mem_taken += i+1 + (i+3)*4 + sizeof(std::map<int, int>);
+    mem_taken += i + 1 + (i + 3) * 4 + sizeof(std::map<int, int>);
     mem_calls += 3;
-    if((i%3) == 2 || (i*7)%11 == 2) {
-      mem_freed += i+1 + (i+3)*4 + sizeof(std::map<int, int>);
+    if ((i % 3) == 2 || (i * 7) % 11 == 2) {
+      mem_freed += i + 1 + (i + 3) * 4 + sizeof(std::map<int, int>);
       del_calls += 3;
       delete ptr;
       delete ptr2;
@@ -102,7 +100,7 @@ MAKE_TEST(many_new_delete_leaking) {
   CHECK(MEMORY_COUNT_NEW == mem_taken);
   CHECK(MEMORY_COUNT_DELETE == mem_freed);
 
-  //cout << get_memory_tracker_results() << endl;
+  // cout << get_memory_tracker_results() << endl;
 }
 
 END_SUITE()

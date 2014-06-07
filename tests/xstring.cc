@@ -4,7 +4,6 @@
 
 #include "testing_suite.h"
 
-
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
@@ -41,7 +40,7 @@ virtual void setup() {
   number = 123;
 }
 
-virtual void tear_down() { }
+virtual void tear_down() {}
 
 MAKE_TEST(constructor) {
   XString xs1("abc");
@@ -51,20 +50,21 @@ MAKE_TEST(constructor) {
 }
 
 MAKE_TEST(subs) {
-  XString src("abc--[placeholder]---[two]--[two]-[two]---[two][two][two][one][one][one]");
+  XString src(
+      "abc--[placeholder]---[two]--[two]-[two]---[two][two][two][one][one]["
+      "one]");
   XString step("abc--yyy---xxx--xxx-[two]---[two][two][two][one][one][one]");
   XString final("abc--yyy---xxx--xxx-xxx---xxxxxxxxxzzzzzzzzz");
 
   XString xs1 = src.subs("[placeholder]", "yyy").subs("[two]", "xxx", 2);
   CHECK(xs1 == step);
 
-  XString xs2 = xs1.subs_all("[two]","xxx").subs_all("[one]", "zzz");
+  XString xs2 = xs1.subs_all("[two]", "xxx").subs_all("[one]", "zzz");
   CHECK(xs2 == final);
 }
 MAKE_TEST(split) {
   tStringList l = s2.split();
   CHECK(l.size() == 2 && l[0].length() == 6 && l[1].length() == 10);
-
 
   tStringList m = XString("ab|cd|foo||a|xxxx").split("|");
   CHECK(m.size() == 6 && m[0].length() == 2 && m[1].length() == 2 &&
@@ -79,29 +79,17 @@ MAKE_TEST(strip) {
   CHECK(xs2.strip("-").strip("/").strip("-") == "xxx");
 }
 
-MAKE_TEST(lower_case) {
-  CHECK(s3.lower() == s3_small);
-}
+MAKE_TEST(lower_case) { CHECK(s3.lower() == s3_small); }
 
-MAKE_TEST(upper_case) {
-  CHECK(s3.upper() == s3_big);
-}
+MAKE_TEST(upper_case) { CHECK(s3.upper() == s3_big); }
 
-MAKE_TEST(real) {
-  CHECK(real(realstr) == decimal);
-}
+MAKE_TEST(real) { CHECK(real(realstr) == decimal); }
 
-MAKE_TEST(real_error) {
-  CHECK_EXC(ConvertValueError, real(foo));
-}
+MAKE_TEST(real_error) { CHECK_EXC(ConvertValueError, real(foo)); }
 
-MAKE_TEST(integer) {
-  CHECK(integer(intstr) == number);
-}
+MAKE_TEST(integer) { CHECK(integer(intstr) == number); }
 
-MAKE_TEST(integer_error) {
-  CHECK_EXC(ConvertValueError, integer(foo));
-}
+MAKE_TEST(integer_error) { CHECK_EXC(ConvertValueError, integer(foo)); }
 
 MAKE_TEST(empty_string_split) {
   XString xs("");
