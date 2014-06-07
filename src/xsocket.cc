@@ -19,7 +19,8 @@ void SocketStream::send(const std::string& data) { send(data, data.length()); }
 
 void SocketStream::send(const std::string& data, int len) {
   int n = write(fd, data.c_str(), len);
-  if (n < 0) throw SocketException("write() failed: " + str(n));
+  if (n < 0)
+    throw SocketException("write() failed: " + str(n));
 }
 
 const std::string SocketStream::get(int len) {
@@ -27,7 +28,8 @@ const std::string SocketStream::get(int len) {
   bzero(&buf, MAX_BUF);
 
   int n = read(fd, &buf, len);
-  if (n < 0) throw SocketException("read() failed" + str(n));
+  if (n < 0)
+    throw SocketException("read() failed" + str(n));
   return buf;
 }
 
@@ -44,7 +46,8 @@ Socket::Socket(SOCKET_TYPE type, int port)
   else if (type == UNIX)
     fd = socket(AF_UNIX, SOCK_DGRAM, 0);
 
-  if (fd < 0) throw SocketException("Could not create socket");
+  if (fd < 0)
+    throw SocketException("Could not create socket");
 }
 
 Socket::~Socket() {
@@ -63,7 +66,8 @@ ServerSocket::ServerSocket(SOCKET_TYPE type, int port) : Socket(type, port) {
 }
 
 ServerSocket::~ServerSocket() {
-  if (stream != NULL) delete stream;
+  if (stream != NULL)
+    delete stream;
 }
 
 SocketStream* ServerSocket::listen() {
@@ -112,7 +116,8 @@ SocketStream* StreamSelecter::select(unsigned int usecs) {
   FD_ZERO(&socks);
   // for(vector<SocketStream*>::iterator i=streams.begin(); i!=streams.end();
   // ++i)
-  for (SocketStream* stream : streams) FD_SET(stream->fd, &socks);
+  for (SocketStream* stream : streams)
+    FD_SET(stream->fd, &socks);
 
   struct timeval timeout;
   timeout.tv_sec = 0;
@@ -121,12 +126,14 @@ SocketStream* StreamSelecter::select(unsigned int usecs) {
   int readsocks =
       ::select(sizeof(socks) * 8, &socks, (fd_set*)0, (fd_set*)0, &timeout);
 
-  if (readsocks == 0) return NULL;
+  if (readsocks == 0)
+    return NULL;
 
   // for(vector<SocketStream*>::iterator i=streams.begin(); i!=streams.end();
   // ++i)
   for (SocketStream* stream : streams)
-    if (FD_ISSET(stream->fd, &socks)) return stream;
+    if (FD_ISSET(stream->fd, &socks))
+      return stream;
 
   return NULL;
 }

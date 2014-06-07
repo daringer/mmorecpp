@@ -69,7 +69,7 @@ void get_stackdata(uint max_frames = 63);
  * usage:
  *
  * DEFINE_EXCEPTION(MyNewException, TOOLS::BaseException);
- * this defines a new exception, which allows one or no 
+ * this defines a new exception, which allows one or no
  * argument for construction
 **/
 #define DEFINE_EXCEPTION(CLASS, PARENT)                                  \

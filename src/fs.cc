@@ -37,12 +37,14 @@ vector<Path> Path::listdir(bool recursive) {
   struct dirent* entry;
   vector<Path> out;
 
-  if (!exists()) throw PathException("Directory does not exist: " + path);
+  if (!exists())
+    throw PathException("Directory does not exist: " + path);
   if ((dir = opendir(path.c_str())) == NULL)
     throw PathException("Could not open directory: " + path);
 
   while ((entry = readdir(dir)) != NULL) {
-    if (string(entry->d_name) == "." || string(entry->d_name) == "..") continue;
+    if (string(entry->d_name) == "." || string(entry->d_name) == "..")
+      continue;
     Path filepath = *this + entry->d_name;
     out.push_back(Path(entry->d_name));
     if (recursive && filepath.is_dir()) {
@@ -74,7 +76,8 @@ bool Path::operator==(const Path& obj) { return path == obj.path; }
  */
 bool Path::is_dir() {
   struct stat s;
-  if (stat(path.c_str(), &s) != 0) return false;
+  if (stat(path.c_str(), &s) != 0)
+    return false;
   return S_ISDIR(s.st_mode);
 }
 /**
@@ -83,7 +86,8 @@ bool Path::is_dir() {
  */
 bool Path::is_file() {
   struct stat s;
-  if (stat(path.c_str(), &s) != 0) return false;
+  if (stat(path.c_str(), &s) != 0)
+    return false;
   return S_ISREG(s.st_mode);
 }
 /**
@@ -92,7 +96,8 @@ bool Path::is_file() {
  */
 Path Path::parent() {
   string::size_type pos = path.rfind("/", path.size() - 1);
-  if (pos == string::npos) return Path("./");
+  if (pos == string::npos)
+    return Path("./");
   return Path(path.substr(0, pos));
 }
 
@@ -119,7 +124,8 @@ bool Path::create_dir() { return (::mkdir(path.c_str(), 0777) == 0); }
  */
 bool Path::move(const string& to) {
   bool res = (rename(path.c_str(), to.c_str()) == 0);
-  if (res) path = to;
+  if (res)
+    path = to;
   return res;
 }
 /**

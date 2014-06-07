@@ -36,13 +36,16 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 // selects either .h file generation or .cc
 //#define GENERATE_HEADER
 
-#define CHECK(expr)                         \
-  if (do_checks) add_check(expr, __LINE__); \
-  if (!(expr) && return_on_fail) return;
+#define CHECK(expr)              \
+  if (do_checks)                 \
+    add_check(expr, __LINE__);   \
+  if (!(expr) && return_on_fail) \
+    return;
 
 #define CHECK_EXC(exc, func)             \
   do {                                   \
-    if (!do_checks) break;               \
+    if (!do_checks)                      \
+      break;                             \
     bool _res = false;                   \
     try {                                \
       func;                              \
@@ -55,22 +58,26 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
 
 #define CHECK_DUAL_ITER(iter, lbox, rbox, expr)                \
   do {                                                         \
-    if (!do_checks) break;                                     \
+    if (!do_checks)                                            \
+      break;                                                   \
     int _count = 0;                                            \
     tIntList errs;                                             \
     for (iter i = lbox.begin(), j = rbox.begin();              \
          i != lbox.end(), j != rbox.end(); ++i, ++j, ++_count) \
-      if (!(expr)) errs.push_back(_count);                     \
+      if (!(expr))                                             \
+        errs.push_back(_count);                                \
     add_iter_check(errs.empty(), _count, errs, __LINE__);      \
   } while (0)
 
 #define CHECK_ITER(iter, box, expr)                           \
   do {                                                        \
-    if (!do_checks) break;                                    \
+    if (!do_checks)                                           \
+      break;                                                  \
     int _count = 0;                                           \
     tIntList errs;                                            \
     for (iter i = box.begin(); i != box.end(); ++i, ++_count) \
-      if (!(expr)) errs.push_back(_count);                    \
+      if (!(expr))                                            \
+        errs.push_back(_count);                               \
     add_iter_check(errs.empty(), _count, errs, __LINE__);     \
   } while (0)
 

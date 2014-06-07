@@ -19,7 +19,8 @@ XLogger::XLogger(const string& id)
       strip_msg(true),
       to_strip({"\n", "\t", " ", "\r"}) {
 
-  if (log_map.find(id) != log_map.end()) throw LoggerIDAlreadyRegistered(id);
+  if (log_map.find(id) != log_map.end())
+    throw LoggerIDAlreadyRegistered(id);
 
   backends.clear();
   log_map[id] = this;
@@ -60,7 +61,8 @@ void XLogger::add_backend(BaseLoggerBackend* back, const string& tmpl) {
 
 // static global getter for the registered XLoggers
 XLogger* XLogger::get(const string& id) throw(NoSuchXLoggerAvailable) {
-  if (log_map.find(id) != log_map.end()) return log_map[id];
+  if (log_map.find(id) != log_map.end())
+    return log_map[id];
   throw NoSuchXLoggerAvailable(id);
 }
 
@@ -92,7 +94,8 @@ void XLogger::set_loglvl_desc(int loglvl, const string& desc) {
 
 // get loglvl description, decrease lvl gradually to 0, if not found.
 string XLogger::get_fancy_level(int lvl) {
-  while (lvl2desc.find(lvl) == lvl2desc.end()) lvl--;
+  while (lvl2desc.find(lvl) == lvl2desc.end())
+    lvl--;
   return lvl2desc[lvl];
 }
 
@@ -106,7 +109,8 @@ string XLogger::render_msg(BaseLoggerBackend* back, const string& data,
 
   XString mymsg = data;
   if (strip_msg) {
-    for (const string& s : to_strip) mymsg.strip(s);
+    for (const string& s : to_strip)
+      mymsg.strip(s);
   }
 
   return msg.subs("%%MSG%%", mymsg)
@@ -123,23 +127,27 @@ void XLogger::log_msg(const string data, int loglevel, int line,
                       const string fn, const string func) {
 
   // if loglvl below min_loglvl, discard!
-  if (loglevel < min_loglvl) return;
+  if (loglevel < min_loglvl)
+    return;
 
   // render and write to all backends
   for (BaseLoggerBackend* back : backends)
     back->write(render_msg(back, data, loglevel, line, fn, func));
 
   // check for action with given loglvl
-  if (lvl2action.find(loglevel) != lvl2action.end()) lvl2action[loglevel]();
+  if (lvl2action.find(loglevel) != lvl2action.end())
+    lvl2action[loglevel]();
 }
 
 // log raw string
 void XLogger::log_msg(const string data) {
   // just to be sure to avoid empty log msgs
-  if (data.length() == 0) return;
+  if (data.length() == 0)
+    return;
 
   // write data to all backends
-  for (BaseLoggerBackend* back : backends) back->write(data);
+  for (BaseLoggerBackend* back : backends)
+    back->write(data);
 }
 
 // LogStream provides the interface for logging

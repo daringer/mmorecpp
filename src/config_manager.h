@@ -150,7 +150,8 @@ class ConfigOption {
   // get data from option
   template <class T>
   const T& get() {
-    if (!was_set && !has_default) throw ValueHasNotBeenSet(id);
+    if (!was_set && !has_default)
+      throw ValueHasNotBeenSet(id);
     return data.get<T>();
   }
 

@@ -56,7 +56,8 @@ string ConfigDataKeeper::verbose_data(void* raw_data) const {
   else
     out = "unknown data";
 
-  if (raw_data != nullptr) delete cdk;
+  if (raw_data != nullptr)
+    delete cdk;
   return out;
 }
 
@@ -83,7 +84,8 @@ string ConfigOption::verbose_data() const {
 }
 
 string ConfigOption::verbose_default() const {
-  if (has_default) return default_data.verbose_data();
+  if (has_default)
+    return default_data.verbose_data();
   return "<no default set>";
 }
 
@@ -102,7 +104,8 @@ ConfigGroup::const_iterator ConfigGroup::end() const { return members.end(); }
 
 ConfigOption& ConfigGroup::get_option(const std::string& id) {
   tOptionIter it = members.find(id);
-  if (it != members.end()) return *it->second;
+  if (it != members.end())
+    return *it->second;
   throw OptionNotFound(id);
 }
 
@@ -113,7 +116,8 @@ ConfigGroup& ConfigManager::new_group(const std::string& name) {
 
 ConfigGroup& ConfigManager::get_group(const string& name) {
   tGroupIter it = groups.find(name);
-  if (it == groups.end()) throw GroupNotFound(name);
+  if (it == groups.end())
+    throw GroupNotFound(name);
   return *it->second;
 }
 
@@ -123,7 +127,8 @@ ConfigGroup& ConfigManager::get_group_from_option(const string& name) {
 
 ConfigOption& ConfigManager::get_option(const std::string& id) {
   tOptionIter it = members.find(id);
-  if (it == members.end()) throw OptionNotFound(id);
+  if (it == members.end())
+    throw OptionNotFound(id);
   return *(it->second);
 }
 
@@ -145,7 +150,8 @@ ConfigManager::ConfigManager(const std::string& start_command)
 void ConfigManager::parse(tStringList* args) {
   string cmd = args->at(0);
 
-  if (cmdmap.find(cmd) == cmdmap.end()) throw UnknownParameter(cmd);
+  if (cmdmap.find(cmd) == cmdmap.end())
+    throw UnknownParameter(cmd);
 
   string id = cmdmap[cmd];
   ConfigDataKeeper* tmp = &members[id]->data;
@@ -177,7 +183,8 @@ void ConfigManager::parse(tStringList* args) {
     return;
   }
 
-  if (args->size() < 2) throw MissingParameter(cmd + " - found no more args");
+  if (args->size() < 2)
+    throw MissingParameter(cmd + " - found no more args");
 
   string arg = args->at(1);
 
@@ -229,9 +236,11 @@ void ConfigManager::parse(tStringList* args) {
 
 void ConfigManager::parse_cmdline(int argc, char* argv[]) {
   tStringList args;
-  for (int i = 1; i < argc; ++i) args.push_back(argv[i]);
+  for (int i = 1; i < argc; ++i)
+    args.push_back(argv[i]);
 
-  while (args.size() > 0) parse(&args);
+  while (args.size() > 0)
+    parse(&args);
 }
 
 void ConfigManager::write_config_file(ostream& fd, bool shorter) {
@@ -254,7 +263,8 @@ void ConfigManager::write_config_file(ostream& fd, bool shorter) {
       if (!shorter) {
         fd << "# " << c->desc << " [" << c->verbose_type() << "]";
         // write if ConfigOption has default
-        if (c->has_default) fd << " default: " << c->verbose_default();
+        if (c->has_default)
+          fd << " default: " << c->verbose_default();
         fd << endl;
       }
 
@@ -269,7 +279,8 @@ void ConfigManager::write_config_file(ostream& fd, bool shorter) {
         fd << "# " << id << " = "
            << "<not set>" << endl;
       }
-      if (!shorter) fd << endl;
+      if (!shorter)
+        fd << endl;
     }
   }
 }
@@ -281,9 +292,11 @@ void ConfigManager::parse_config_file(const string& fn) {
   while (fd.good()) {
     getline(fd, line);
     line.strip().strip("\n");
-    if (line.length() == 0) continue;
+    if (line.length() == 0)
+      continue;
 
-    if (line.startswith("#")) continue;
+    if (line.startswith("#"))
+      continue;
 
     if (line.find("=") == string::npos) {
       tokens.push_back("--" + line);
@@ -301,7 +314,8 @@ void ConfigManager::parse_config_file(const string& fn) {
   fd.close();
 
   try {
-    while (tokens.size() > 0) parse(&tokens);
+    while (tokens.size() > 0)
+      parse(&tokens);
   }
   catch (IncompatibleDataTypes& e) {
     e.message += " (inside configfile)";
@@ -312,7 +326,8 @@ void ConfigManager::parse_config_file(const string& fn) {
 bool ConfigManager::is_group_active(const std::string& name) {
   tOptionMap& opts = groups[name]->members;
   for (tOptionIter i = opts.begin(); i != opts.end(); ++i)
-    if (i->second->was_set) return true;
+    if (i->second->was_set)
+      return true;
   return false;
 }
 

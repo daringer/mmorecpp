@@ -34,20 +34,23 @@ Executor::Executor(const string& cmd, bool use_path)
     else
       args.push_back(*i);
 
-  if (!use_path && !FS::Path(command).exists()) throw CommandNotFound(command);
+  if (!use_path && !FS::Path(command).exists())
+    throw CommandNotFound(command);
 }
 
 void Executor::set_buffer_size(int buf_size) {
   BUF_SIZE = buf_size;
 
-  if (buffer != NULL) delete[] buffer;
+  if (buffer != NULL)
+    delete[] buffer;
 
   buffer = new char[buf_size];
   bzero(buffer, sizeof(char) * buf_size);
 }
 
 void Executor::communicate() {
-  if (verbose) cout << "[i] Starting control of child!" << endl;
+  if (verbose)
+    cout << "[i] Starting control of child!" << endl;
 
   pipe(fdin);
   pipe(fdout);
@@ -60,29 +63,42 @@ void Executor::communicate() {
 
   } else if (pid == 0) {
 
-    if (dup2(fdout[0], STDIN_FILENO) == -1) perror("dup2-1");
-    if (dup2(fdin[1], STDOUT_FILENO) == -1) perror("dup2-1");
-    if (dup2(fderr[1], STDERR_FILENO) == -1) perror("dup2-1");
+    if (dup2(fdout[0], STDIN_FILENO) == -1)
+      perror("dup2-1");
+    if (dup2(fdin[1], STDOUT_FILENO) == -1)
+      perror("dup2-1");
+    if (dup2(fderr[1], STDERR_FILENO) == -1)
+      perror("dup2-1");
 
-    if (close(fdout[0]) == -1) perror("close-fork-1");
-    if (close(fdout[1]) == -1) perror("close-fork-2");
-    if (close(fdin[0]) == -1) perror("close-fork-3");
-    if (close(fdin[1]) == -1) perror("close-fork-4");
-    if (close(fderr[0]) == -1) perror("close-fork-5");
-    if (close(fderr[1]) == -1) perror("close-fork-6");
+    if (close(fdout[0]) == -1)
+      perror("close-fork-1");
+    if (close(fdout[1]) == -1)
+      perror("close-fork-2");
+    if (close(fdin[0]) == -1)
+      perror("close-fork-3");
+    if (close(fdin[1]) == -1)
+      perror("close-fork-4");
+    if (close(fderr[0]) == -1)
+      perror("close-fork-5");
+    if (close(fderr[1]) == -1)
+      perror("close-fork-6");
 
     int ret = execute();
     exit(ret);
   } else {
-    if (close(fderr[1]) == -1) perror("close(fderr[1])");
-    if (close(fdin[1]) == -1) perror("close(fderr[1])");
-    if (close(fdout[0]) == -1) perror("close(fdout[0])");
+    if (close(fderr[1]) == -1)
+      perror("close(fderr[1])");
+    if (close(fdin[1]) == -1)
+      perror("close(fderr[1])");
+    if (close(fdout[0]) == -1)
+      perror("close(fdout[0])");
   }
   init_done = true;
 }
 
 int Executor::run() {
-  if (verbose) cout << "[i] Running child!" << endl;
+  if (verbose)
+    cout << "[i] Running child!" << endl;
 
   pid = fork();
   int out = -1;
@@ -99,19 +115,22 @@ int Executor::run() {
 }
 
 string Executor::read_stderr() {
-  if (verbose) cout << "[i] trying to read from child's stderr" << endl;
+  if (verbose)
+    cout << "[i] trying to read from child's stderr" << endl;
 
   return read_from_fd(fderr[0]);
 }
 
 string Executor::read_stdout() {
-  if (verbose) cout << "[i] trying to read from child's stdout" << endl;
+  if (verbose)
+    cout << "[i] trying to read from child's stdout" << endl;
 
   return read_from_fd(fdin[0]);
 }
 
 string Executor::read_from_fd(int fd) {
-  if (!init_done) throw CommunicationNotInited("Tunnel not initilized");
+  if (!init_done)
+    throw CommunicationNotInited("Tunnel not initilized");
 
   string out = "";
   while (read(fd, buffer, BUF_SIZE - 1) > 0) {
@@ -122,10 +141,12 @@ string Executor::read_from_fd(int fd) {
 }
 
 void Executor::write_stdin(const string& input, bool newline) {
-  if (!init_done) throw CommunicationNotInited("Tunnel not initilized");
+  if (!init_done)
+    throw CommunicationNotInited("Tunnel not initilized");
 
   write(fdout[1], input.c_str(), input.length());
-  if (newline) write(fdout[1], "\n", 1);
+  if (newline)
+    write(fdout[1], "\n", 1);
 }
 
 int Executor::execute() {
@@ -150,7 +171,8 @@ int Executor::execute() {
   else
     out = execv(cargs[0], cargs);
 
-  for (uint i = 0; args.size() + 1; ++i) delete[] cargs[i];
+  for (uint i = 0; args.size() + 1; ++i)
+    delete[] cargs[i];
   delete[] cargs;
 
   return out;
@@ -161,10 +183,12 @@ int Executor::check_for_exit(bool blocking) {
     cout << "[i] Checking for child (pid: " << pid << ") to exit" << endl;
 
   int flags = 0;
-  if (!blocking) flags |= WNOHANG;
+  if (!blocking)
+    flags |= WNOHANG;
   pid_t retpid = waitpid(pid, &result, flags);
 
-  if (retpid == -1) perror("waitpid() failed: ");
+  if (retpid == -1)
+    perror("waitpid() failed: ");
 
   if (WIFEXITED(result) != 0 && verbose)
     cout << "[i] Child (pid: " << pid << ") returned: " << result << endl;

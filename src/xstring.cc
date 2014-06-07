@@ -16,8 +16,10 @@ XString::~XString() {}
  * @return *this
  */
 XString& XString::strip(const string& s) {
-  if (length() == 0) return *this;
-  while (substr(0, s.length()) == s) erase(0, s.length());
+  if (length() == 0)
+    return *this;
+  while (substr(0, s.length()) == s)
+    erase(0, s.length());
   while (substr(length() - s.length(), s.length()) == s)
     erase(length() - s.length(), s.length());
   return *this;
@@ -59,7 +61,8 @@ XString& XString::subs(const string& what, const string& with,
   int replaced = 0;
   while ((pos = find(what, pos)) != string::npos) {
     replace(pos, what.length(), with);
-    if (++replaced == max_replaces) break;
+    if (++replaced == max_replaces)
+      break;
     pos += with.length();
   }
   return *this;
@@ -97,7 +100,8 @@ XString& XString::join(const tStringSet& set) {
  */
 XString& XString::lower() {
   for (string::iterator i = begin(); i != end(); ++i)
-    if ((*i) >= 65 && (*i) <= 90) replace(i, i + 1, 1, (char)((*i) + 32));
+    if ((*i) >= 65 && (*i) <= 90)
+      replace(i, i + 1, 1, (char)((*i) + 32));
   return *this;
 }
 /**
@@ -106,7 +110,8 @@ XString& XString::lower() {
  */
 XString& XString::upper() {
   for (string::iterator i = begin(); i != end(); ++i)
-    if ((*i) >= 97 && (*i) <= 122) replace(i, i + 1, 1, (char)((*i) - 32));
+    if ((*i) >= 97 && (*i) <= 122)
+      replace(i, i + 1, 1, (char)((*i) - 32));
   return *this;
 }
 

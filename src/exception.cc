@@ -64,7 +64,8 @@ void BaseException::init() { set_message(message); }
 */
 void BaseException::set_message(const string& msg = "") {
   output = "[" + exception_name + "]";
-  if (msg != "") output += " " + msg;
+  if (msg != "")
+    output += " " + msg;
 }
 
 /**

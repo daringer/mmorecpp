@@ -40,7 +40,8 @@ void TestSuite::add_iter_check(bool res, int iters, tIntList errs, int line) {
   stringstream out;
   for (tIntIter i = errs.begin(); i != errs.end(); ++i) {
     out << *i;
-    if (i + 1 != errs.end()) out << ",";
+    if (i + 1 != errs.end())
+      out << ",";
   }
   if (!res)
     active_test->res.details.append("[eq_iter: iterations: " + str(iters) +
@@ -173,7 +174,8 @@ void TestFramework::show_result_overview() {
     all_tests += i->second->check_count;
     for (tTestIter j = i->second->tests.begin(); j != i->second->tests.end();
          ++j) {
-      if (j->second.res.run) (j->second.res.result) ? good++ : bad++;
+      if (j->second.res.run)
+        (j->second.res.result) ? good++ : bad++;
     }
   }
   cout << endl << "[i] Finished TestRun (" << all_tests

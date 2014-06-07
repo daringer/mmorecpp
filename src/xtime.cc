@@ -7,7 +7,8 @@ using namespace TOOLS;
 using namespace std;
 
 XTime::XTime(bool auto_start) {
-  if (auto_start) start();
+  if (auto_start)
+    start();
 }
 
 void XTime::start() { gettimeofday(&raw_start, NULL); }

@@ -20,7 +20,8 @@ Regex::Regex(const std::string& query)
   bzero(pattern, sizeof(regex_t));
 
   int ret = regcomp(pattern, query.c_str(), REG_EXTENDED);
-  if (ret != 0) throw RegexException(ret, pattern);
+  if (ret != 0)
+    throw RegexException(ret, pattern);
 }
 
 Regex::~Regex() {
@@ -49,10 +50,12 @@ void Regex::apply_pattern(const string& s, int max_results) {
     ptr += res[0].rm_eo;
     offset += res[0].rm_eo;
 
-    if (max_results == 0) break;
+    if (max_results == 0)
+      break;
     max_results--;
   }
-  if (ret != REG_NOMATCH && ret != 0) throw RegexException(ret, pattern);
+  if (ret != REG_NOMATCH && ret != 0)
+    throw RegexException(ret, pattern);
 }
 
 bool Regex::match(const string& s) {
@@ -68,7 +71,8 @@ Matchinglist& Regex::search(const string& s) {
 string Regex::replace(const string& s, const string& repl) {
   apply_pattern(s, -1);
 
-  if (results.size() == 0) return s;
+  if (results.size() == 0)
+    return s;
 
   Regex re_repl("[\\][1-9]");
   Matchinglist refs = re_repl.search(repl);

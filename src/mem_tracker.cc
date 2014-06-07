@@ -131,7 +131,8 @@ string __print_memory_details(bool delete_mode, bool verbose) {
   }
 
   // directly return, if no details are available
-  if (data.size() == 0) return "";
+  if (data.size() == 0)
+    return "";
 
   // find PtrData instance allocating most bytes
   tPtrDataIter max_iter = std::max_element(
@@ -169,7 +170,8 @@ string __print_memory_details(bool delete_mode, bool verbose) {
            ++p, col++) {
         ss << p->p << "[" << setw(max_width) << p->size << "]";
         ss << (((p + 1) != i->second.end()) ? ", " : "\n");
-        if ((col % max_cols) == (max_cols - 1)) ss << endl << "       ";
+        if ((col % max_cols) == (max_cols - 1))
+          ss << endl << "       ";
       }
     }
   }

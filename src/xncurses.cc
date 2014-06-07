@@ -124,12 +124,14 @@ void XNCTable::del_data(const uint& idx) {
 void XNCTable::update() {
   // set_layout();
   map<uint, uint> who_wide, col_pos;
-  for (uint x = 0; x < head.size(); ++x) who_wide[x] = head[x].length();
+  for (uint x = 0; x < head.size(); ++x)
+    who_wide[x] = head[x].length();
 
   // first, find widest col-members
   for (uint y = 0; y < data.size(); ++y)
     for (uint x = 0; x < data[y].size(); ++x)
-      if (data[y][x].length() > who_wide[x]) who_wide[x] = data[y][x].length();
+      if (data[y][x].length() > who_wide[x])
+        who_wide[x] = data[y][x].length();
 
   // set col positions
   col_pos[0] = 0;
@@ -176,7 +178,8 @@ void XNCStatusBar::set_content(const uint& idx, const string& s) {
   if (data.size() <= idx)
     data[idx] = s;
   else {
-    while (data.size() <= idx) data.push_back("");
+    while (data.size() <= idx)
+      data.push_back("");
     data.push_back(s);
   }
   update();
@@ -198,9 +201,11 @@ XNCScrolling::XNCScrolling(const uint& lines, const tCoords& pos,
 
 void XNCScrolling::update() {
   clear();
-  while (data.size() > lines) data.pop_back();
+  while (data.size() > lines)
+    data.pop_back();
 
-  for (uint i = 0; i < data.size(); ++i) mvwaddstr(_win, i, 0, data[i].c_str());
+  for (uint i = 0; i < data.size(); ++i)
+    mvwaddstr(_win, i, 0, data[i].c_str());
   wrefresh(_win);
 }
 
@@ -229,7 +234,8 @@ void XNC::add_window(const std::string& id, XNCBaseWindow* obj) {
 XNC::~XNC() { endwin(); }
 
 void XNC::update() {
-  for (auto& n2w : name2window) n2w.second->update();
+  for (auto& n2w : name2window)
+    n2w.second->update();
 }
 
 int main() {

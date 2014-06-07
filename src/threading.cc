@@ -14,7 +14,8 @@ BaseParallel::BaseParallel() : retval(new int), retdata(nullptr) {}
 
 BaseParallel::~BaseParallel() {
   delete retval;
-  if (retdata != nullptr) delete (int*)retdata;
+  if (retdata != nullptr)
+    delete (int*)retdata;
 }
 
 void BaseParallel::run() {}
@@ -57,9 +58,11 @@ void BaseProcess::run(const string stdout_fn, const string stderr_fn) {
   } else if (pid == 0) {
     // if stdout_fn or stderr_fn are != "",
     //  redirect stdout/err to this/these file(s)
-    if (stdout_fn != "") freopen(stdout_fn.c_str(), "w", stdout);
+    if (stdout_fn != "")
+      freopen(stdout_fn.c_str(), "w", stdout);
 
-    if (stderr_fn != "") freopen(stderr_fn.c_str(), "w", stderr);
+    if (stderr_fn != "")
+      freopen(stderr_fn.c_str(), "w", stderr);
 
     // child
     worker();
@@ -71,10 +74,12 @@ void BaseProcess::run(const string stdout_fn, const string stderr_fn) {
 
 void BaseProcess::join(bool blocking) {
   int flags = 0;
-  if (!blocking) flags |= WNOHANG;
+  if (!blocking)
+    flags |= WNOHANG;
   pid_t retpid = waitpid(pid, retval, flags);
 
-  if (retpid == -1) perror("waitpid() failed: ");
+  if (retpid == -1)
+    perror("waitpid() failed: ");
 
   if (WIFEXITED(retval) != 0) {
     // child (pid) returned (result)
@@ -142,7 +147,8 @@ bool MessageQueueServer::check_for_msg() {
 
   // ret -1 on empty queue && non-blocking
   if (bytes_read == -1) {
-    if (!blocking) return (local_queue.size() > 0);
+    if (!blocking)
+      return (local_queue.size() > 0);
     // err?!
     perror("err: ");
   }

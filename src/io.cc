@@ -6,7 +6,8 @@ using namespace TOOLS::IO;
 string TOOLS::IO::nextline(istream& inp) {
   char buffer[256] = {0};
 
-  if (inp.eof()) throw IOException("Unexpected end-of-file");
+  if (inp.eof())
+    throw IOException("Unexpected end-of-file");
 
   inp.getline(buffer, 255);
   return buffer;

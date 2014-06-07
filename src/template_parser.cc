@@ -104,7 +104,8 @@ void TemplateParser::replace_template(const string& template_path) {
   tmpl_filename = template_path;
   read_template(stream);
 
-  if (root_node != nullptr) delete root_node;
+  if (root_node != nullptr)
+    delete root_node;
 
   generate_ast();
 }
@@ -114,9 +115,11 @@ void TemplateParser::replace_template(const string& template_path) {
  *        reaction that deletes all children below the root_node
  */
 TemplateParser::~TemplateParser() {
-  if (!no_cleanup) delete root_node;
+  if (!no_cleanup)
+    delete root_node;
 
-  for (auto item : subtemplates) delete item.second;
+  for (auto item : subtemplates)
+    delete item.second;
 }
 
 TemplateParser* TemplateParser::new_subtemplate(const std::string& tmpl_name) {
@@ -128,7 +131,8 @@ TemplateParser* TemplateParser::new_subtemplate(const std::string& tmpl_name) {
 
 tStringList TemplateParser::get_subtemplates() {
   tStringList out;
-  for (auto it_pair : subtemplates) out.push_back(it_pair.first);
+  for (auto it_pair : subtemplates)
+    out.push_back(it_pair.first);
   return out;
 }
 
@@ -275,7 +279,8 @@ void TemplateParser::generate_ast() {
       active_node = active_node->children.back();
     } else if (tokens[0] == "end" || tokens[0] == "endfor" ||
                tokens[0] == "endif" || tokens[0] == "endsubtemplate") {
-      if (active_node->type == "else") active_node = active_node->parent;
+      if (active_node->type == "else")
+        active_node = active_node->parent;
       active_node = active_node->parent;
     } else {
       cerr << "Found unknown control structure: \"" << cmd << "\"" << endl;
@@ -312,7 +317,8 @@ void TemplateParser::show_ast() { show_ast(this->root_node, 0); }
  * @param level the depth of the node, the method is processing right now
  */
 void TemplateParser::show_ast(ASTNode* node, int level) {
-  for (int j = 0; j < level; ++j) cout << "|";
+  for (int j = 0; j < level; ++j)
+    cout << "|";
   cout << "- " << node->type << " children_count: " << node->children.size()
        << endl;
   for (vector<ASTNode*>::iterator i = node->children.begin();
@@ -337,7 +343,8 @@ void TemplateParser::parse(ASTNode* node) {
     assert((tokens.size() == 2) || (tokens.size() == 3 && tokens[1] == "not"));
     string var = get_val((tokens.size() == 3) ? tokens[2] : tokens[1]);
     bool is_true = (var == "0" || var == "" || var == "false") ? false : true;
-    if (tokens.size() == 3) is_true = !is_true;
+    if (tokens.size() == 3)
+      is_true = !is_true;
 
     // first handling potential else
     if (!is_true) {
@@ -351,7 +358,8 @@ void TemplateParser::parse(ASTNode* node) {
         node->children.pop_back();
       }
       parse_children(node);
-      if (else_node) node->children.push_back(else_node);
+      if (else_node)
+        node->children.push_back(else_node);
     }
     // arbitrary integer ranges can be used either: "for i to count" or
     // "for i to count from start_count"
@@ -386,8 +394,10 @@ void TemplateParser::parse(ASTNode* node) {
     for (iter_vars[iter] = start, first_loop[iter] = true,
         last_loop[iter] = false;
          iter_vars[iter] < end; ++iter_vars[iter]) {
-      if (iter_vars[iter] != start) first_loop[iter] = false;
-      if (iter_vars[iter] == end - 1) last_loop[iter] = true;
+      if (iter_vars[iter] != start)
+        first_loop[iter] = false;
+      if (iter_vars[iter] == end - 1)
+        last_loop[iter] = true;
       parse_children(node);
     }
     // parse "else"
@@ -418,9 +428,11 @@ bool TemplateParser::save_to_file(const string& filename) {
     cerr << "Could not open file: " << filename << endl;
     return false;
   }
-  if (root_node == nullptr) generate_ast();
+  if (root_node == nullptr)
+    generate_ast();
 
-  if (!is_rendered) render();
+  if (!is_rendered)
+    render();
 
   fd << output;
   fd.close();
