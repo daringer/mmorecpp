@@ -1,11 +1,11 @@
-CCC = g++ #clang++ #g++
+CCC = clang++ #g++
 AR = ar
 RANLIB = ranlib
 RM = rm -f
 
 #PARTS=fs xtime template_parser
-PARTS=
-SOURCES.cc = run_tests.cc $(addsuffix .cc,$(PARTS))
+#PARTS=
+SOURCES.cc = run_tests.cc #$(addsuffix .cc,$(PARTS))
 
 LIBOBJ = ../src/libtools.a
 SOURCES = $(SOURCES.cc) $(LIBOBJ)
@@ -20,15 +20,12 @@ LIBS = -L../src -ltools -lm -pthread -L../src/libtools.a
 
 
 all:	 $(PROGRAM)
-objects: $(SOURCES) $(OBJECTS)
-sources: $(SOURCES)
-targets: $(SOURCES)
 
 clean:
-	$(RM) $(OBJECTS) $(PROGRAM)
+	$(RM) $(PROGRAM)
 
-$(PROGRAM): $(SOURCES)
+$(PROGRAM): $(SOURCES.cc)
 	$(CCC) $(INCS) $(CCFLAGS) $(LDFLAGS) -o $@ $(SOURCES) $(LIBS)
 
-#%.o: $(SOURCES)
-#	$(CCC) $(CCFLAGS) $(LDFLAGS) -c -g $(@:%.o=%.cc) -o $@ 
+tests: $(PROGRAM)
+	./run_tests 
