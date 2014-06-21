@@ -14,8 +14,7 @@ goals:
 
 Currently the following functionalities exist:
 
-**alot - mostly undocumented at the moment**
+* **alot - mostly only documented inside the code**
+* **BUT** *documentation is on the way, stay tuned!*
+* ...in the meantime just check the tests and read the .h files
 
-**BUT** *documentation is on the way, stay tuned!*
-
-...in the meantime just check the tests and read the .h files
