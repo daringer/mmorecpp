@@ -241,7 +241,7 @@ void exit(int status) throw() {
   ARCHIVED_PTRS.clear();
   // calling "real" exit()
   original_exit(status);
-  //exit(0);
+  // exit(0);
 }
 
 /** initilize the memory tracker variables */

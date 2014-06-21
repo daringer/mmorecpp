@@ -9,11 +9,13 @@ void TOOLS::tools_lib_exception_handler() {
     print_stacktrace();
     exception_ptr exc = current_exception();
     rethrow_exception(exc);
-  
-  } catch (BaseException& e) {
-    cerr << "[EXC] " << e.exception_name << " base:(TOOLS::BaseException)" << endl;
+  }
+  catch (BaseException& e) {
+    cerr << "[EXC] " << e.exception_name << " base:(TOOLS::BaseException)"
+         << endl;
     cerr << "[EXC] " << e.what() << endl;
-  } catch (std::exception& e) {
+  }
+  catch (std::exception& e) {
     cerr << "[EXC] Exception description following:" << endl;
     cerr << "[EXC] " << e.what() << endl;
   }
@@ -53,13 +55,9 @@ BaseException::~BaseException() throw() {}
 /**
 * @brief show full message through stderr
 */
-const string BaseException::get_message() const { 
-  return output; 
-}
+const string BaseException::get_message() const { return output; }
 
-const char* BaseException::what() const noexcept {
-  return output.c_str();
-}
+const char* BaseException::what() const noexcept { return output.c_str(); }
 
 /**
 * @brief show full message through stderr (C++ wrapper method)
@@ -69,9 +67,7 @@ void BaseException::dump() const { cerr << output << endl; }
 /**
  * @brief actual initialization
  */
-void BaseException::init() { 
-  set_message(message); 
-}
+void BaseException::init() { set_message(message); }
 
 /**
 * @brief explicitly set the message
@@ -141,9 +137,9 @@ void print_stacktrace(uint max_frames) {
         cout << "[BT] (" << lvl << ") -> " << funcname << endl;
         // demangle failed
       } else {
-        cout  << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
+        cout << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
       }
-    // parsing failed 
+      // parsing failed
     } else {
       cout << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
     }

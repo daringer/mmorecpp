@@ -126,30 +126,29 @@ class MessageQueueClient : public MessageQueue {
  *  on a given template argument type variable.
  *  Access to the variable is either set(T& var) or get()
  */
-template<class T>
+template <class T>
 class MutexVariable {
-public:
-    MutexVariable() {}; 
-    explicit MutexVariable(const T &initial) : value(initial) {};
+ public:
+  MutexVariable() {};
+  explicit MutexVariable(const T& initial) : value(initial) {};
 
-    T get() {
-        mx.lock();
-        T& out = value;
-        mx.unlock();
-        return out;
-    };
+  T get() {
+    mx.lock();
+    T& out = value;
+    mx.unlock();
+    return out;
+  };
 
-    void set(const T &new_value) {
-        mx.lock();
-        value = new_value;
-        mx.unlock();
-    };
-private:
-    T value;
-    Mutex mx;
+  void set(const T& new_value) {
+    mx.lock();
+    value = new_value;
+    mx.unlock();
+  };
+
+ private:
+  T value;
+  Mutex mx;
 };
-
 }
-
 
 #endif
