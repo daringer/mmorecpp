@@ -240,9 +240,8 @@ void exit(int status) throw() {
   ALLOCATED_PTRS.clear();
   ARCHIVED_PTRS.clear();
   // calling "real" exit()
-  << << << < HEAD original_exit(status);
-  == == == = _exit(status);
-  >>>>>>> 40f2e8892616ce4d4ce6225c713a6e6c39293b2d
+  original_exit(status);
+  //exit(0);
 }
 
 /** initilize the memory tracker variables */

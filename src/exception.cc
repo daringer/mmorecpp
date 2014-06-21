@@ -4,19 +4,21 @@ using namespace std;
 using namespace TOOLS;
 
 void TOOLS::tools_lib_exception_handler() {
-  std::cout << endl << "[E] An uncaught exception occurred!" << std::endl;
-  print_stacktrace();
-  cout << "after stacktrace" << endl;
+  cerr << endl << "[EXC] An uncaught exception occurred!" << endl;
+  //print_stacktrace();
   try {
-    std::exception_ptr exc = std::current_exception();
-    std::rethrow_exception(exc);
-  }
-  catch (std::exception& e) {
-    cout << "[E] Exception description following:" << endl;
-    cout << "[E] " << e.what() << endl;
+    exception_ptr exc = current_exception();
+    rethrow_exception(exc);
+  
+  } catch (BaseException& e) {
+    cerr << "[EXC] TOOLS::BaseException:" << endl;
+    cerr << "[EXC] " << e.what() << endl;
+  } catch (std::exception& e) {
+    cerr << "[EXC] Exception description following:" << endl;
+    cerr << "[EXC] " << e.what() << endl;
   }
 
-  cout << "[i] exiting now..." << std::endl;
+  cerr << "...exiting now..." << endl;
   exit(1);
 }
 
@@ -34,6 +36,7 @@ BaseException::BaseException(const std::string& exc_name)
     : exception(), exception_name(exc_name), message("") {
   init();
 }
+
 /**
  * @brief copy-constructor
  * @param the object to be copied
@@ -42,22 +45,33 @@ BaseException::BaseException(const BaseException& obj)
     : exception(), exception_name(obj.exception_name), message(obj.message) {
   init();
 }
+
 /**
 * @brief descructor including very important throw declaration
 */
 BaseException::~BaseException() throw() {}
+
 /**
 * @brief show full message through stderr
 */
-const string BaseException::get_message() const { return output; }
+const string BaseException::get_message() const { 
+  return output; 
+}
+
+const char* BaseException::what() const noexcept {
+  return output.c_str();
+}
+
 /**
 * @brief show full message through stderr (C++ wrapper method)
 */
 void BaseException::dump() const { cerr << output << endl; }
+
 /**
  * @brief actual initialization
  */
 void BaseException::init() { set_message(message); }
+
 /**
 * @brief explicitly set the message
 * @param msg the message to be set

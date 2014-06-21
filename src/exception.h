@@ -45,6 +45,9 @@ class BaseException : public std::exception {
   // get_message
   const std::string get_message() const;
 
+  // overload regular what()
+  const char* what() const noexcept;
+
   // dump_message
   void dump() const;
 
