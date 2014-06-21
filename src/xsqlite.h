@@ -68,6 +68,11 @@ class XSQLite {
   bool init_insert(const std::string& table, const tStringList& cols);
   bool insert();
 
+  // UPDATE {table} SET {values} WHERE {where}
+  bool init_update(const std::string& table, 
+                   const tStringList& cols, const std::string& where = "");
+  bool update();
+
   bool bind_int(const uint idx, const int& data);
   bool bind_string(const uint idx, const std::string& data);
   bool bind_long(const uint idx, const long& data);

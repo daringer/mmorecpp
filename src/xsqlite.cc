@@ -73,6 +73,38 @@ bool XSQLite::bind_double(const uint idx, const double& data) {
   return handle_err(sqlite3_bind_double(stmt, idx + 1, data));
 }
 
+bool XSQLite::init_update(const std::string& table, 
+    const tStringList& cols, const std::string& where) {
+
+  tbl = table;
+  insert_cols = cols;
+  state = _ready;
+
+  string kv_pairs = "";
+  for(const string& col : cols) 
+    kv_pairs += col + " = ?, ";
+  kv_pairs = kv_pairs.substr(0, kv_pairs.length() - 2);
+  string sql = "UPDATE " + table + " SET " + kv_pairs;
+  if(!where.empty())
+    sql += (" WHERE " + where);
+  
+  int ret = init_raw_query(sql);
+  state = _inited;
+  return ret;
+}
+
+bool XSQLite::update() {
+  if (state != _inited)
+    throw SQLQueryNotInited("update() called, but no sql inited!");
+
+  int ret = sqlite3_step(stmt);
+  if (ret != SQLITE_DONE)
+    return handle_err(ret);
+
+  state = _finished;
+  return true;
+}
+
 bool XSQLite::handle_err(int err_code) {
   if (err_code != SQLITE_OK) {
     const char* msg = sqlite3_errmsg(db);
@@ -117,8 +149,8 @@ bool XSQLite::init_insert(const std::string& table, const tStringList& cols) {
   colstr = colstr.substr(0, colstr.length() - 1);
   const string sql =
       "INSERT INTO " + table + "(" + colstr + ") VALUES (" + tmp + ")";
-  int ret = init_raw_query(sql);
 
+  int ret = init_raw_query(sql);
   state = _inited;
   return ret;
 }
