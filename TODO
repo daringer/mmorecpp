@@ -29,6 +29,8 @@
 	  )
   );
 
+- ConfigManager -> is_group_active() seems not to work all the time?!
+
 - TemplateParser 
   - subtemplate works but fails on template change as it 
     directly parses/renders each subtemplate (and adding it as text)
