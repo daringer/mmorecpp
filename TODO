@@ -29,3 +29,9 @@
 	  )
   );
 
+- config manager, make separators for list and map exchangable!
+
+- xlogger needs a 'better' file backend:
+  - BufferedFileBackend() with adjustable buffer size, 
+    write only to file if buffer is full
+
