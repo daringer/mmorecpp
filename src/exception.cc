@@ -5,19 +5,18 @@ using namespace TOOLS;
 
 void TOOLS::tools_lib_exception_handler() {
   cerr << endl << "[EXC] An uncaught exception occurred!" << endl;
-  //print_stacktrace();
   try {
+    print_stacktrace();
     exception_ptr exc = current_exception();
     rethrow_exception(exc);
   
   } catch (BaseException& e) {
-    cerr << "[EXC] TOOLS::BaseException:" << endl;
+    cerr << "[EXC] " << e.exception_name << " base:(TOOLS::BaseException)" << endl;
     cerr << "[EXC] " << e.what() << endl;
   } catch (std::exception& e) {
     cerr << "[EXC] Exception description following:" << endl;
     cerr << "[EXC] " << e.what() << endl;
   }
-
   cerr << "...exiting now..." << endl;
   exit(1);
 }
@@ -70,7 +69,9 @@ void BaseException::dump() const { cerr << output << endl; }
 /**
  * @brief actual initialization
  */
-void BaseException::init() { set_message(message); }
+void BaseException::init() { 
+  set_message(message); 
+}
 
 /**
 * @brief explicitly set the message
@@ -86,15 +87,7 @@ void BaseException::set_message(const string& msg = "") {
  * @brief print a stacktrace for the active frame
  * @param max_frames maximum depth of the trace
  */
-
 void print_stacktrace(uint max_frames) {
-  cout << "[BT] Showing stacktrace: " << endl;
-  //  for(string& s : get_stackdata(max_frames)) {
-  //    cout << "[BT] " << s << endl;
-  //  }
-}
-
-void get_stackdata(uint max_frames) {
   void* addrlist[max_frames + 1];
   int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
@@ -129,6 +122,7 @@ void get_stackdata(uint max_frames) {
     }
 
     string tmp;
+    uint lvl = 1;
     if (begin_name && begin_offset && end_offset && begin_name < begin_offset) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
@@ -141,29 +135,18 @@ void get_stackdata(uint max_frames) {
       int status;
       char* ret =
           abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
-      cout << "status: " << status << endl;
       // use possibly realloc()-ed string
       if (status == 0) {
         funcname = ret;
-        cout << funcname << endl;
-        // tmp = string(funcname);
+        cout << "[BT] (" << lvl << ") -> " << funcname << endl;
         // demangle failed
       } else {
-        cout << symlist[i] << endl;
-        // tmp = string(symlist[i]);
+        cout  << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
       }
-      cout << " EVER HERE???" << endl;
-      // parsing failed
+    // parsing failed 
     } else {
-      cout << symlist[i] << endl;
-
-      // tmp = string(symlist[i]);
+      cout << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
     }
-
-    // move into vector
-    // cout << tmp << endl;
-    // cout << out.size() << endl;
-    // out.push_back(tmp);
   }
   free(funcname);
   free(symlist);
