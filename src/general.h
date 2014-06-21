@@ -9,7 +9,6 @@
 #include <exception>
 #include <cstdlib>
 
-
 namespace TOOLS {
 
 const int MAX_LISTEN_QUEUE = 10;
@@ -32,9 +31,6 @@ typedef std::map<std::string, std::string> tStringMap;
 typedef tStringMap::iterator tStringMapIter;
 
 typedef std::set<std::string> tStringSet;
-
-
 }
 
 #endif
-

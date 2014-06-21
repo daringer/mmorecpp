@@ -30,33 +30,33 @@ DEFINE_EXCEPTION(PathException, BaseException)
  *        leads to the desired behavior
  */
 class Path {
-  public:
-    std::string path;
+ public:
+  std::string path;
 
-    Path();
-    Path(const std::string& path);
-    Path(const Path& obj);
-    ~Path();
+  Path();
+  Path(const std::string& path);
+  Path(const Path& obj);
+  ~Path();
 
-    bool exists();
-    bool is_dir();
-    bool is_file();
+  bool exists();
+  bool is_dir();
+  bool is_file();
 
-    Path parent();
-    Path pwd();
+  Path parent();
+  Path pwd();
 
-    bool create_dir();
+  bool create_dir();
 
-    bool move(const std::string& to);
+  bool move(const std::string& to);
 
-    std::vector<Path> listdir();
-    std::vector<Path> listdir(bool recursive);
+  std::vector<Path> listdir();
+  std::vector<Path> listdir(bool recursive);
 
-    Path operator+(const std::string& add);
-    Path operator+(const Path& obj);
-    bool operator==(const Path& obj);
+  Path operator+(const std::string& add);
+  Path operator+(const Path& obj);
+  bool operator==(const Path& obj);
 
-    operator std::string();
+  operator std::string();
 };
 
 bool change_dir(const std::string& path);

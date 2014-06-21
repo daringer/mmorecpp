@@ -6,9 +6,9 @@ using namespace TOOLS;
 /**
  * @brief empty constructor
  */
-XString::XString() : string() { }
+XString::XString() : string() {}
 
-XString::~XString() { }
+XString::~XString() {}
 
 /**
  * @brief strip all leading and trailing occurences of the given char(s)
@@ -16,11 +16,11 @@ XString::~XString() { }
  * @return *this
  */
 XString& XString::strip(const string& s) {
-  if(length() == 0)
+  if (length() == 0)
     return *this;
-  while(substr(0, s.length()) == s)
+  while (substr(0, s.length()) == s)
     erase(0, s.length());
-  while(substr(length() - s.length(), s.length()) == s)
+  while (substr(length() - s.length(), s.length()) == s)
     erase(length() - s.length(), s.length());
   return *this;
 }
@@ -31,8 +31,8 @@ XString& XString::strip(const string& s) {
 tStringList XString::split(const string& s) {
   tStringList out;
   string::size_type pos = 0, last_pos = 0;
-  while((pos = find(s, last_pos)) != string::npos) {
-    out.push_back(substr(last_pos, pos-last_pos));
+  while ((pos = find(s, last_pos)) != string::npos) {
+    out.push_back(substr(last_pos, pos - last_pos));
     last_pos = pos + s.length();
   }
   out.push_back(substr(last_pos));
@@ -55,12 +55,13 @@ XString& XString::subs_all(const string& what, const string& with) {
  *                     -1 means unlimited/all occurences
  * @return *this
  */
-XString& XString::subs(const string& what, const string& with, int max_replaces) {
+XString& XString::subs(const string& what, const string& with,
+                       int max_replaces) {
   string::size_type pos = 0;
   int replaced = 0;
-  while((pos = find(what, pos)) != string::npos) {
+  while ((pos = find(what, pos)) != string::npos) {
     replace(pos, what.length(), with);
-    if(++replaced == max_replaces)
+    if (++replaced == max_replaces)
       break;
     pos += with.length();
   }
@@ -75,7 +76,7 @@ XString& XString::join(const tStringList& list) {
   XString delim(*this);
   clear();
 
-  for(tStringList::const_iterator i=list.begin(); i!=list.end(); ++i)
+  for (tStringList::const_iterator i = list.begin(); i != list.end(); ++i)
     append((*i) + ((i != --list.end()) ? delim : ""));
   return *this;
 }
@@ -88,7 +89,7 @@ XString& XString::join(const tStringSet& set) {
   XString delim(*this);
   clear();
 
-  for(tStringSet::const_iterator i=set.begin(); i!=set.end(); ++i)
+  for (tStringSet::const_iterator i = set.begin(); i != set.end(); ++i)
     append((*i) + ((i != --set.end()) ? delim : ""));
   return *this;
 }
@@ -98,9 +99,9 @@ XString& XString::join(const tStringSet& set) {
  * @return a string reference with the converted content
  */
 XString& XString::lower() {
-  for(string::iterator i=begin(); i!=end(); ++i)
-    if((*i) >= 65 && (*i) <= 90)
-      replace(i, i+1, 1, (char)((*i)+32));
+  for (string::iterator i = begin(); i != end(); ++i)
+    if ((*i) >= 65 && (*i) <= 90)
+      replace(i, i + 1, 1, (char)((*i) + 32));
   return *this;
 }
 /**
@@ -108,19 +109,14 @@ XString& XString::lower() {
  * @return a string reference with the converted content
  */
 XString& XString::upper() {
-  for(string::iterator i=begin(); i!=end(); ++i)
-    if((*i) >= 97 && (*i) <= 122)
-      replace(i, i+1, 1, (char)((*i)-32));
+  for (string::iterator i = begin(); i != end(); ++i)
+    if ((*i) >= 97 && (*i) <= 122)
+      replace(i, i + 1, 1, (char)((*i) - 32));
   return *this;
 }
 
-bool XString::startswith(const string& what) {
-  return (find(what) == 0);
-}
+bool XString::startswith(const string& what) { return (find(what) == 0); }
 
 bool XString::endswith(const string& what) {
   return (rfind(what) == (length() - what.length()));
 }
-
-
-

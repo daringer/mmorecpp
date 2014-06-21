@@ -35,7 +35,8 @@ virtual void setup() {
 }
 
 virtual void tear_down() {
-  system(("rm -rf " + fn + " " + morefn + " " + realfn + " " + torealfn).c_str());
+  system(
+      ("rm -rf " + fn + " " + morefn + " " + realfn + " " + torealfn).c_str());
 }
 
 MAKE_TEST(path_init) {

@@ -21,17 +21,17 @@ DEFINE_EXCEPTION(SubTemplateNameNotFound, BaseException);
  * @brief Represents one node inside the constructed abstract syntax tree
  */
 class ASTNode {
-  public:
-    std::string type;
-    XString content;
+ public:
+  std::string type;
+  XString content;
 
-    ASTNode* parent;
-    std::vector<ASTNode*> children;
+  ASTNode* parent;
+  std::vector<ASTNode*> children;
 
-    ASTNode();
-    ASTNode(const ASTNode& node);
-    ASTNode(const std::string& type, ASTNode* parent, const std::string& content);
-    virtual ~ASTNode();
+  ASTNode();
+  ASTNode(const ASTNode& node);
+  ASTNode(const std::string& type, ASTNode* parent, const std::string& content);
+  virtual ~ASTNode();
 };
 /**
  * @brief The class, which actually implements the TemplateParser.
@@ -56,14 +56,16 @@ class ASTNode {
  * p.add_to_key("mylist", "item1");              // automaticly declare "mylist"
  * p.add_to_key("mylist", "item2");              // as a list of strings
  *
- * tStringList sl = p.get_subtemplates();        // list of sub-templates (names)
+ * tStringList sl = p.get_subtemplates();        // list of sub-templates
+ *(names)
  *
- * TemplateParser sub = 
- *     p.new_subtemplate("mysubtemplate");       // (Sub)TemplateParser instance 
+ * TemplateParser sub =
+ *     p.new_subtemplate("mysubtemplate");       // (Sub)TemplateParser instance
  * sub.set_key("subkey", "datastring");
  * sub.set_key("anotherkey", "datafoo");
  *
- * p.add_to_key("multi_lvl_array", sub);         // add SubTemplateParser instance
+ * p.add_to_key("multi_lvl_array", sub);         // add SubTemplateParser
+ *instance
  *                                                  to parent TemplateParser
  *
  * p.save_to_file();                             // save rendered file
@@ -106,7 +108,7 @@ class ASTNode {
  *       {% if not i.last_loop %}everytime except in the last loop{% end %}
  *     {% end %}
  *
- *   - "{% end %}" may be any of: {% end[for|if|subtemplate] %} 
+ *   - "{% end %}" may be any of: {% end[for|if|subtemplate] %}
  *     (is not sematically verified a.t.m.)
  *     \endcode
  *
@@ -115,60 +117,64 @@ class ASTNode {
  * @todo arbitrary depth for loops, thus a possibility to save them
  */
 class TemplateParser {
-  private:
-    std::string content;
-    std::string output;
-    bool is_rendered;
-    bool no_cleanup;
+ private:
+  std::string content;
+  std::string output;
+  bool is_rendered;
+  bool no_cleanup;
 
-    std::map<std::string, std::string> string_vars;
-    std::map<std::string, tStringList> vector_vars;
-    std::map<std::string, int> iter_vars;
-    std::map<std::string, bool> first_loop;
-    std::map<std::string, bool> last_loop;
+  std::map<std::string, std::string> string_vars;
+  std::map<std::string, tStringList> vector_vars;
+  std::map<std::string, int> iter_vars;
+  std::map<std::string, bool> first_loop;
+  std::map<std::string, bool> last_loop;
 
-    std::map<std::string, TemplateParser*> subtemplates;
+  std::map<std::string, TemplateParser*> subtemplates;
 
-    ASTNode* root_node;
+  ASTNode* root_node;
 
-    void read_template(std::istream& stream);
+  void read_template(std::istream& stream);
 
-    void generate_ast();
-    void parse(ASTNode* node);
-    void parse_children(ASTNode* node);
-    void show_ast(ASTNode* node, int level);
+  void generate_ast();
+  void parse(ASTNode* node);
+  void parse_children(ASTNode* node);
+  void show_ast(ASTNode* node, int level);
 
-    std::string get_val(const std::string& name);
+  std::string get_val(const std::string& name);
 
-  public:
-    std::string tmpl_filename;
+ public:
+  std::string tmpl_filename;
 
-    TemplateParser(const std::string& template_path);
-    TemplateParser(std::istream& stream);
-    TemplateParser(ASTNode* root_node);
-    TemplateParser(const TemplateParser& cobj);
-    
-    virtual ~TemplateParser();
+  TemplateParser(const std::string& template_path);
+  TemplateParser(std::istream& stream);
+  TemplateParser(ASTNode* root_node);
+  TemplateParser(const TemplateParser& cobj);
 
-    void replace_template(const std::string& template_path);
+  virtual ~TemplateParser();
 
-    void set_key(const std::string& name, const std::string& val);
-    void set_key(const std::string& name, TemplateParser* tp);
-    // set_key() could also understand things like elems.width, which would make this a (2D) array
-    // this would mean elems.i.width.j would access the 2-dimensional array
-    // void set_key(const std::string& name);                           /// <--- this could mean: "I'm an array"
-    void add_to_key(const std::string& name, const std::string& val);   /// <--- then this should fail on non-boxes
-    void add_to_key(const std::string& name, TemplateParser* tp);
+  void replace_template(const std::string& template_path);
 
-    TemplateParser* new_subtemplate(const std::string& tmpl_name);
-    tStringList get_subtemplates();
+  void set_key(const std::string& name, const std::string& val);
+  void set_key(const std::string& name, TemplateParser* tp);
+  // set_key() could also understand things like elems.width, which would make
+  // this a (2D) array
+  // this would mean elems.i.width.j would access the 2-dimensional array
+  // void set_key(const std::string& name);                           /// <---
+  // this could mean: "I'm an array"
+  void add_to_key(const std::string& name,
+                  const std::string& val);  /// <--- then this should fail on
+                                            /// non-boxes
+  void add_to_key(const std::string& name, TemplateParser* tp);
 
-    std::string& render();
+  TemplateParser* new_subtemplate(const std::string& tmpl_name);
+  tStringList get_subtemplates();
 
-    bool save_to_file();
-    bool save_to_file(const std::string& filename);
+  std::string& render();
 
-    void show_ast();
+  bool save_to_file();
+  bool save_to_file(const std::string& filename);
+
+  void show_ast();
 };
 }
 #endif

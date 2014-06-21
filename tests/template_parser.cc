@@ -5,7 +5,6 @@
 
 #include "testing_suite.h"
 
-
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
@@ -20,9 +19,9 @@ START_SUITE(TemplateParserToolsTestSuite) {
   REG_TEST(subtemplate)
 }
 
-virtual void setup() { }
+virtual void setup() {}
 
-virtual void tear_down() { }
+virtual void tear_down() {}
 
 MAKE_TEST(simple_substitution) {
   string s("{{ foo }}");
@@ -47,7 +46,9 @@ MAKE_TEST(for_simple) {
 }
 
 MAKE_TEST(for_first_last) {
-  string s("{% for i to #items %}{% if i.first_loop %}[first]{% endif %}{{ items.i }}{% if i.last_loop %}[last]{% endif %}{% endfor %}");
+  string s(
+      "{% for i to #items %}{% if i.first_loop %}[first]{% endif %}{{ items.i "
+      "}}{% if i.last_loop %}[last]{% endif %}{% endfor %}");
   istringstream ss(s);
   TemplateParser p(ss);
   p.add_to_key("items", "start");
@@ -107,7 +108,9 @@ MAKE_TEST(subtemplate) {
   s += "{% end %}\n";
   s += "Something after the subtemplate: {{ myvar }}\n";
   s += "{% for i to #subs %}i:{{ subs.i }}\n{% end %}\n";
-  s += "And finally, a place to insert the subtemplate:\n{{ single_sub_target }}\n";
+  s +=
+      "And finally, a place to insert the subtemplate:\n{{ single_sub_target "
+      "}}\n";
   istringstream ss(s);
   TemplateParser p(ss);
 
@@ -115,9 +118,10 @@ MAKE_TEST(subtemplate) {
   tStringList sl = p.get_subtemplates();
 
   CHECK(sl.size() == 1);
-  
+
   TemplateParser* tp = p.new_subtemplate(sl[0]);
-  tp->set_key("single_var", "my perfect single variable inside the subtemplate");
+  tp->set_key("single_var",
+              "my perfect single variable inside the subtemplate");
   tp->set_key("bool_var", "true");
   tp->set_key("foobar", "wohooo");
   p.add_to_key("subs", tp);
@@ -128,6 +132,5 @@ MAKE_TEST(subtemplate) {
 
   CHECK(out.size() == 582);
 }
-
 
 END_SUITE()

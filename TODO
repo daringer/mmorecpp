@@ -35,3 +35,9 @@
   - BufferedFileBackend() with adjustable buffer size, 
     write only to file if buffer is full
 
+- ConfigManager -> is_group_active() seems not to work all the time?!
+
+- TemplateParser 
+  - subtemplate works but fails on template change as it 
+    directly parses/renders each subtemplate (and adding it as text)
+    instead of adding it to the AST as separate node and rendering on demand...

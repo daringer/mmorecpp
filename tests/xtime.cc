@@ -5,7 +5,6 @@
 
 #include "testing_suite.h"
 
-
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;
@@ -25,8 +24,7 @@ virtual void setup() {
   sleep_duration = 1;
 }
 
-virtual void tear_down() {
-}
+virtual void tear_down() {}
 
 MAKE_TEST(date_default_format) {
   XDateTime dt;
@@ -44,7 +42,7 @@ MAKE_TEST(interval) {
   t.start();
   sleep(sleep_duration);
   t.stop();
-  CHECK(t.diff_us() >= sleep_duration*1e6);
+  CHECK(t.diff_us() >= sleep_duration * 1e6);
   CHECK(t.diff_s() >= sleep_duration);
 }
 
@@ -52,7 +50,7 @@ MAKE_TEST(interval_autostart) {
   XTime t(true);
   sleep(sleep_duration);
   t.stop();
-  CHECK(t.diff_us() >= sleep_duration*1e6);
+  CHECK(t.diff_us() >= sleep_duration * 1e6);
   CHECK(t.diff_s() >= sleep_duration);
 }
 END_SUITE()
