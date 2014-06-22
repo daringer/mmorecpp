@@ -73,10 +73,18 @@ class XSQLite {
                    const tStringList& cols, const std::string& where = "");
   bool update();
 
+  // reset all query related members
+  void reset();
+
   bool bind_int(const uint idx, const int& data);
   bool bind_string(const uint idx, const std::string& data);
   bool bind_long(const uint idx, const long& data);
   bool bind_double(const uint idx, const double& data);
+  
+  bool bind_int(const int& data);
+  bool bind_string(const std::string& data);
+  bool bind_long(const long& data);
+  bool bind_double(const double& data);
 
   bool handle_err(int err_code);
   const uint col2idx(const std::string& name);
@@ -87,15 +95,24 @@ class XSQLite {
     _inited,
     _finished
   } tSQLState;
+  tSQLState state;
 
+  // db-file and internals
   std::string db_fn;
   sqlite3_stmt* stmt;
   sqlite3* db;
 
-  tSQLState state;
-
+  // target-table
   std::string tbl;
-  tStringList insert_cols;
+
+  // columns to be inserted/updated
+  tStringList columns;
+
+  // once a bind_* without idx was called,
+  // no idx based bind_* may be called until 
+  // reset() was called
+  bool ordered_bind;
+  uint next_idx;
 };
 
 }  // end namspace TOOLS

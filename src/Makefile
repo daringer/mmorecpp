@@ -32,7 +32,6 @@ objects: $(SOURCES) $(OBJECTS)
 sources: $(SOURCES)
 targets: $(SOURCES)
 
-
 clean:
 	$(RM) $(OBJECTS) $(LIB)
 

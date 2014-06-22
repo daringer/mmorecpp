@@ -49,7 +49,8 @@ double SQLResult::get_double(uint col) {
 }
 
 XSQLite::XSQLite(const std::string& db_fn)
-    : db_fn(db_fn), stmt(nullptr), db(nullptr), state(_ready) {
+    : state(_ready), db_fn(db_fn), stmt(nullptr), db(nullptr), 
+      ordered_bind(false), next_idx(0) {
 
   handle_err(sqlite3_open(db_fn.c_str(), &db));
 }
@@ -57,28 +58,52 @@ XSQLite::XSQLite(const std::string& db_fn)
 XSQLite::~XSQLite() {}
 
 bool XSQLite::bind_int(const uint idx, const int& data) {
+  assert(!ordered_bind);
   return handle_err(sqlite3_bind_int(stmt, idx + 1, data));
 }
 
 bool XSQLite::bind_string(const uint idx, const std::string& data) {
+  assert(!ordered_bind);
   return handle_err(sqlite3_bind_text(stmt, idx + 1, data.c_str(),
                                       data.length(), SQLITE_TRANSIENT));
 }
 
 bool XSQLite::bind_long(const uint idx, const long& data) {
+  assert(!ordered_bind);
   return handle_err(sqlite3_bind_int64(stmt, idx + 1, data));
 }
 
 bool XSQLite::bind_double(const uint idx, const double& data) {
+  assert(!ordered_bind);
   return handle_err(sqlite3_bind_double(stmt, idx + 1, data));
+}
+
+bool XSQLite::bind_int(const int& data) {
+  ordered_bind = true;
+  return bind_int(next_idx++, data);
+}
+
+bool XSQLite::bind_string(const std::string& data) {
+  ordered_bind = true;
+  return bind_string(next_idx++, data);
+}
+
+bool XSQLite::bind_long(const long& data) {
+  ordered_bind = true;
+  return bind_long(next_idx++, data);
+}
+
+bool XSQLite::bind_double(const double& data) {
+  ordered_bind = true;
+  return bind_double(next_idx++, data);
 }
 
 bool XSQLite::init_update(const std::string& table, 
     const tStringList& cols, const std::string& where) {
+  reset();
 
   tbl = table;
-  insert_cols = cols;
-  state = _ready;
+  columns = cols;
 
   string kv_pairs = "";
   for(const string& col : cols) 
@@ -115,12 +140,12 @@ bool XSQLite::handle_err(int err_code) {
 }
 
 const uint XSQLite::col2idx(const std::string& name) {
-  auto it = std::find(insert_cols.begin(), insert_cols.end(), name);
+  auto it = std::find(columns.begin(), columns.end(), name);
 
-  if (it == insert_cols.end())
+  if (it == columns.end())
     throw NoSuchColumnFound(name);
 
-  return std::distance(insert_cols.begin(), it);
+  return std::distance(columns.begin(), it);
 }
 
 bool XSQLite::insert() {
@@ -136,9 +161,10 @@ bool XSQLite::insert() {
 }
 
 bool XSQLite::init_insert(const std::string& table, const tStringList& cols) {
-  state = _ready;
+  reset();
+
   tbl = table;
-  insert_cols = cols;
+  columns = cols;
 
   string tmp, colstr;
   for (const auto& col : cols) {
@@ -165,8 +191,8 @@ bool XSQLite::init_select(const std::string& table, const std::string& what,
                           const std::string& order_by,
                           const std::string& group_by,
                           const std::string& limit) {
+  reset();
 
-  insert_cols.clear();
   tbl = table;
 
   string sql = "SELECT " + what + " FROM " + table;
@@ -184,6 +210,14 @@ bool XSQLite::init_select(const std::string& table, const std::string& what,
   int ret = init_raw_query(sql);
   state = _inited;
   return ret;
+}
+
+void XSQLite::reset() {
+  columns.clear();
+  tbl = "";
+  state = _ready;
+  ordered_bind = false;
+  next_idx = 0;
 }
 
 bool XSQLite::init_raw_query(const std::string& q) {
