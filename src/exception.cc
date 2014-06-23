@@ -118,7 +118,6 @@ void print_stacktrace(uint max_frames) {
     }
 
     string tmp;
-    uint lvl = 1;
     if (begin_name && begin_offset && end_offset && begin_name < begin_offset) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
@@ -134,14 +133,14 @@ void print_stacktrace(uint max_frames) {
       // use possibly realloc()-ed string
       if (status == 0) {
         funcname = ret;
-        cout << "[BT] (" << lvl << ") -> " << funcname << endl;
+        cout << "[BT] (" << i << ") -> " << funcname << endl;
         // demangle failed
       } else {
-        cout << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
+        cout << "[BT] (" << i << ") -> " << symlist[i] << endl;
       }
       // parsing failed
     } else {
-      cout << "[BT] (" << lvl << ") -> " << symlist[i] << endl;
+      cout << "[BT] (" << i << ") -> " << symlist[i] << endl;
     }
   }
   free(funcname);
