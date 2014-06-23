@@ -23,6 +23,56 @@ DEFINE_EXCEPTION(SQLQueryNotInited, BaseException);
 DEFINE_EXCEPTION(SQLResultError, BaseException);
 DEFINE_EXCEPTION(EmptySQLResultError, BaseException);
 
+namespace helper {
+  // bind type-dispatcher helper classes 
+  template<class T> struct bind_dispatch;
+
+  template<> struct bind_dispatch<std::string> {
+    static int apply(sqlite3_stmt* stmt, const std::string& val, const int& idx) {
+      return sqlite3_bind_text(stmt, idx, val.c_str(),
+          val.length(), SQLITE_TRANSIENT);
+    }
+  };
+  template<> struct bind_dispatch<long> {
+    static int apply(sqlite3_stmt* stmt, const long& val, const int& idx) {
+      return sqlite3_bind_int64(stmt, idx, val);
+    }
+  };
+  template<> struct bind_dispatch<int> {
+    static int apply(sqlite3_stmt* stmt, const int& val, const int& idx) {
+      return sqlite3_bind_int(stmt, idx, val);
+    }
+  };
+  template<> struct bind_dispatch<double> {
+    static int apply(sqlite3_stmt* stmt, const double& val, const int& idx) {
+      return sqlite3_bind_double(stmt, idx, val);
+    }
+  };
+  // get type-dispatcher helper classes
+  template<class T> struct get_dispatch;
+
+  template<> struct get_dispatch<double> {
+    static double apply(sqlite3_stmt* stmt, const uint& col) {
+      return sqlite3_column_double(stmt, col);
+    }
+  };
+  template<> struct get_dispatch<std::string> {
+    static std::string apply(sqlite3_stmt* stmt, const uint& col) {
+      return (const char*) sqlite3_column_text(stmt, col);
+    }
+  };
+  template<> struct get_dispatch<int> {
+    static int apply(sqlite3_stmt* stmt, const uint& col) {
+      return sqlite3_column_int(stmt, col);
+    }
+  };
+  template<> struct get_dispatch<long> {
+    static long apply(sqlite3_stmt* stmt, const uint& col) {
+      return sqlite3_column_int64(stmt, col);
+    }
+  };
+}
+
 class SQLResult {
  public:
   bool done;
@@ -40,12 +90,23 @@ class SQLResult {
   long get_long(uint col);
   double get_double(uint col);
 
+  // get value from col
+  template<class T> T get(const uint& col) {
+    assert(started);
+    return helper::get_dispatch<T>::apply(stmt, col);
+  };
+
  private:
   sqlite3_stmt* stmt;
 };
 
 class XSQLite {
  public:
+  // next column idx to be used on bind() without idx
+  uint next_idx;
+  // last inserted row id
+  long last_insert_id;
+
   XSQLite(const std::string& db_fn);
   virtual ~XSQLite();
 
@@ -73,10 +134,22 @@ class XSQLite {
                    const tStringList& cols, const std::string& where = "");
   bool update();
 
+  // PRAGMA statement (init included)
+  bool pragma(const std::string& key, const std::string& val);
+
   // reset all query related members
   void reset();
 
-  bool bind_int(const uint idx, const int& data);
+  // binding values to sql-query idx == -1 means 'next_idx'
+  template<class T> bool bind(const T& data, const int& idx=-1) {
+    int i = (idx == -1) ? ++next_idx : idx + 1;
+    int ret = helper::bind_dispatch<T>::apply(stmt, data, i);
+    return handle_err(ret);
+  };
+  // dummy bind - to bind a NULL 
+  bool bind();
+
+  /*bool bind_int(const uint idx, const int& data);
   bool bind_string(const uint idx, const std::string& data);
   bool bind_long(const uint idx, const long& data);
   bool bind_double(const uint idx, const double& data);
@@ -84,8 +157,19 @@ class XSQLite {
   bool bind_int(const int& data);
   bool bind_string(const std::string& data);
   bool bind_long(const long& data);
-  bool bind_double(const double& data);
+  bool bind_double(const double& data);*/
 
+  /*bool bind_int(const tIntList& data);
+  bool bind_string(const tStringList& data);
+  bool bind_long(const tLongList& data);
+  bool bind_double(const tDoubleList& data);*/
+
+  // load / save(backup) / exec sql-file on db
+  sqlite3* load_db(const std::string& fn);
+  bool save_db(const std::string& fn);
+  bool exec_sql_fn(const std::string& fn);
+
+  // sqlite error handler, throws error on critical
   bool handle_err(int err_code);
   const uint col2idx(const std::string& name);
 
@@ -101,18 +185,13 @@ class XSQLite {
   std::string db_fn;
   sqlite3_stmt* stmt;
   sqlite3* db;
+  std::string last_query;
 
   // target-table
   std::string tbl;
 
   // columns to be inserted/updated
   tStringList columns;
-
-  // once a bind_* without idx was called,
-  // no idx based bind_* may be called until 
-  // reset() was called
-  bool ordered_bind;
-  uint next_idx;
 };
 
 }  // end namspace TOOLS
