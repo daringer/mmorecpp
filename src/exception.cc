@@ -1,7 +1,28 @@
+#include <fstream>
+#include <string>
+
 #include "exception.h"
 
 using namespace std;
 using namespace TOOLS;
+
+// fallback system() with output 
+std::string _exec(const string& cmd) {
+    FILE* pipe = popen(cmd.c_str(), "r");
+    if (!pipe) {
+      cerr << "could not open pipe in exec!" << endl;
+      exit(1);
+    }
+   
+    char buf[128];
+    std::string out = "";
+    while(!feof(pipe))
+      if(fgets(buf, 128, pipe) != NULL)
+        out += buf;
+
+    pclose(pipe);
+    return out;
+}
 
 void TOOLS::tools_lib_exception_handler() {
   cerr << endl << "[EXC] An uncaught exception occurred!" << endl;
@@ -98,11 +119,23 @@ void print_stacktrace(uint max_frames) {
   size_t funcnamesize = 256;
   char* funcname = (char*)malloc(funcnamesize);
 
+  // copy binary (UGLY HACK!)
+  _exec("rm /tmp/myexe");
+  ifstream bin("/proc/self/exe");
+  string s((std::istreambuf_iterator<char>(bin)),
+           (std::istreambuf_iterator<char>()));
+  ofstream otmp("/tmp/myexe");
+  otmp << s;
+  otmp.close();
+  bin.close();
+
   // demangle all functionnames
   for (int i = 1; i < addrlen; ++i) {
     char* begin_name = 0;
     char* begin_offset = 0;
     char* end_offset = 0;
+    char* begin_addr = 0;
+    char* end_addr = 0;
 
     // find parentheses and +address offset surrounding the mangled name:
     // ./module(function+0x15c) [0x8048a6d]
@@ -111,8 +144,12 @@ void print_stacktrace(uint max_frames) {
         begin_name = p;
       else if (*p == '+')
         begin_offset = p;
-      else if (*p == ')' && begin_offset) {
+      else if (*p == ')' && begin_offset) 
         end_offset = p;
+      else if (*p == '[')
+        begin_addr = p + 1;
+      else if (*p == ']' && begin_addr) {
+        end_addr = p;
         break;
       }
     }
@@ -122,18 +159,27 @@ void print_stacktrace(uint max_frames) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
       *end_offset++ = '\0';
+  
+      string addr;
+      string loc;
+      if(begin_addr) {
+        //*end_addr = '\0';
+        addr = string(begin_addr);
+        loc = _exec("addr2line " + addr + " -e /tmp/myexe -p -s");
+        loc = loc.substr(0, loc.length()-2);
+      }
 
       // mangled name is now in [begin_name, begin_offset) and caller
       // offset in [begin_offset, end_offset). now apply
       // __cxa_demangle():
 
-      int status;
+      int status = -1;
       char* ret =
           abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
       // use possibly realloc()-ed string
       if (status == 0) {
         funcname = ret;
-        cout << "[BT] (" << i << ") -> " << funcname << endl;
+        cout << "[BT] (" << i << ") -> (" << loc << ") " << funcname << endl;
         // demangle failed
       } else {
         cout << "[BT] (" << i << ") -> " << symlist[i] << endl;
