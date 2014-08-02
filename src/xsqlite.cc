@@ -78,6 +78,7 @@ bool XSQLite::pragma(const std::string& key, const std::string& val) {
   return true;
 }
 
+
 bool XSQLite::bind() {
   return handle_err(sqlite3_bind_null(stmt, next_idx++ + 1));
 }
