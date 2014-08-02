@@ -106,6 +106,8 @@ class XSQLite {
   uint next_idx;
   // last inserted row id
   long last_insert_id;
+  // last executed query
+  std::string last_query;
 
   XSQLite(const std::string& db_fn);
   virtual ~XSQLite();
@@ -149,21 +151,6 @@ class XSQLite {
   // dummy bind - to bind a NULL 
   bool bind();
 
-  /*bool bind_int(const uint idx, const int& data);
-  bool bind_string(const uint idx, const std::string& data);
-  bool bind_long(const uint idx, const long& data);
-  bool bind_double(const uint idx, const double& data);
-  
-  bool bind_int(const int& data);
-  bool bind_string(const std::string& data);
-  bool bind_long(const long& data);
-  bool bind_double(const double& data);*/
-
-  /*bool bind_int(const tIntList& data);
-  bool bind_string(const tStringList& data);
-  bool bind_long(const tLongList& data);
-  bool bind_double(const tDoubleList& data);*/
-
   // load / save(backup) / exec sql-file on db
   sqlite3* load_db(const std::string& fn);
   bool save_db(const std::string& fn);
@@ -185,7 +172,6 @@ class XSQLite {
   std::string db_fn;
   sqlite3_stmt* stmt;
   sqlite3* db;
-  std::string last_query;
 
   // target-table
   std::string tbl;

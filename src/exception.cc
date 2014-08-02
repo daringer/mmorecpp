@@ -40,7 +40,7 @@ void TOOLS::tools_lib_exception_handler() {
     cerr << "[EXC] Exception description following:" << endl;
     cerr << "[EXC] " << e.what() << endl;
   }
-  cerr << "...exiting now..." << endl;
+  cerr << "...end..." << endl;
   exit(1);
 }
 
@@ -166,7 +166,7 @@ void print_stacktrace(uint max_frames) {
         //*end_addr = '\0';
         addr = string(begin_addr);
         loc = _exec("addr2line " + addr + " -e /tmp/myexe -p -s");
-        loc = loc.substr(0, loc.length()-2);
+        loc = loc.substr(0, loc.length()-1);
       }
 
       // mangled name is now in [begin_name, begin_offset) and caller

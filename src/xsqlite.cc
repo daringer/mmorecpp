@@ -50,9 +50,9 @@ double SQLResult::get_double(uint col) {
 }
 
 XSQLite::XSQLite(const std::string& db_fn)
-    : next_idx(0), state(_ready), db_fn(db_fn), stmt(nullptr), 
-      db(load_db(db_fn)) {
-}
+    : next_idx(0), last_insert_id(-1),
+      state(_ready), db_fn(db_fn), stmt(nullptr), 
+      db(load_db(db_fn)) { }
 
 XSQLite::~XSQLite() {
   // i think this _may_ fail, but destruction never "fails" ;D
@@ -64,6 +64,7 @@ bool XSQLite::pragma(const std::string& key, const std::string& val) {
 
   // init query
   const string sql = "PRAGMA " + key + " = " + val + "";
+  last_query = sql;
   handle_err(init_raw_query(sql) == SQLITE_OK);
   
   // do it!
@@ -80,42 +81,6 @@ bool XSQLite::pragma(const std::string& key, const std::string& val) {
 bool XSQLite::bind() {
   return handle_err(sqlite3_bind_null(stmt, next_idx++ + 1));
 }
-
-#if 0
-bool XSQLite::bind_int(const uint idx, const int& data) {
-  return handle_err(sqlite3_bind_int(stmt, idx + 1, data));
-}
-
-bool XSQLite::bind_string(const uint idx, const std::string& data) {
-  return handle_err(sqlite3_bind_text(stmt, idx + 1, data.c_str(),
-                                      data.length(), SQLITE_TRANSIENT));
-}
-
-bool XSQLite::bind_long(const uint idx, const long& data) {
-  return handle_err(sqlite3_bind_int64(stmt, idx + 1, data));
-}
-
-bool XSQLite::bind_double(const uint idx, const double& data) {
-  return handle_err(sqlite3_bind_double(stmt, idx + 1, data));
-}
-
-bool XSQLite::bind_int(const int& data) {
-  return handle_err(sqlite3_bind_int(stmt, next_idx++ + 1, data));
-}
-
-bool XSQLite::bind_string(const std::string& data) {
-  return handle_err(sqlite3_bind_text(stmt, next_idx++ + 1, data.c_str(),
-                                      data.length(), SQLITE_TRANSIENT));
-}
-
-bool XSQLite::bind_long(const long& data) {
-  return handle_err(sqlite3_bind_int64(stmt, next_idx++ + 1, data));
-}
-
-bool XSQLite::bind_double(const double& data) {
-  return handle_err(sqlite3_bind_double(stmt, next_idx++ + 1, data));
-}
-#endif 
 
 bool XSQLite::init_update(const std::string& table, 
     const tStringList& cols, const std::string& where) {
