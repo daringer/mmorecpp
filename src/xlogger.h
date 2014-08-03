@@ -33,9 +33,9 @@
 // formatting";
 
 #if XLOG_MIN_LOG_LVL <= 1
-#define PROFILING LOG(1, LOGID)
+#define MAX_LOG LOG(1, LOGID)
 #else
-#define PROFILING FAKELOG()
+#define MAX_LOG FAKELOG()
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 2
