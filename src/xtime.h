@@ -40,6 +40,8 @@ class XDateTime {
 
   void set_format(const std::string& fmt);
   std::string format() const;
+
+  time_t get_raw_stamp() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const XDateTime& dt);
