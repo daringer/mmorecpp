@@ -34,38 +34,50 @@
 
 #if XLOG_MIN_LOG_LVL <= 1
 #define MAX_LOG LOG(1, LOGID)
+#define IS_MAX_LOG true
 #else
 #define MAX_LOG FAKELOG()
+#define IS_MAX_LOG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 2
 #define MORE_DEBUG LOG(2, LOGID)
+#define IS_MORE_DEBUG true
 #else
 #define MORE_DEBUG FAKELOG()
+#define IS_MORE_DEBUG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 3
 #define DEBUG LOG(3, LOGID)
+#define IS_DEBUG true
 #else
 #define DEBUG FAKELOG()
+#define IS_DEBUG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 5
 #define INFO LOG(5, LOGID)
+#define IS_INFO true
 #else
 #define INFO FAKELOG()
+#define IS_INFO false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 7
 #define WARN LOG(7, LOGID)
+#define IS_WARN true
 #else
 #define WARN FAKELOG()
+#define IS_WARN false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 10
 #define ERROR LOG(10, LOGID)
+#define IS_ERROR true
 #else
 #define ERROR FAKELOG()
+#define IS_ERROR false
 #endif
 
 namespace TOOLS {
