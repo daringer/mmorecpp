@@ -34,49 +34,49 @@
 
 #if XLOG_MIN_LOG_LVL <= 1
 #define MAX_LOG LOG(1, LOGID)
-#define IS_MAX_LOG true
+#define IS_MAX_LOG true && TOOLS::XLogger::check_loglevel(1, LOGID)
 #else
-#define MAX_LOG FAKELOG()
+#define MAX_LOG if(false) FAKELOG() 
 #define IS_MAX_LOG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 2
 #define MORE_DEBUG LOG(2, LOGID)
-#define IS_MORE_DEBUG true
+#define IS_MORE_DEBUG true && TOOLS::XLogger::check_loglevel(2, LOGID)
 #else
-#define MORE_DEBUG FAKELOG()
+#define MORE_DEBUG if(false) FAKELOG()
 #define IS_MORE_DEBUG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 3
 #define DEBUG LOG(3, LOGID)
-#define IS_DEBUG true
+#define IS_DEBUG true && TOOLS::XLogger::check_loglevel(3, LOGID)
 #else
-#define DEBUG FAKELOG()
+#define DEBUG if(false) FAKELOG()
 #define IS_DEBUG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 5
 #define INFO LOG(5, LOGID)
-#define IS_INFO true
+#define IS_INFO true && TOOLS::XLogger::check_loglevel(4, LOGID)
 #else
-#define INFO FAKELOG()
+#define INFO if(false) FAKELOG()
 #define IS_INFO false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 7
 #define WARN LOG(7, LOGID)
-#define IS_WARN true
+#define IS_WARN true && TOOLS::XLogger::check_loglevel(7, LOGID)
 #else
-#define WARN FAKELOG()
+#define WARN if(false) FAKELOG()
 #define IS_WARN false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 10
 #define ERROR LOG(10, LOGID)
-#define IS_ERROR true
+#define IS_ERROR true && TOOLS::XLogger::check_loglevel(10, LOGID)
 #else
-#define ERROR FAKELOG()
+#define ERROR if(false) FAKELOG()
 #define IS_ERROR false
 #endif
 
