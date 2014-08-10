@@ -154,6 +154,9 @@ class XLogger {
   void set_loglvl_action(int loglvl, tLogActionPtr func);
   void set_loglvl_desc(int loglvl, const std::string& desc);
 
+  void add_filename_filter(const std::string& fn);
+  void remove_filename_filter(const std::string& fn);
+
   void set_min_loglvl(int loglvl);
 
   void log_msg(const std::string data, int loglevel, int line,
@@ -174,6 +177,8 @@ class XLogger {
 
   bool strip_msg;
   tStringList to_strip;
+
+  std::set<std::string> fn_filter;
 
   std::string render_msg(BaseLoggerBackend* back, const std::string& data,
                          int loglevel, int line, const std::string& fn,
