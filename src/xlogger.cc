@@ -135,7 +135,7 @@ void XLogger::log_msg(const string data, int loglevel, int line,
                       const string fn, const string func) {
 
   // if not fn_filter.empty() show only msg from given files
-  if(fn_filter.find(fn) == fn_filter.end())
+  if(!fn_filter.empty() && fn_filter.find(fn) == fn_filter.end())
     return;
 
   // if loglvl below min_loglvl, discard!
