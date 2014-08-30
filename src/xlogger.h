@@ -7,6 +7,8 @@
 #include <ostream>
 #include <vector>
 #include <map>
+#include <set>
+#include <unordered_map>
 #include <typeinfo>
 
 #include "general.h"
@@ -219,6 +221,45 @@ class FakeLogStream {
     return *this;
   }
 };
+
+template <class T>
+LogStream& operator<<(LogStream& out, const std::set<T>& v) {
+  for (const T& item : v)
+    out << item << " ";
+  return out;
+}
+
+template <class T>
+LogStream& operator<<(LogStream& out, const std::vector<T>& v) {
+  for (const T& item : v)
+    out << item << "  ";
+  return out;
+}
+
+template <class K, class V>
+LogStream& operator<<(LogStream& out, const std::map<K, V>& m) {
+  for (const auto& item : m)
+    out << item.first << ": " << item.second << " ";
+  return out;
+}
+
+template <class K, class V>
+LogStream& operator<<(LogStream& out, const std::unordered_map<K, V>& m) {
+  for (const auto& item : m)
+    out << item.first << ": " << item.second << " ";
+  return out;
+}
+
+template <class K, class V>
+LogStream& operator<<(LogStream& out, const std::pair<K, V>& p) {
+  out << "key: " << p.first << " val: " << p.second;
+  return out;
+}
+
+
+
+
+
 }
 
 #endif
