@@ -20,7 +20,7 @@ COMMON_CCFLAGS = -c -I. -std=c++11 -pedantic -Wall
 DEV_CCFLAGS = $(COMMON_CCFLAGS) -ggdb
 FAST_CCFLAGS = $(COMMON_CCFLAGS) -O3 
 
-CCFLAGS = $(DEV_CCFLAGS)
+CCFLAGS = $(FAST_CCFLAGS)
 
 LDFLAGS = -pthread -rdynamic
 ARFLAGS = ruv
