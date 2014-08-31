@@ -20,17 +20,18 @@ COMMON_CCFLAGS = -c -I. -std=c++11 -pedantic -Wall
 DEV_CCFLAGS = $(COMMON_CCFLAGS) -ggdb
 FAST_CCFLAGS = $(COMMON_CCFLAGS) -O3 
 
-CCFLAGS = $(FAST_CCFLAGS)
+CCFLAGS = $(DEV_CCFLAGS)
 
 LDFLAGS = -pthread -rdynamic
 ARFLAGS = ruv
 
-.PHONY: all
 
-all:	 $(LIB)
-objects: $(SOURCES) $(OBJECTS)
-sources: $(SOURCES)
-targets: $(SOURCES)
+
+all: $(LIB)
+objects: $(SOURCES)
+targets: $(OBJECTS)
+
+.PHONY: all objects targets
 
 clean:
 	$(RM) $(OBJECTS) $(LIB)

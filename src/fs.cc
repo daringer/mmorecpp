@@ -21,12 +21,19 @@ Path::Path(const Path& obj) : path(obj.path) {}
  * @brief Path desctructor
  */
 Path::~Path() {}
-/**
- * @brief collect all filenames in a given directory
- * @return vector<Path> a vector containing the new order of the circuits
- * (maybe)
- */
-vector<Path> Path::listdir() { return listdir(false); }
+
+bool Path::empty() const {
+  return path.empty();
+}
+
+size_t Path::size() const {
+  return path.size();
+}
+
+const char* Path::c_str() const {
+  return path.c_str();
+}
+
 /**
  * @brief (recursivly) collect all filenames in a given directory
  * @param recursive recursivly descend through the filesystem
@@ -43,15 +50,15 @@ vector<Path> Path::listdir(bool recursive) {
     throw PathException("Could not open directory: " + path);
 
   while ((entry = readdir(dir)) != NULL) {
-    if (string(entry->d_name) == "." || string(entry->d_name) == "..")
+    string d_name(entry->d_name);
+    if (d_name == "." || d_name == "..")
       continue;
-    Path filepath = *this + entry->d_name;
-    out.push_back(Path(entry->d_name));
+    Path filepath = join(d_name);
+    out.push_back(d_name);
     if (recursive && filepath.is_dir()) {
       vector<Path> contents = filepath.listdir(recursive);
-      for (vector<Path>::iterator i = contents.begin(); i != contents.end();
-           ++i)
-        out.push_back(Path(entry->d_name) + *i);
+      for(Path& p : contents)
+        out.push_back(out.back() + p);
     }
   }
   free(dir);
@@ -59,15 +66,28 @@ vector<Path> Path::listdir(bool recursive) {
 }
 
 Path Path::operator+(const string& add) {
-  return (path.substr(path.size() - 1) == "/") ? Path(path + add)
-                                               : Path(path + "/" + add);
-}
-Path Path::operator+(const Path& obj) {
-  return (path.substr(path.size() - 1) == "/") ? Path(path + obj.path)
-                                               : Path(path + "/" + obj.path);
+  return join(add);
 }
 
-Path::operator string() { return path; }
+Path Path::operator+(const char*& add) {
+  return join(add);
+}
+
+Path Path::operator+(const Path& obj) {
+  return join(obj.path);
+}
+
+Path& Path::operator=(const string& obj) {
+  path = obj;
+  return *this;
+}
+
+//Path::operator string() { return path; }
+
+bool Path::operator!=(const Path& obj) {
+  return (! (*this == obj));
+}
+
 
 bool Path::operator==(const Path& obj) { return path == obj.path; }
 /**
@@ -144,3 +164,22 @@ string TOOLS::FS::current_dir() {
   out += dir;
   return out;
 }
+
+Path TOOLS::FS::Path::join(const std::string& what) {
+  Path out(*this);
+  if(what.substr(0, 1) == "/")
+    out.path = what;
+  else if(path.substr(path.size() - 1) == "/")
+    out.path = out.path + what;
+  else
+    out.path = out.path + "/" + what;
+  return out;
+}
+
+Path TOOLS::FS::operator+(const char* lhs, Path& rhs) {
+  return Path(rhs).join(lhs);
+}
+/*Path TOOLS::FS::operator+(const std::string& lhs, Path& rhs) {
+  return Path(rhs).join(lhs);
+}*/
+
