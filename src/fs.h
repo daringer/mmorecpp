@@ -45,15 +45,26 @@ class Path {
   bool exists();
   bool is_dir();
   bool is_file();
+  //bool is_symlink();
 
+  // dirname
   Path parent();
+
+  // basename
   Path pwd();
 
   Path join(const std::string& what);
 
+  // bool recursive missing
   bool create_dir();
 
   bool move(const std::string& to);
+  
+  //bool remove(bool recursive, bool force);
+
+  //bool copy(bool recursive, Path target);
+
+  //void walk(lambda func);
 
   std::vector<Path> listdir(bool recursive=false);
 
@@ -67,6 +78,7 @@ class Path {
   //operator std::string();
 };
 
+// add Path overloaded
 bool change_dir(const std::string& path);
 std::string current_dir();
 
