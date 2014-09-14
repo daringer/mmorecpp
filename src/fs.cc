@@ -54,7 +54,7 @@ vector<Path> Path::listdir(bool recursive) {
     if (d_name == "." || d_name == "..")
       continue;
     Path filepath = join(d_name);
-    out.push_back(d_name);
+    out.push_back(Path(d_name));
     if (recursive && filepath.is_dir()) {
       vector<Path> contents = filepath.listdir(recursive);
       for(Path& p : contents)
@@ -111,7 +111,7 @@ bool Path::is_file() {
   return S_ISREG(s.st_mode);
 }
 /**
- * @brief Does this Path instance represent an directory?
+ * @brief Return parent from this path
  * @return bool true or false
  */
 Path Path::parent() {
@@ -169,7 +169,7 @@ Path TOOLS::FS::Path::join(const std::string& what) {
   Path out(*this);
   if(what.substr(0, 1) == "/")
     out.path = what;
-  else if(path.substr(path.size() - 1) == "/")
+  else if(out.path.substr(out.path.size() - 1) == "/")
     out.path = out.path + what;
   else
     out.path = out.path + "/" + what;
@@ -177,7 +177,7 @@ Path TOOLS::FS::Path::join(const std::string& what) {
 }
 
 Path TOOLS::FS::operator+(const char* lhs, Path& rhs) {
-  return Path(rhs).join(lhs);
+  return Path(lhs) + rhs;
 }
 /*Path TOOLS::FS::operator+(const std::string& lhs, Path& rhs) {
   return Path(rhs).join(lhs);
