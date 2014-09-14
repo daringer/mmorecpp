@@ -117,6 +117,7 @@ MAKE_TEST(is_real) {
   CHECK(is_real("10e3"));
   CHECK(is_real("-432e-123"));
   CHECK(is_real("-999E999"));
+  CHECK(is_real("1.145e-05"));
 
   // BAD:
   CHECK(!is_real("1.231.231"));
