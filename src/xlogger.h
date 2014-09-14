@@ -7,6 +7,8 @@
 #include <ostream>
 #include <vector>
 #include <map>
+#include <set>
+#include <unordered_map>
 #include <typeinfo>
 
 #include "general.h"
@@ -33,39 +35,51 @@
 // formatting";
 
 #if XLOG_MIN_LOG_LVL <= 1
-#define PROFILING LOG(1, LOGID)
+#define MAX_LOG LOG(1, LOGID)
+#define IS_MAX_LOG true && TOOLS::XLogger::check_loglevel(1, LOGID)
 #else
-#define PROFILING FAKELOG()
+#define MAX_LOG if(false) FAKELOG() 
+#define IS_MAX_LOG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 2
 #define MORE_DEBUG LOG(2, LOGID)
+#define IS_MORE_DEBUG true && TOOLS::XLogger::check_loglevel(2, LOGID)
 #else
-#define MORE_DEBUG FAKELOG()
+#define MORE_DEBUG if(false) FAKELOG()
+#define IS_MORE_DEBUG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 3
 #define DEBUG LOG(3, LOGID)
+#define IS_DEBUG true && TOOLS::XLogger::check_loglevel(3, LOGID)
 #else
-#define DEBUG FAKELOG()
+#define DEBUG if(false) FAKELOG()
+#define IS_DEBUG false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 5
 #define INFO LOG(5, LOGID)
+#define IS_INFO true && TOOLS::XLogger::check_loglevel(4, LOGID)
 #else
-#define INFO FAKELOG()
+#define INFO if(false) FAKELOG()
+#define IS_INFO false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 7
 #define WARN LOG(7, LOGID)
+#define IS_WARN true && TOOLS::XLogger::check_loglevel(7, LOGID)
 #else
-#define WARN FAKELOG()
+#define WARN if(false) FAKELOG()
+#define IS_WARN false
 #endif
 
 #if XLOG_MIN_LOG_LVL <= 10
 #define ERROR LOG(10, LOGID)
+#define IS_ERROR true && TOOLS::XLogger::check_loglevel(10, LOGID)
 #else
-#define ERROR FAKELOG()
+#define ERROR if(false) FAKELOG()
+#define IS_ERROR false
 #endif
 
 namespace TOOLS {
@@ -142,6 +156,9 @@ class XLogger {
   void set_loglvl_action(int loglvl, tLogActionPtr func);
   void set_loglvl_desc(int loglvl, const std::string& desc);
 
+  void add_filename_filter(const std::string& fn);
+  void remove_filename_filter(const std::string& fn);
+
   void set_min_loglvl(int loglvl);
 
   void log_msg(const std::string data, int loglevel, int line,
@@ -162,6 +179,8 @@ class XLogger {
 
   bool strip_msg;
   tStringList to_strip;
+
+  std::set<std::string> fn_filter;
 
   std::string render_msg(BaseLoggerBackend* back, const std::string& data,
                          int loglevel, int line, const std::string& fn,
@@ -202,6 +221,45 @@ class FakeLogStream {
     return *this;
   }
 };
+
+template <class T>
+LogStream& operator<<(LogStream& out, const std::set<T>& v) {
+  for (const T& item : v)
+    out << item << " ";
+  return out;
+}
+
+template <class T>
+LogStream& operator<<(LogStream& out, const std::vector<T>& v) {
+  for (const T& item : v)
+    out << item << "  ";
+  return out;
+}
+
+template <class K, class V>
+LogStream& operator<<(LogStream& out, const std::map<K, V>& m) {
+  for (const auto& item : m)
+    out << item.first << ": " << item.second << " ";
+  return out;
+}
+
+template <class K, class V>
+LogStream& operator<<(LogStream& out, const std::unordered_map<K, V>& m) {
+  for (const auto& item : m)
+    out << item.first << ": " << item.second << " ";
+  return out;
+}
+
+template <class K, class V>
+LogStream& operator<<(LogStream& out, const std::pair<K, V>& p) {
+  out << "key: " << p.first << " val: " << p.second;
+  return out;
+}
+
+
+
+
+
 }
 
 #endif

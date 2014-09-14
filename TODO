@@ -1,5 +1,13 @@
 ######### mmorecpp TODOs
 
+- XString
+  - there seems to be a weird memory-weirdo-moved-data-bug-somethere....
+  - for(const string& s : something)
+      XString foo(s);
+
+      foo.endswith("bla"); // <--- shows weird behavior after some iters (deterministic!)
+  - for(XString s : something)
+     // same ..... veeeeery weirdoooo
 
 - put str/real and related into separate .h file : converters.h
 

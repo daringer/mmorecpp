@@ -52,6 +52,10 @@ void XDateTime::set_format(const string& fmt) {
   render();
 }
 
+time_t XDateTime::get_raw_stamp() const {
+  return rawtime;
+}
+
 ostream& operator<<(ostream& os, const XDateTime& dt) {
   return (os << dt.format());
 }

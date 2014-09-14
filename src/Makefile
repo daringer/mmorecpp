@@ -26,10 +26,9 @@ ARFLAGS = ruv
 
 .PHONY: all clean
 
-all:	 $(LIB)
-objects: $(SOURCES) $(OBJECTS)
-sources: $(SOURCES)
-targets: $(SOURCES)
+all: $(LIB)
+objects: $(SOURCES)
+targets: $(OBJECTS)
 
 clean:
 	$(RM) $(OBJECTS) $(LIB)

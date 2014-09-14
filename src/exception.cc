@@ -120,7 +120,7 @@ void print_stacktrace(uint max_frames) {
   char* funcname = (char*)malloc(funcnamesize);
 
   // copy binary (UGLY HACK!)
-  _exec("rm /tmp/myexe");
+  _exec("rm -f /tmp/myexe");
   ifstream bin("/proc/self/exe");
   string s((std::istreambuf_iterator<char>(bin)),
            (std::istreambuf_iterator<char>()));

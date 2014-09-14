@@ -12,6 +12,7 @@ goals:**
 * c++11 required (clang++ (>=3.4) [recommended], g++ (>=4.8))
 * extremly easy and smart interfaces
 * slim OO-interfaces for tedious plain C interfaces (e.g., sqlite3, popen, date/time, threading/forking, locking, sockets, ncurses)
+* .... or maybe you're just lookin' for some "inspiration" for you current project, come in and (may)be get inspired ;)
 
 **Where is the documentation?**
 
@@ -44,5 +45,5 @@ goals:**
 * `DEFINE_EXCEPTION` reduces the time needed to introduce a new exception to seconds
 * `BaseException` a multi-purpose to-be-derived-from exception, which unleashes its full potential paired with the macro, i.e., `DEFINE_EXCEPTION(MyOhGodSomethingHappendError, TOOLS::BaseException);` 
 * `print_stacktrace()` outputs the current stacktrace providing useful insight where needed
-* `mem_tracker` is exactly what you need to precisely track down memory leaks, just include the .h file and set `USE_MEMORY_TRACK=true` and back to `false` - once the programm exits, a detailed memory statistics - for precicsly the lines between setting `true/false` - are shown! (currently under heavy work, but usable - not build by default)
+* `mem_tracker` is exactly what you need to precisely track down memory leaks, just include the .h file and set `USE_MEMORY_TRACK=true` and back to `false` - once the programm exits, a detailed memory statistics - for precicsly the lines between setting `true/false` - are shown! (currently under heavy work, but usable - not build by default - although CLANG and LeakSanitizer/AddressSanitizer introduces exactly the same feature, this means this mem_tracker is actually obsolete)
 * Combining some of the previous with `TOOLS::tools_lib_exception_handler()` as the default terminate handler using `set_terminate()` enables you to see the stacktrace once a unhandled exception was catched - in other words, if your software crashes you will get alot of useful information!

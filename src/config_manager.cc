@@ -324,9 +324,14 @@ void ConfigManager::parse_config_file(const string& fn) {
 }
 
 bool ConfigManager::is_group_active(const std::string& name) {
-  tOptionMap& opts = groups[name]->members;
-  for (tOptionIter i = opts.begin(); i != opts.end(); ++i)
-    if (i->second->was_set)
+  if(groups.find(name) == groups.end())
+    throw GroupNotFound(name);
+
+  tOptionMap& opts = groups.at(name)->members;
+  //for (tOptionIter i = opts.begin(); i != opts.end(); ++i)
+  for(auto&& kv : opts)
+    if (kv.second->was_set)
+    //if (i->second->was_set)
       return true;
   return false;
 }

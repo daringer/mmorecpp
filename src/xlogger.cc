@@ -37,6 +37,14 @@ XLogger::~XLogger() {
   log_map.erase(id);
 }
 
+void XLogger::add_filename_filter(const string& fn) {
+  fn_filter.insert(fn);  
+}
+
+void XLogger::remove_filename_filter(const string& fn) {
+  fn_filter.erase(fn_filter.find(fn));
+}
+
 void XLogger::set_msg_stripping(const bool& yesno) { strip_msg = yesno; }
 
 void XLogger::set_msg_stripping(const bool& yesno, const tStringList& trims) {
@@ -125,6 +133,10 @@ string XLogger::render_msg(BaseLoggerBackend* back, const string& data,
 // log message (including meta data)
 void XLogger::log_msg(const string data, int loglevel, int line,
                       const string fn, const string func) {
+
+  // if not fn_filter.empty() show only msg from given files
+  if(!fn_filter.empty() && fn_filter.find(fn) == fn_filter.end())
+    return;
 
   // if loglvl below min_loglvl, discard!
   if (loglevel < min_loglvl)

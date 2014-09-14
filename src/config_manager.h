@@ -135,7 +135,6 @@ class ConfigOption {
       throw IncompatibleDataTypes("Data has: " + data.verbose_type() +
                                   " Template(Option::set) was: " +
                                   typeid(T).name());
-
     data.set<T>(value);
     was_set = true;
     return *this;
