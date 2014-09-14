@@ -77,12 +77,16 @@ class Path {
   
   //bool touch();
 
+  //tTime get_access_time();
+  //tTime get_atime();
+  //tTime get_modified_time();
+  //tTime get_mtime();
+
   // dirname
   Path parent();
   //Path dirname(); -- make alias
 
   // basename
-  Path pwd();
   //Path basename(); -- make alias
   
   Path join(const std::string& what);
@@ -93,7 +97,7 @@ class Path {
 
   bool move(const std::string& to);
   
-  //bool remove(bool recursive, bool force);
+  //bool remove(bool recursive, bool inc_dirs, bool force);
 
   //bool copy(bool recursive, Path target);
 

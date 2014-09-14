@@ -22,6 +22,7 @@ START_SUITE(XStringToolsTestSuite) {
   REG_TEST(empty_string_split)
   REG_TEST(string_no_delim)
   REG_TEST(is_real)
+  REG_TEST(is_no_real)
 }
 
 XString s1, s2, s3, foo, realstr, intstr, s3_big, s3_small;
@@ -104,7 +105,6 @@ MAKE_TEST(string_no_delim) {
 }
 
 MAKE_TEST(is_real) {
-  // GOOD:
   CHECK(is_real("1"));
   CHECK(is_real("-1"));
   CHECK(is_real("0"));
@@ -117,8 +117,11 @@ MAKE_TEST(is_real) {
   CHECK(is_real("10e3"));
   CHECK(is_real("-432e-123"));
   CHECK(is_real("-999E999"));
+  CHECK(is_real("1.145e-05"));
+  CHECK(is_real("1.5E-05"));
+}
 
-  // BAD:
+MAKE_TEST(is_no_real) {
   CHECK(!is_real("1.231.231"));
   CHECK(!is_real(""));
   CHECK(!is_real("oidsjf3242"));
