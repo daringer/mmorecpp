@@ -21,6 +21,7 @@ START_SUITE(XStringToolsTestSuite) {
   REG_TEST(upper_case)
   REG_TEST(empty_string_split)
   REG_TEST(string_no_delim)
+  REG_TEST(is_real)
 }
 
 XString s1, s2, s3, foo, realstr, intstr, s3_big, s3_small;
@@ -100,6 +101,31 @@ MAKE_TEST(empty_string_split) {
 MAKE_TEST(string_no_delim) {
   tStringList sl = s1.split(" ");
   CHECK(sl.size() == 1 && sl[0] == s1);
+}
+
+MAKE_TEST(is_real) {
+  // GOOD:
+  CHECK(is_real("1"));
+  CHECK(is_real("-1"));
+  CHECK(is_real("0"));
+  CHECK(is_real("1.1"));
+  CHECK(is_real("-5.15"));
+  CHECK(is_real("1.4325123"));
+  CHECK(is_real("-94023.23442"));
+  CHECK(is_real("23412"));
+  CHECK(is_real("1.23e-45"));
+  CHECK(is_real("10e3"));
+  CHECK(is_real("-432e-123"));
+  CHECK(is_real("-999E999"));
+
+  // BAD:
+  CHECK(!is_real("1.231.231"));
+  CHECK(!is_real(""));
+  CHECK(!is_real("oidsjf3242"));
+  CHECK(!is_real("123.123e12331e"));
+  CHECK(!is_real("a"));
+  CHECK(!is_real("123.312w44"));
+  CHECK(!is_real("-"));
 }
 
 END_SUITE()

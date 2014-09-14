@@ -1,7 +1,6 @@
 LIB = libtools.a
 
-PARTS = config_manager exception xstring xsocket fs template_parser xregex io\
-	testing_suite executor xlogger xtime threading mem_tracker xsqlite
+PARTS = config_manager exception xstring xsocket fs template_parser xregex io testing_suite executor xlogger xtime threading mem_tracker xsqlite
 
 SOURCES.cc = $(addsuffix .cc, $(PARTS))
 SOURCES.h = $(addsuffix .h, $(PARTS))
@@ -25,7 +24,7 @@ CCFLAGS = $(DEV_CCFLAGS)
 LDFLAGS = -pthread -rdynamic
 ARFLAGS = ruv
 
-.PHONY: all
+.PHONY: all clean
 
 all:	 $(LIB)
 objects: $(SOURCES) $(OBJECTS)
