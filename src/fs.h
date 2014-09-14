@@ -57,6 +57,7 @@ class Path {
   size_t size() const;
   const char* c_str() const;
 
+  // path status, type
   bool exists();
   bool is_dir();
   bool is_file();
@@ -74,10 +75,7 @@ class Path {
   //bool is_writeable();
   //bool is_executable();
   
-  //
   //bool touch();
-
-
 
   // dirname
   Path parent();
@@ -116,7 +114,11 @@ class Path {
 // add Path overloaded
 bool change_dir(const std::string& path);
 //bool change_dir(const FS::Path& path);
+
 std::string current_dir();
+
+// create 
+
 
 Path operator+(const char* lhs, Path& rhs);
 //Path operator+(const std::string& LHS, Path& RHS);
