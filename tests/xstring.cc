@@ -119,6 +119,10 @@ MAKE_TEST(is_real) {
   CHECK(is_real("-999E999"));
   CHECK(is_real("1.145e-05"));
   CHECK(is_real("1.5E-05"));
+  CHECK(is_real("1e+07"));
+  CHECK(is_real("1231.5E+005"));
+  CHECK(is_real("1.5092383201382102"));
+
 }
 
 MAKE_TEST(is_no_real) {
