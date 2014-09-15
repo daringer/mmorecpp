@@ -126,7 +126,7 @@ bool XString::endswith(const string& what) {
 
 /* replaced in favor of the new "check-for-real" function: */
 /* maybe not unicode ready - but are there unicode-floating-point-numbers??? */
-bool is_real(const string& s) {
+bool TOOLS::is_real(const string& s) {
   // empty string is by-definition not a number!
   if(s.empty())
     return false;
