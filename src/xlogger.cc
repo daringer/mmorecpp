@@ -37,6 +37,25 @@ XLogger::~XLogger() {
   log_map.erase(id);
 }
 
+void XLogger::quick_init(
+      const std::string& newlogid, const std::string& console_format, 
+      const int& minloglvl, bool strip) {
+  
+  XLogger *xlog = new XLogger(newlogid);
+  ConsoleBackend* xlog_console = new ConsoleBackend(newlogid);
+  xlog->add_backend(xlog_console, console_format);
+
+  xlog->set_loglvl_desc(10, "ERR");
+  xlog->set_loglvl_desc(7, "W");
+  xlog->set_loglvl_desc(5, "i");
+  xlog->set_loglvl_desc(3, "DEBUG");
+  xlog->set_loglvl_desc(1, "PROFILE");
+
+  xlog->set_min_loglvl(minloglvl);
+  xlog->set_msg_stripping(strip);
+}
+
+
 void XLogger::add_filename_filter(const string& fn) {
   fn_filter.insert(fn);  
 }

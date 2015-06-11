@@ -1,5 +1,7 @@
 #include "testing_suite.h"
 
+#include <cmath>
+
 using namespace std;
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
@@ -60,45 +62,61 @@ void TestSuite::after_tear_down() {
 }
 
 void TestSuite::execute_tests(const string& suite_name, const string& only_test,
-                              const bool& return_on_fail) {
-  for (tTestIter i = tests.begin(); i != tests.end(); ++i) {
+                              const bool& return_on_fail,
+                              const int& repeat_times) {
 
-    i->second.res.id = suite_name + "::" + i->first;
+  // execute tests 'repeat_times' times
+  for (int run = repeat_times; run; --run) {
+    // for each test registered inside this TestSuite
+    for (tTestIter i = tests.begin(); i != tests.end(); ++i) {
 
-    // if executing choosen test
-    if (only_test != "" && i->second.res.id.find(only_test) == string::npos)
-      continue;
+      // short-hand ref for current result-data
+      TestResult& cur_res = i->second.res;
 
-    i->second.res.run = true;
+      // generate full-test-identification
+      cur_res.id = suite_name + "::" + i->first;
 
-    active_test = &i->second;
+      // if executing chosen test (set with '-t' cmdline option)
+      if (only_test != "" && cur_res.id.find(only_test) == string::npos)
+        continue;
 
-    setup();
-    after_setup();
+      // set test as active and was run flag
+      cur_res.run = true;
+      active_test = &i->second;
 
-    i->second.res.timer.start();
+      // fixture setup routines (setup() may be overridden)
+      setup();
+      after_setup();
+      cur_res.timer.start();
 
-    try {
-      (i->second.object->*i->second.method)(true, return_on_fail);
+      try {
+        // actual test-method call/execution
+        (i->second.object->*i->second.method)(true, return_on_fail);
+
+        // catch (more-expressive) TOOLS exception
+      } catch (TOOLS::BaseException& e) {
+        cur_res.details.append("[E] test failed - exception caught: " +
+                               e.output + " - ");
+        cur_res.result = false;
+
+        // catch generic C++ exception
+      } catch (exception& e) {
+        cur_res.details.append("[E] test failed - std::exception caught: " +
+                               str(e.what()) + " - ");
+        cur_res.result = false;
+      }
+
+      cur_res.timer.stop();
+      // tear down test-fixture (tear_down() may be overidden by the user)
+      tear_down();
+      after_tear_down();
+
+      active_test = NULL;
+
+      // show results, but only on last 'repeat_times' round
+      if (run == 1)
+        cur_res.show(false);
     }
-    catch (TOOLS::BaseException& e) {
-      i->second.res.details.append("[E] test failed - exception caught: " +
-                                   e.output + " - ");
-      i->second.res.result = false;
-    }
-    catch (exception& e) {
-      i->second.res.details.append("[E] test failed - std::exception caught: " +
-                                   str(e.what()) + " - ");
-      i->second.res.result = false;
-    }
-
-    i->second.res.timer.stop();
-
-    tear_down();
-    after_tear_down();
-
-    active_test = NULL;
-    i->second.res.show(false);
   }
 }
 
@@ -117,12 +135,30 @@ void TestResult::show(bool show_details) {
     icon = "-";
   }
 
+  // test description and final rating...
   cout << "[" << icon << "] " << left << setw(45) << id << setw(20) << right
        << rating;
 
-  double diff = timer.diff_us() / 1000.;
-  cout << " ->" << setw(9) << right << diff << "ms" << endl;
+  // total accumulated test runting
+  double diff = timer.diff_us();
+  double show_time = (diff > 1000.) ? diff / 1000. : diff;
+  std::string unit = (diff > 1000.) ? "ms" : "µs";
 
+  cout.precision(2);
+
+  // show (total) measured time
+  cout << " ->" << setw(10) << right << fixed << show_time << unit;
+
+  // if repeated multiple times, provide avg-time for test 
+  if(timer.cycles > 1) {
+    double avg = round((diff / timer.cycles) * 1e6) / 1e6;
+    show_time = (avg > 1000.) ? avg / 1000. : avg; 
+    unit = (avg > 1000.) ? "ms" : "µs";
+    cout << " [ avg: " << setw(10) << right << fixed << show_time  << unit << " ]";
+  }
+  cout << endl; 
+
+  // details shown here, if wanted.... 
   if (details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;
 }
@@ -135,34 +171,43 @@ TestFramework::TestFramework(int argc, char* argv[]) {
 
   grp.new_option<string>("execute-test", "Execute test(s) by name", "t")
       .set_default("");
+
   grp.new_option<bool>("stay-on-fail", "Stay in test on fail", "r")
       .set_default(false);
+
+  grp.new_option<int>("repeat-times", "Repeat the tests X times", "x")
+      .set_default(1);
 
   // ConfigManager init finished, start parsing file, then cmdline
   try {
     conf.parse_config_file("noname.conf");
     conf.parse_cmdline(argc, argv);
-    cout << "[+] Parsing commandline complete" << endl;
-  }
-  catch (ConfigManagerException& e) {
+  } catch (ConfigManagerException& e) {
     e.dump();
     conf.usage(cout);
     exit(1);
   }
 
+  // cmdline parsing done, save configured vars
   show_details = conf.get<bool>("debug");
   execute_test = conf.get<string>("execute-test");
   return_on_fail = !conf.get<bool>("stay-on-fail");
+  repeat_times = conf.get<int>("repeat-times");
+
+  cout << endl;
+  cout << "[i] START - TestFramework" << endl;
 }
 
 TestFramework::~TestFramework() {
   for (tTestSuiteIter i = test_suites.begin(); i != test_suites.end(); ++i)
     delete i->second;
+  cout << "[i] END - TestFramework" << endl;
 }
 
 void TestFramework::run() {
   for (tTestSuiteIter i = test_suites.begin(); i != test_suites.end(); ++i)
-    i->second->execute_tests(i->first, execute_test, return_on_fail);
+    i->second->execute_tests(i->first, execute_test, return_on_fail,
+                             repeat_times);
 }
 
 void TestFramework::show_result_overview() {
@@ -178,10 +223,17 @@ void TestFramework::show_result_overview() {
         (j->second.res.result) ? good++ : bad++;
     }
   }
-  cout << endl << "[i] Finished TestRun (" << all_tests
+  cout << endl
+       << "[i] Finished TestRun (" << all_tests
        << " checks done) - Tests: good: " << good;
+
   if (bad > 0)
     cout << " and bad: " << bad << endl;
   else
     cout << " and NO bad ones!" << endl;
+
+  if(repeat_times > 1)
+    cout << "[i] - repeated " << repeat_times << " times" << endl;
+  if(!execute_test.empty())
+    cout << "[i] - filtered tests by: '" << execute_test << "'" << endl;
 }

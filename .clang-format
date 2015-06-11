@@ -1,26 +1,33 @@
 ---
 # BasedOnStyle:  Google
 
-#Language: Cpp
-#AllowShortFunctionsOnASingleLine: None
-#AllowShortBlocksOnASingleLine: false
+Language: Cpp
 
 AccessModifierOffset: -1
-ConstructorInitializerIndentWidth: 4
 AlignEscapedNewlinesLeft: true
 AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true 
+
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+
+
 AlwaysBreakTemplateDeclarations: true
 AlwaysBreakBeforeMultilineStrings: true
 BreakBeforeBinaryOperators: false
 BreakBeforeTernaryOperators: true
 BreakConstructorInitializersBeforeComma: false
+
+BinPackArguments: true
 BinPackParameters: true
-ColumnLimit:     80
-ConstructorInitializerAllOnOneLineOrOnePerLine: true
-DerivePointerBinding: true
+
+ColumnLimit:     81
+
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+ConstructorInitializerIndentWidth: 4
+
 ExperimentalAutoDetectBinPacking: false
 IndentCaseLabels: true
 MaxEmptyLinesToKeep: 1
@@ -37,16 +44,27 @@ SpacesBeforeTrailingComments: 2
 Cpp11BracedListStyle: true
 Standard:        Auto
 IndentWidth:     2
-TabWidth:        8
+TabWidth:        2
 UseTab:          Never
 BreakBeforeBraces: Attach
 IndentFunctionDeclarationAfterType: true
+
 SpacesInParentheses: false
 SpacesInAngles:  false
 SpaceInEmptyParentheses: false
+
 SpacesInCStyleCastParentheses: false
 SpaceAfterControlStatementKeyword: true
 SpaceBeforeAssignmentOperators: true
-ContinuationIndentWidth: 4
+
+ContinuationIndentWidth: 6
+
+#DerivePointerBinding: true  
+#DerivePointerAlignment: false
+PointerAlignment: Left
+
+
+
+
 ...
 

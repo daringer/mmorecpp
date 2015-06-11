@@ -33,27 +33,24 @@ typedef tTestMap::iterator tTestIter;
 typedef tTestResultMap::iterator tTestResultIter;
 typedef tTestSuiteMap::iterator tTestSuiteIter;
 
-// selects either .h file generation or .cc
-//#define GENERATE_HEADER
-
-#define CHECK(expr)              \
-  if (do_checks)                 \
-    add_check(expr, __LINE__);   \
-  if (!(expr) && return_on_fail) \
+#define CHECK(expr)                                            \
+  if (do_checks)                                               \
+    add_check(expr, __LINE__);                                 \
+  if (!(expr) && return_on_fail)                               \
     return;
 
-#define CHECK_EXC(exc, func)             \
-  do {                                   \
-    if (!do_checks)                      \
-      break;                             \
-    bool _res = false;                   \
-    try {                                \
-      func;                              \
-    }                                    \
-    catch (exc e) {                      \
-      _res = true;                       \
-    }                                    \
-    add_exc_check(_res, #exc, __LINE__); \
+#define CHECK_EXC(exc, func)                                   \
+  do {                                                         \
+    if (!do_checks)                                            \
+      break;                                                   \
+    bool _res = false;                                         \
+    try {                                                      \
+      func;                                                    \
+    }                                                          \
+    catch (exc e) {                                            \
+      _res = true;                                             \
+    }                                                          \
+    add_exc_check(_res, #exc, __LINE__);                       \
   } while (0)
 
 #define CHECK_DUAL_ITER(iter, lbox, rbox, expr)                \
@@ -82,17 +79,17 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   } while (0)
 
 // MACRO to start a test-suite
-#define START_SUITE(name)         \
-  class name : public TestSuite { \
-   public:                        \
-    typedef name tTestSuite;      \
+#define START_SUITE(name)                                     \
+  class name : public TestSuite {                             \
+   public:                                                    \
+    typedef name tTestSuite;                                  \
   name()
 
 // MACRO to define and implement a test
 #define MAKE_TEST(name) \
   void test_##name(bool do_checks = true, bool return_on_fail = true)
 
-// MACRO to register a test (obsolete?)
+// MACRO to register a test 
 #define REG_TEST(method) add_test(#method, &tTestSuite::test_##method);
 
 // MACRO to end the test-suite
@@ -100,7 +97,7 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   }                 \
   ;
 
-// MACRO to call other test function without evaluating its CHECKs
+// Call test function without evaluating its CHECKs (not working?)
 #define PREPARE_WITH(fnc) test_##fnc(false);
 
 class TestResult {
@@ -143,8 +140,8 @@ class TestSuite {
   virtual void setup();
   void after_setup();
 
-  void execute_tests(const std::string& suite_name,
-                     const std::string& only_test, const bool& return_on_fail);
+  void execute_tests(const std::string& suite_name, const std::string& only_test,
+                     const bool& return_on_fail, const int& repeat_times);
 
  protected:
   Test* active_test;
@@ -182,6 +179,7 @@ class TestFramework {
   bool show_details;
   std::string execute_test;
   bool return_on_fail;
+  int repeat_times;
 };
 }
 }

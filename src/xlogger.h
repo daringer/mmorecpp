@@ -114,6 +114,21 @@ class FileBackend : public BaseLoggerBackend {
   FileBackend(const std::string& my_id, const std::string& fn);
   void write(const std::string& msg);
 };
+
+class BufferedFileBackend : public FileBackend {                                 
+ public:                                                                         
+  BufferedFileBackend(const std::string& my_id, const std::string& fn,           
+                      const int& buf_size);                                      
+  virtual void write(const std::string& msg);                                    
+  
+  // force flush buffer and write it to file!
+  void flush();
+
+ protected:                                                                      
+  std::string _buf;                                                              
+  int _buffer_size;
+};                           
+
 // class PersistentFileBackend
 // class MutexedFileBackend
 // class UDP/TCPServerBackend
@@ -148,6 +163,11 @@ class XLogger {
   static XLogger* get(const std::string& id) throw(NoSuchXLoggerAvailable);
   static bool check_loglevel(const int& lvl, const std::string& id) throw(
       NoSuchXLoggerAvailable);
+  
+  // quick init logger (e.g., for testing)
+  static void quick_init(const std::string& newlogid, 
+      const std::string& console_format = "[%%FANCYLVL%%] %%MSG%%\n",
+      const int& minloglvl=3, bool strip=false);
 
   void add_backend(BaseLoggerBackend* back, const std::string& tmpl = "");
 

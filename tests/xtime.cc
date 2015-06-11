@@ -43,6 +43,7 @@ MAKE_TEST(interval) {
   sleep(sleep_duration);
   t.stop();
   CHECK(t.diff_us() >= sleep_duration * 1e6);
+  CHECK(t.diff_ms() >= sleep_duration * 1e3);
   CHECK(t.diff_s() >= sleep_duration);
 }
 
@@ -51,6 +52,7 @@ MAKE_TEST(interval_autostart) {
   sleep(sleep_duration);
   t.stop();
   CHECK(t.diff_us() >= sleep_duration * 1e6);
+  CHECK(t.diff_ms() >= sleep_duration * 1e3);
   CHECK(t.diff_s() >= sleep_duration);
 }
 END_SUITE()

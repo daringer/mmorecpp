@@ -1,25 +1,55 @@
 #include "strings.h"
 #include "time.h"
+#include "assert.h"
 
 #include "xtime.h"
 
 using namespace TOOLS;
-using namespace std;
 
-XTime::XTime(bool auto_start) {
+using std::string;
+using std::ostream;
+
+XTime::XTime(bool auto_start) : passed_us(0), active(false), cycles(0) {
   if (auto_start)
     start();
 }
 
-void XTime::start() { gettimeofday(&raw_start, NULL); }
+void XTime::start() {
+  assert(!active);
+  gettimeofday(&raw_start, NULL);
+  active = true;
+}
 
-void XTime::stop() { gettimeofday(&raw_end, NULL); }
+void XTime::stop() {
+  assert(active);
+  gettimeofday(&raw_end, NULL);
+  active = false;
 
-long XTime::diff_s() { return raw_end.tv_sec - raw_start.tv_sec; }
+  // update cache (passed_us) accordingly - attention: '.tv_usec' is % 1e6
+  passed_us += (raw_end.tv_usec - raw_start.tv_usec) + \
+               (raw_end.tv_sec - raw_start.tv_sec) * us2s_factor;
+  cycles++;
+}
 
-long XTime::diff_us() {
-  // tv_usec is % 1e6
-  return (raw_end.tv_usec - raw_start.tv_usec) + diff_s() * 1e6;
+void XTime::reset() {
+  passed_us = 0;
+  active = false;
+  cycles = 0;
+}
+
+tMicroTime XTime::diff_s() const {
+  assert(!active);
+  return passed_us / us2s_factor;
+}
+
+tMicroTime XTime::diff_ms() const {
+  assert(!active);
+  return passed_us / us2ms_factor;
+}
+
+tMicroTime XTime::diff_us() const {
+  assert(!active);
+  return passed_us;
 }
 
 XDateTime::XDateTime(const XDateTime& obj)
@@ -29,7 +59,7 @@ XDateTime::XDateTime(const XDateTime& obj)
   render();
 }
 
-XDateTime::XDateTime(const std::string& fmt)
+XDateTime::XDateTime(const string& fmt)
     : rawtime(time(NULL)), timeinfo(localtime(&rawtime)), fmt_template(fmt) {
   render();
 }
