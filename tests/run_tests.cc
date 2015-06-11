@@ -4,7 +4,7 @@
 
 #define XLOG_MIN_LOG_LVL 1
 
-#include "testing_suite.h"
+#include "../src/testing_suite.h"
 
 #include "fs.cc"
 #include "xtime.cc"
@@ -13,7 +13,6 @@
 #include "executor.cc"
 #include "xstring.cc"
 #include "xlogger.cc"
-//#include "mem_tracker.cc"
 
 using namespace std;
 using namespace TOOLS;
@@ -38,7 +37,6 @@ int main(int argc, char* argv[]) {
   f.add_suite<ExecutorToolsTestSuite>("TOOLS::Executor");
   f.add_suite<XStringToolsTestSuite>("TOOLS::XString");
   f.add_suite<XLoggerToolsTestSuite>("TOOLS::XLogger");
-  // f.add_suite<MemTrackerToolsTestSuite>("TOOLS::MemTracker");
   f.run();
   f.show_result_overview();
 

@@ -1,5 +1,4 @@
-#ifndef TESTING_SUITE_H
-#define TESTING_SUITE_H
+#pragma once
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,6 +14,9 @@
 #include "xstring.h"
 #include "config_manager.h"
 #include "xtime.h"
+
+#include "xunit.h"
+
 
 namespace TOOLS {
 namespace UNIT_TEST {
@@ -107,6 +109,7 @@ class TestResult {
   bool run;
   std::string details;
   XTime timer;
+  std::vector<tMicroTime> runtimes;
 
   TestResult();
   TestResult(const std::string& testid, bool res, const std::string& details);
@@ -184,4 +187,3 @@ class TestFramework {
 }
 }
 
-#endif

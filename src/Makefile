@@ -1,7 +1,7 @@
 
 TARGET = libtools.a
 
-CONTENTS = exception xstring xsocket fs template_parser config_manager xregex io testing_suite executor xlogger xtime threading mem_tracker xsqlite
+CONTENTS = exception xstring xsocket fs template_parser config_manager xregex io testing_suite executor xlogger xtime threading xsqlite xunit
 
 
 CPP = clang++

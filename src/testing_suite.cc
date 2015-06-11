@@ -1,6 +1,7 @@
 #include "testing_suite.h"
 
 #include <cmath>
+#include <limits>
 
 using namespace std;
 using namespace TOOLS;
@@ -93,13 +94,13 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
         // actual test-method call/execution
         (i->second.object->*i->second.method)(true, return_on_fail);
 
-        // catch (more-expressive) TOOLS exception
+      // catch (more-expressive) TOOLS exception
       } catch (TOOLS::BaseException& e) {
         cur_res.details.append("[E] test failed - exception caught: " +
                                e.output + " - ");
         cur_res.result = false;
 
-        // catch generic C++ exception
+      // catch generic C++ exception
       } catch (exception& e) {
         cur_res.details.append("[E] test failed - std::exception caught: " +
                                str(e.what()) + " - ");
@@ -112,6 +113,13 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
       after_tear_down();
 
       active_test = NULL;
+
+      // save this specific time taken (instead of the overall duration)
+      if(cur_res.runtimes.empty())
+        cur_res.runtimes.push_back(cur_res.timer.diff_us());
+      else
+        cur_res.runtimes.push_back(cur_res.timer.diff_us() - 
+            cur_res.runtimes.back());
 
       // show results, but only on last 'repeat_times' round
       if (run == 1)
@@ -139,22 +147,26 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << setw(20) << right
        << rating;
 
-  // total accumulated test runting
-  double diff = timer.diff_us();
-  double show_time = (diff > 1000.) ? diff / 1000. : diff;
-  std::string unit = (diff > 1000.) ? "ms" : "µs";
-
-  cout.precision(2);
+  // total accumulated test runtimes (sum of all runtimes)
+  tMicroTime diff = timer.diff_us();
+  double mean = static_cast<double>((diff/ 1e6) / runtimes.size()) ;
+  // calc avg variance, simple squared dist to avg, additionally keep max/min
+  double max_val = std::numeric_limits<double>::min();
+  double min_val = std::numeric_limits<double>::max();
+  for (const tMicroTime& mt : runtimes) {
+    max_val = std::max(max_val, static_cast<double>(mt));
+    min_val = std::min(min_val, static_cast<double>(mt));
+  }
 
   // show (total) measured time
-  cout << " ->" << setw(10) << right << fixed << show_time << unit;
+  cout << " ->" << XUnit(diff, "s", 1, false, -6).lpad(12);
 
-  // if repeated multiple times, provide avg-time for test 
+  // if repeated multiple times, provide avg-time (and variance) for test 
   if(timer.cycles > 1) {
-    double avg = round((diff / timer.cycles) * 1e6) / 1e6;
-    show_time = (avg > 1000.) ? avg / 1000. : avg; 
-    unit = (avg > 1000.) ? "ms" : "µs";
-    cout << " [ avg: " << setw(10) << right << fixed << show_time  << unit << " ]";
+    cout << " [ Ø: " <<  XUnit(mean, "s", 1, false).lpad(10) 
+         << " | min: " << XUnit(min_val, "s", 1, false, -6).lpad(8)
+         << " | max: " << XUnit(max_val, "s", 1, false, -6).lpad(8) 
+         << " ]"; 
   }
   cout << endl; 
 

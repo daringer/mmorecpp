@@ -43,8 +43,6 @@
 - config manager, make separators for list and map exchangable!
 
 - xlogger needs a 'better' file backend:
-  - BufferedFileBackend() with adjustable buffer size, 
-    write only to file if buffer is full
   - TwoFileBackend() - one in /tmp and the "real" on HDD to save writes
 
 - ConfigManager -> is_group_active() seems not to work all the time?!

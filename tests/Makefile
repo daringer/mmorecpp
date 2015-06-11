@@ -10,7 +10,7 @@ SOURCES.cc = run_tests.cc #$(addsuffix .cc,$(PARTS))
 LIBOBJ = ../src/libtools.a
 SOURCES = $(SOURCES.cc) $(LIBOBJ)
 
-CCFLAGS = -w -g -Wall -pedantic -rdynamic -std=c++0x
+CCFLAGS = -w -g -Wall -pedantic -rdynamic -std=c++11
 PROGRAM = run_tests
 LDFLAGS = -g -rdynamic 
 

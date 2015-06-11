@@ -107,29 +107,59 @@ class BaseLoggerBackend {
   virtual void cleanup();
 };
 
+// append log data to a file named 'fn'
+// re-open it for every write
 class FileBackend : public BaseLoggerBackend {
  public:
-  std::string filename;
+  FileBackend(const std::string& my_id, const std::string& fn,
+              const std::string& my_name = "file-append");
+  virtual ~FileBackend();
 
-  FileBackend(const std::string& my_id, const std::string& fn);
   void write(const std::string& msg);
+ 
+ protected:
+  virtual void write_to_fstream(std::ofstream& fd, const std::string& msg);
+
+  std::string filename;
 };
 
-class BufferedFileBackend : public FileBackend {                                 
- public:                                                                         
-  BufferedFileBackend(const std::string& my_id, const std::string& fn,           
-                      const int& buf_size);                                      
-  virtual void write(const std::string& msg);                                    
+// the only difference to FileBackend: keep open file-descriptor!
+class PersistentFileBackend : public FileBackend {
+ public:
+  PersistentFileBackend(const std::string& my_id, const std::string& fn,
+                        const std::string& my_name = "persistent-file-append");
+   virtual ~PersistentFileBackend();
+
+   void write(const std::string& msg);
+ 
+ protected:
+   void init();
+   void cleanup();
+
+   std::ofstream fd;
+};
+
+// Persistant _AND_ Buffered (likely the best performing log-file-backend)
+class BufferedFileBackend : public PersistentFileBackend {
+ public:
+  BufferedFileBackend(const std::string& my_id, const std::string& fn,
+                      const int& buf_size, 
+                      const std::string& my_name = "buffered-pers-file-append");
+  virtual ~BufferedFileBackend();
+
+  void write(const std::string& msg);
   
-  // force flush buffer and write it to file!
+  // (force) flush buffer and write it to file!
   void flush();
 
- protected:                                                                      
-  std::string _buf;                                                              
-  int _buffer_size;
-};                           
+ protected:
+  // flush with cleanup!
+  void cleanup();
 
-// class PersistentFileBackend
+  std::string _buf;
+  int _buffer_size;
+};
+
 // class MutexedFileBackend
 // class UDP/TCPServerBackend
 

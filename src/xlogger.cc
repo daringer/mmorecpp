@@ -199,9 +199,13 @@ LogStream& LogStream::operator<<(tEndl fnc) {
 
 // BaseLoggerBackend abstract class
 BaseLoggerBackend::BaseLoggerBackend(const string& my_id, const string& my_name)
-    : id(my_id), name(my_name) {}
+    : id(my_id), name(my_name) {
+  init();    
+}
 
-BaseLoggerBackend::~BaseLoggerBackend() {}
+BaseLoggerBackend::~BaseLoggerBackend() {
+  cleanup();
+}
 
 // Hook for custom initialization
 void BaseLoggerBackend::init() {}
@@ -210,16 +214,79 @@ void BaseLoggerBackend::init() {}
 void BaseLoggerBackend::cleanup() {}
 
 // FileBackend realization
-FileBackend::FileBackend(const string& my_id, const string& fn)
-    : BaseLoggerBackend(my_id, "file-append"), filename(fn) {}
+FileBackend::FileBackend(const string& my_id, const string& fn,
+                         const string& my_name)
+    : BaseLoggerBackend(my_id, my_name), filename(fn) {}
+
+FileBackend::~FileBackend() { }
 
 // writing to file: opening - appending message - closing
 void FileBackend::write(const string& msg) {
   ofstream fd(filename.c_str(), ios::app);
-  fd.write(msg.c_str(), msg.size());
+  write_to_fstream(fd, msg);
   fd.close();
 }
 
+// internal, write 'msg' to 'fd'
+void FileBackend::write_to_fstream(ofstream& fd, const string& msg) {
+  fd.write(msg.c_str(), msg.size());
+}
+
+// PersistentFileBackend keeps the fileobject open
+PersistentFileBackend::PersistentFileBackend(const string& my_id,
+                                             const string& fn,
+                                             const string& my_name)
+    : FileBackend(my_id, fn, my_name) {
+}
+
+PersistentFileBackend::~PersistentFileBackend() { }
+
+// write directly to file
+void PersistentFileBackend::write(const string& msg) {
+  write_to_fstream(fd, msg);
+  fd.flush();
+}
+
+// open file-descriptor wrapper
+void PersistentFileBackend::init() {
+  fd.open(filename.c_str(), ios::app);
+}
+
+// close file-descriptor wrapper
+void PersistentFileBackend::cleanup() {
+  fd.close();
+}
+
+// BufferedFileBackend
+BufferedFileBackend::BufferedFileBackend(const string& my_id, 
+                                         const string& fn,
+                                         const int& buf_size, 
+                                         const string& my_name)
+    : PersistentFileBackend(my_id, fn, my_name), _buffer_size(buf_size) {
+}
+
+BufferedFileBackend::~BufferedFileBackend() { }
+
+// first copy data to buffer, once it overflows, flush into file!
+void BufferedFileBackend::write(const string& msg) {
+  if (_buf.size() + msg.size() > _buffer_size)
+    flush();
+
+  _buf.append(msg);
+}
+
+// flush buffer contents and write them to file
+void BufferedFileBackend::flush() {
+  write_to_fstream(fd, _buf);
+  fd.flush();
+  _buf.clear();
+
+}
+
+void BufferedFileBackend::cleanup() {
+  flush();
+  fd.close();
+}
 // ConsoleBackend realization
 ConsoleBackend::ConsoleBackend(const string& my_id)
     : BaseLoggerBackend(my_id, "stdout") {}
@@ -235,3 +302,6 @@ MemoryBackend::MemoryBackend(const string& my_id)
 
 // save data to logger vector
 void MemoryBackend::write(const string& msg) { log_msgs.push_back(msg); }
+
+
+
