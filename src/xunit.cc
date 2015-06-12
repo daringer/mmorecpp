@@ -15,22 +15,24 @@ XUnit::scale2unit = std::map<int, std::string>
      {SI_ZETA, "Z"}};
 
 void XUnit::si_scale() {
-  const double threshold =
-        pow(static_cast<double>(base), static_cast<double>(e_step));
+  const double upper = 1000.0;
+  const double lower = 1.0;
+  const int e_add = 3;
 
-  // catch zeros ...
+  // catch zeros, corner-cases, life insurance follows (in-while)
   if (c_data == 0 || c_data == 0.0 || c_data == 0.0f)
     return;
 
-  if (c_data > threshold) {
-    while (c_data > threshold) {
-      c_data /= threshold;
-      exponent += e_step;
+  double last_c_data = c_data;
+  if (c_data > upper) {
+    while (c_data > upper) {
+      c_data /= upper;
+      exponent += e_add;
     }
-  } else if (c_data < 1.0) {
-    while (c_data < 1.0) {
-      c_data *= threshold;
-      exponent -= e_step;
+  } else if (c_data < lower) {
+    while (c_data < lower) {
+      c_data *= upper;
+      exponent -= e_add;
     }
   }
 }

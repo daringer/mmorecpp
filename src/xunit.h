@@ -29,32 +29,13 @@ typedef enum {
   SI_ZETA = 21
 } SI_SCALING_BASE10;
 
-typedef enum {
-/*  SI_ATTO = -60,
-  SI_FEMTO = -50,
-  SI_PICO = -40,
-  SI_NANO = -30,
-  SI_MICRO = -20,
-  SI_MILLI = -10,*/
-  SI2_NONE = 0,
-  SI2_KILO = 10,
-  SI2_MEGA = 20,
-  SI2_GIGA = 30,
-  SI2_TERA = 40,
-  SI2_PETA = 50,
-  SI2_EXA = 60,
-  SI2_ZETA = 70
-} SI_SCALING_BASE2;
-
 class XUnit {
  public:
   const double data;
   double c_data;
 
   size_t decimal_precision;
-  size_t base;
   int exponent;
-  int e_step;
   bool force_scientific;
   std::string unit_suffix;
 
@@ -64,7 +45,7 @@ class XUnit {
   XUnit(const T& d, const std::string& unitname = "", const size_t& decimals = 2,
         const bool& e_notation = false, const int& has_exp = 0)
       : data(static_cast<double>(d)), c_data(static_cast<double>(d)),
-        decimal_precision(decimals), base(10), exponent(has_exp), e_step(3),
+        decimal_precision(decimals), exponent(has_exp), 
         force_scientific(e_notation), unit_suffix(unitname), cache(""), ss("") {
 
     si_scale();
