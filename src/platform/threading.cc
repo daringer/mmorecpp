@@ -5,7 +5,8 @@
 #include <string.h>
 
 #include "threading.h"
-#include "xstring.h"
+#include "../core/xstring.h"
+#include "../core/converter.h"
 
 using namespace TOOLS;
 using namespace std;

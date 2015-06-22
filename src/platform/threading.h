@@ -1,5 +1,4 @@
-#ifndef THREADING_H
-#define THREADING_H
+#pragma once 
 
 #include <pthread.h>
 #include <sys/stat.h>
@@ -8,7 +7,7 @@
 
 #include <deque>
 
-#include "exception.h"
+#include "../core/exception.h"
 
 namespace TOOLS {
 /**
@@ -151,4 +150,3 @@ class MutexVariable {
 };
 }
 
-#endif

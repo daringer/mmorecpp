@@ -3,9 +3,7 @@
 
 #define XLOG_MIN_LOG_LVL 3
 
-#include "xlogger.h"
-#include "io.h"
-#include "testing_suite.h"
+#include "tools.h"
 
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;

@@ -1,5 +1,4 @@
-#ifndef EXECUTOR_H
-#define EXECUTOR_H
+#pragma once 
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "exception.h"
+#include "../core/exception.h"
 
 namespace TOOLS {
 
@@ -57,4 +56,3 @@ class Executor {
 };
 }
 
-#endif

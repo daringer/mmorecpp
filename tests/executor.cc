@@ -2,8 +2,7 @@
 #include "string.h"
 #include "unistd.h"
 
-#include "executor.h"
-#include "testing_suite.h"
+#include "tools.h"
 
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;

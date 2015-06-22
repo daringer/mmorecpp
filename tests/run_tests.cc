@@ -1,10 +1,11 @@
-// have to globally activate it,
-// FIXME: testing suite should separate and compile each TestSuite on its own
-#define MEMORY_TRACKER_ACTIVE 1
-
 #define XLOG_MIN_LOG_LVL 1
 
-#include "../src/testing_suite.h"
+
+#define EXPERIMENTAL
+#define OOAPI
+#define PLATFORM
+
+#include "tools.h"
 
 #include "fs.cc"
 #include "xtime.cc"

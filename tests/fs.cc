@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "fs.h"
-
-#include "testing_suite.h"
+#include "tools.h"
 
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;

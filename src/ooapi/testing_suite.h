@@ -9,13 +9,13 @@
 #include <vector>
 #include <iomanip>
 
-#include "general.h"
-#include "exception.h"
-#include "xstring.h"
-#include "config_manager.h"
-#include "xtime.h"
+#include "../core/general.h"
+#include "../core/exception.h"
+#include "../core/xstring.h"
+#include "../core/xtime.h"
+#include "../core/xunit.h"
 
-#include "xunit.h"
+#include "config_manager.h"
 
 
 namespace TOOLS {

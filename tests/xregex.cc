@@ -1,8 +1,7 @@
 #include "stdlib.h"
 
-#include "xregex.h"
+#include "tools.h"
 
-#include "testing_suite.h"
 
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;

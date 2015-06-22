@@ -1,5 +1,5 @@
-#ifndef GENERAL_H
-#define GENERAL_H
+#pragma once
+
 
 #include <vector>
 #include <map>
@@ -9,7 +9,6 @@
 #include <exception>
 #include <cstdlib>
 
-#include "general.h"
 
 namespace TOOLS {
 
@@ -42,7 +41,3 @@ typedef std::set<std::string> tStringSet;
 
 
 
-
-
-
-#endif

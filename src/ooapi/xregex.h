@@ -1,5 +1,7 @@
-#ifndef REGEX_H
-#define REGEX_H
+#pragma once 
+
+#warning deprecated
+
 
 #include <string>
 #include <vector>
@@ -7,9 +9,10 @@
 #include <regex.h>
 #include <strings.h>
 
-#include "general.h"
-#include "exception.h"
-#include "xstring.h"
+#include "../core/general.h"
+#include "../core/exception.h"
+#include "../core/converter.h"
+#include "../core/xstring.h"
 
 namespace TOOLS {
 
@@ -51,4 +54,3 @@ class Regex {
   void apply_pattern(const std::string& s, int max_results);
 };
 }
-#endif

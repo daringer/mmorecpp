@@ -1,5 +1,4 @@
-#ifndef FS_H
-#define FS_H
+#pragma once
 
 #include <stdarg.h>
 #include <unistd.h>
@@ -15,8 +14,8 @@
 #include <fstream>
 #include <vector>
 
-#include "exception.h"
-#include "xstring.h"
+#include "../core/exception.h"
+#include "../core/xstring.h"
 
 namespace TOOLS {
 namespace FS {
@@ -129,4 +128,3 @@ Path operator+(const char* lhs, Path& rhs);
 
 }
 }
-#endif

@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 
+#include "../core/converter.h"
 #include "xsocket.h"
 
 using namespace std;

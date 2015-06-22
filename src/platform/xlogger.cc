@@ -1,9 +1,10 @@
 #include <time.h>
 
 #include "xlogger.h"
-#include "xtime.h"
-#include "xstring.h"
-#include "testing_suite.h"
+#include "../core/xtime.h"
+#include "../core/xstring.h"
+#include "../core/converter.h"
+#include "../ooapi/testing_suite.h"
 
 using namespace std;
 using namespace TOOLS;

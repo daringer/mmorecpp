@@ -1,5 +1,4 @@
-#ifndef XSOCKET_H
-#define XSOCKET_H
+#pragma once 
 
 #include <stdio.h>
 #include <strings.h>
@@ -15,8 +14,8 @@
 #include <vector>
 #include <string>
 
-#include "general.h"
-#include "xstring.h"
+#include "../core/general.h"
+#include "../core/xstring.h"
 
 namespace TOOLS {
 namespace NET {
@@ -97,4 +96,3 @@ class StreamSelecter {
 }
 }
 
-#endif

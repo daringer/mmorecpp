@@ -1,13 +1,12 @@
-#ifndef XNCURSES_H
-#define XNCURSES_H
+#pragma once
 
 #include <curses.h>
 
 #include <vector>
 
-#include "general.h"
-#include "exception.h"
-#include "xstring.h"
+#include "../core/general.h"
+#include "../core/exception.h"
+#include "../core/xstring.h"
 
 namespace TOOLS {
 
@@ -147,4 +146,3 @@ class XNC {
 };
 }
 
-#endif

@@ -2,8 +2,10 @@
 #include <iostream>
 #include <fstream>
 
-#include "general.h"
-#include "xstring.h"
+#include "../core/general.h"
+#include "../core/converter.h"
+#include "../core/xstring.h"
+
 #include "xsqlite.h"
 
 using namespace std;

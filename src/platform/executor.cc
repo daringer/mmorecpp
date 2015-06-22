@@ -6,10 +6,11 @@
 #include <errno.h>
 #include <sys/select.h>
 
-#include "general.h"
-#include "xstring.h"
-#include "fs.h"
+#include "../core/general.h"
+#include "../core/xstring.h"
+#include "../core/converter.h"
 
+#include "fs.h"
 #include "executor.h"
 
 using namespace std;

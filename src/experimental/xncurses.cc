@@ -161,7 +161,7 @@ void XNCStatusBar::update() {
   // right and left is aligned
   uint left_col = data[0].length() + 3;
   uint right_col = size.x - data.back().length() - 3;
-  uint middel_space = size.x - left_col - right_col;
+  //uint middel_space = size.x - left_col - right_col;
   uint colwidth = size.x / (content_cols - 2);
 
   mvwaddstr(_win, 0, 2, data[0].c_str());

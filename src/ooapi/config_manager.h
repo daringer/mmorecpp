@@ -1,5 +1,4 @@
-#ifndef CONFIG_MANAGER_H
-#define CONFIG_MANAGER_H
+#pragma once 
 
 #include <typeinfo>
 #include <map>
@@ -13,9 +12,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "general.h"
-#include "exception.h"
-#include "xstring.h"
+#include "../core/general.h"
+#include "../core/converter.h"
+#include "../core/exception.h"
+#include "../core/xstring.h"
 
 namespace TOOLS {
 
@@ -286,4 +286,3 @@ class ConfigGroup {
 };
 }
 
-#endif

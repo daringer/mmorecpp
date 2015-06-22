@@ -1,5 +1,4 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#pragma once 
 
 #include <string>
 #include <fstream>
@@ -11,9 +10,10 @@
 #include <unordered_map>
 #include <typeinfo>
 
-#include "general.h"
-#include "exception.h"
-#include "xstring.h"
+#include "../core/general.h"
+#include "../core/exception.h"
+#include "../core/converter.h"
+#include "../core/xstring.h"
 
 // default shows it all
 // (set this before you include xlogger.h)
@@ -312,4 +312,3 @@ LogStream& operator<<(LogStream& out, const std::pair<K, V>& p) {
 
 }
 
-#endif
