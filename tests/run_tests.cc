@@ -14,6 +14,7 @@
 #include "executor.cc"
 #include "xstring.cc"
 #include "xlogger.cc"
+#include "math.cc"
 
 using namespace std;
 using namespace TOOLS;
@@ -38,6 +39,7 @@ int main(int argc, char* argv[]) {
   f.add_suite<ExecutorToolsTestSuite>("TOOLS::Executor");
   f.add_suite<XStringToolsTestSuite>("TOOLS::XString");
   f.add_suite<XLoggerToolsTestSuite>("TOOLS::XLogger");
+  f.add_suite<MathToolsTestSuite>("TOOLS::math");
   f.run();
   f.show_result_overview();
 
