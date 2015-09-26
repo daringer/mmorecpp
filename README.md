@@ -21,7 +21,7 @@ Aiming for the following goals:**
 
 **Where is the documentation?**
 
-* **at this point mostly only documented inside the code**
+* currently the code-basis serves as documentation
 * ...check `tests/*.cpp` and `.h` files for alot info/examples
 
 **What are the modules/features of this so-called 'mmorecpp' library?**
