@@ -1,8 +1,8 @@
 mmorecpp - a high-lvl, flexible, lightweight C++ utils library
 ===========================================================================
 
-**This library should provide helpful tools for C++. Aiming for the following
-goals:**
+**This library provides helpful tools for your everyday C++ challenges. 
+Aiming for the following goals:**
 
 * useful, comfortable C++ style (boost like) utils
 * include into project and reduce external dependencies
@@ -10,6 +10,9 @@ goals:**
 * simple, fast, small footprint
 * can be used in parts
 * c++11 required (clang++ (>=3.4) [recommended], g++ (>=4.8))
+  * support for older compilers in progress
+  * support for a higher platform independance in progress
+* selectivly disable features during compile-time 
 * extremly easy and smart interfaces
 * slim OO-interfaces for tedious plain C interfaces (e.g., sqlite3, popen,
   date/time, threading/forking, locking, sockets, ncurses)
@@ -19,9 +22,7 @@ goals:**
 **Where is the documentation?**
 
 * **at this point mostly only documented inside the code**
-* **BUT** *documentation is on the way, stay tuned!*
-* ...in the meantime check the tests/ and .h files for alot info/examples
-
+* ...check `tests/*.cpp` and `.h` files for alot info/examples
 
 **What are the modules/features of this so-called 'mmorecpp' library?**
 
@@ -33,7 +34,7 @@ goals:**
   load (still in early devel only insert/select atm)
 * `Executor` Execute command and (if needed) take full control of strout/err/in
 * `FS::Path` Filesystem helper class to search/manipulate paths/files/dirs
-* `XTime`, `XDateTime` Charmingly easy OO-interfaces for time-measuring and
+* `XTime`, `XDateTime`, `XUnit` Charmingly easy OO-interfaces for time-measuring and
   date/time handling
 * `XString` provides high-lvl string manipulation (split, strip, join,
   substitute, lower, upper, startswith, endswith) and derives from std::string
