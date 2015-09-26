@@ -41,6 +41,18 @@ typedef tTestSuiteMap::iterator tTestSuiteIter;
   if (!(expr) && return_on_fail)                               \
     return;
 
+#define CHECK_EQ(val1, val2)                                   \
+  if (do_checks)                                               \
+    add_check((val1 == val2), __LINE__);                       \
+  if (val1 != val2 && return_on_fail)                          \
+    return;
+
+#define CHECK_APPROX(val1, val2, eps)                          \
+  if (do_checks)                                               \
+    add_check((std::abs(val1-val2) < eps), __LINE__);          \
+  if (!(std::abs(val1-val2) < eps) && return_on_fail)          \
+    return;
+
 #define CHECK_EXC(exc, func)                                   \
   do {                                                         \
     if (!do_checks)                                            \
