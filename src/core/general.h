@@ -48,6 +48,9 @@ enum SOCKET_TYPE {
   UDP
 };
 
+typedef unsigned int uint;
+
+
 #ifndef MM_NO_VECTOR
 typedef std::vector<std::string> tStringList;
 typedef tStringList::iterator tStringIter;

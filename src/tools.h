@@ -1,22 +1,12 @@
-#pragma once 
+#pragma once
 
-#include "core/general.h"
-#include "core/exception.h"
-#include "core/converter.h"
-#include "core/xstring.h"
-#include "core/io.h"
-#include "core/xtime.h"
-#include "core/xunit.h"
-
-#include "ooapi/config_manager.h"
-#include "ooapi/template_parser.h"
-#include "ooapi/testing_suite.h"
-#include "ooapi/xregex.h"
-#include "ooapi/xsqlite.h"
-
-#include "platform/executor.h"
-#include "platform/fs.h"
-#include "platform/threading.h"
-#include "platform/xlogger.h"
-#include "platform/xsocket.h"
-
+// wrap different platforms to appropriate includes
+#ifdef _WIN32
+#include "tools_win.h"
+#elif __unix__
+#include "tools_lin.h"
+#elif __linux__
+#include "tools_lin.h"
+#elif __APPLE__
+#include "tools_lin.h"
+#endif

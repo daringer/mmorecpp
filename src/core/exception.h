@@ -67,9 +67,10 @@ void tools_lib_exception_handler();
 void signal_handler(int sig);
 }
 
+#if MM_PLATFORM == linux
 // print a stacktrace
 void print_stacktrace(uint max_frames = 63);
-// void get_stackdata(uint max_frames = 63);
+#endif
 
 /**
  * Macro to easily define a exception.

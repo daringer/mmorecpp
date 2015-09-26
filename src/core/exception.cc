@@ -29,7 +29,9 @@ std::string _exec(const string& cmd) {
 void MM_NAMESPACE()::tools_lib_exception_handler() {
   cerr << endl << "[EXC] An uncaught exception occurred!" << endl;
   try {
+#if MM_PLATFORM == linux
     print_stacktrace();
+#endif
     exception_ptr exc = current_exception();
     rethrow_exception(exc);
   }
@@ -48,7 +50,9 @@ void MM_NAMESPACE()::tools_lib_exception_handler() {
 
 void MM_NAMESPACE()::signal_handler(int sig) {
   cout << "DAAAAAAAAAAAAAAAMNNNNN SEGFAUUUUULT!!!!" << endl;
+#if MM_PLATFORM == linux
   print_stacktrace();
+#endif 
   exit(1);
 }
 
