@@ -22,3 +22,4 @@
 #include "platform/xlogger.h"
 #include "platform/xsocket.h"
 
+#include "math/funcs.h"
