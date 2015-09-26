@@ -60,7 +60,7 @@ ServerSocket::ServerSocket(SOCKET_TYPE type, int port) : Socket(type, port) {
   addr.sin_addr.s_addr = INADDR_ANY;
   addr.sin_port = htons(port);
 
-  if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+  if (bind(fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
     throw SocketException("Could not bind to address/port");
 
   stream = new SocketStream(fd);
