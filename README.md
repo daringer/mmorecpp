@@ -1,6 +1,8 @@
 mmorecpp - a high-lvl, flexible, lightweight C++ utils library
 ===========================================================================
 
+[![Build Status](https://travis-ci.org/daringer/mmorecpp.svg)](https://travis-ci.org/daringer/mmorecpp)
+
 **This library provides helpful tools for your everyday C++ challenges. 
 Aiming for the following goals:**
 
