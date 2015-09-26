@@ -4,8 +4,8 @@
 #include <limits>
 
 using namespace std;
-using namespace TOOLS;
-using namespace TOOLS::UNIT_TEST;
+using namespace MM_NAMESPACE();
+using namespace MM_NAMESPACE()::UNIT_TEST;
 
 Test::Test() : name(""), method(NULL), object(NULL) {}
 
@@ -94,8 +94,8 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
         // actual test-method call/execution
         (i->second.object->*i->second.method)(true, return_on_fail);
 
-      // catch (more-expressive) TOOLS exception
-      } catch (TOOLS::BaseException& e) {
+      // catch (more-expressive) MM_NAMESPACE() exception
+      } catch (MM_NAMESPACE()::BaseException& e) {
         cur_res.details.append("[E] test failed - exception caught: " +
                                e.output + " - ");
         cur_res.result = false;

@@ -8,7 +8,7 @@
 
 #define BUFSIZE 256
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 typedef uint64_t tMicroTime; 
 const tMicroTime us2ms_factor = 1e3;

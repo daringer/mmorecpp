@@ -6,7 +6,7 @@
 #include "xsocket.h"
 
 using namespace std;
-using namespace TOOLS::NET;
+using namespace MM_NAMESPACE()::NET;
 
 SocketStream::SocketStream(int fd) : fd(fd) {}
 

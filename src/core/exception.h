@@ -1,5 +1,4 @@
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#pragma once
 
 #include <signal.h>
 #include <execinfo.h>
@@ -12,9 +11,14 @@
 #include <cstdlib>
 #include <vector>
 
-namespace TOOLS {
-/* @brief The global (abstract) exception-base-class for all
- *        thrown exceptions
+#include "general.h"
+
+namespace MM_NAMESPACE() {
+/** BaseException 
+ * provides advanced exception handling, i.e., 
+ * - derived exceptions should call BaseException("ExceptionName", msg)
+ *   in their ctor
+ * - by default provides a single string argument used for a description
  */
 class BaseException : public std::exception {
  public:
@@ -71,7 +75,7 @@ void print_stacktrace(uint max_frames = 63);
  * Macro to easily define a exception.
  * usage:
  *
- * DEFINE_EXCEPTION(MyNewException, TOOLS::BaseException);
+ * DEFINE_EXCEPTION(MyNewException, MM_NAMESPACE()::BaseException);
  * this defines a new exception, which allows one or no
  * argument for construction
 **/
@@ -87,4 +91,3 @@ void print_stacktrace(uint max_frames = 63);
         : PARENT(exc, msg) {}                                            \
     CLASS(const CLASS& obj) : PARENT(obj.exception_name, obj.message) {} \
   };
-#endif

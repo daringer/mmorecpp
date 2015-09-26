@@ -18,7 +18,7 @@
 #include "config_manager.h"
 
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 namespace UNIT_TEST {
 
 class TestSuite;

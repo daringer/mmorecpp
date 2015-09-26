@@ -8,7 +8,7 @@
 #include "../core/xstring.h"
 #include "../core/converter.h"
 
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 using namespace std;
 
 BaseParallel::BaseParallel() : retval(new int), retdata(nullptr) {}

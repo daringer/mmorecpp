@@ -9,7 +9,7 @@
 
 #include "../core/exception.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 /**
  * @brief An abstract class to derive from to implement a thread.
  *        Simply declare a class like:

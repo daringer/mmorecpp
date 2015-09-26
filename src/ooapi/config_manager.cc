@@ -1,7 +1,7 @@
 #include "config_manager.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 ConfigDataKeeper::ConfigDataKeeper(const ConfigDataKeeper& obj)
     : storage(obj.storage), tinfo(obj.tinfo) {}

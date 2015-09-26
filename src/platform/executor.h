@@ -11,7 +11,7 @@
 
 #include "../core/exception.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 DEFINE_EXCEPTION(CommandNotFound, BaseException)
 DEFINE_EXCEPTION(CommunicationNotInited, BaseException)

@@ -4,9 +4,9 @@
 #include <unistd.h>
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
-tCoords TOOLS::make_coords(const uint& x, const uint& y) {
+tCoords MM_NAMESPACE()::make_coords(const uint& x, const uint& y) {
   tCoords out;
   out.x = x;
   out.y = y;

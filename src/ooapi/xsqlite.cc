@@ -9,7 +9,7 @@
 #include "xsqlite.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 SQLResult::SQLResult(sqlite3_stmt* used_stmt)
     : done(false), started(false), cur_row(0), stmt(used_stmt) {}
@@ -37,7 +37,7 @@ int SQLResult::get_int(uint col) {
 
 std::string SQLResult::get_string(uint col) {
   assert(started);
-  std::string s = TOOLS::str(sqlite3_column_text(stmt, col));
+  std::string s = MM_NAMESPACE()::str(sqlite3_column_text(stmt, col));
   return s;
 }
 

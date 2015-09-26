@@ -8,7 +8,7 @@
 #include "../core/exception.h"
 #include "../core/xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 DEFINE_EXCEPTION(ColumnIndexOutOfRange, BaseException);
 DEFINE_EXCEPTION(ContentLengthNotMatching, BaseException);

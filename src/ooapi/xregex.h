@@ -14,7 +14,7 @@
 #include "../core/converter.h"
 #include "../core/xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 typedef tStringList Grouplist;
 typedef std::vector<tStringList> Matchinglist;

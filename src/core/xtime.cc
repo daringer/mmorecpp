@@ -2,9 +2,10 @@
 #include "time.h"
 #include "assert.h"
 
+#include "general.h"
 #include "xtime.h"
 
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 using std::string;
 using std::ostream;

@@ -7,7 +7,7 @@
 #include "../ooapi/testing_suite.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 tXLoggerMap XLogger::log_map;
 
@@ -143,10 +143,10 @@ string XLogger::render_msg(BaseLoggerBackend* back, const string& data,
 
   return msg.subs("%%MSG%%", mymsg)
       .subs("%%TIME%%", XDateTime(time_format).format())
-      .subs("%%LOGLVL%%", TOOLS::str(loglevel))
+      .subs("%%LOGLVL%%", MM_NAMESPACE()::str(loglevel))
       .subs("%%FANCYLVL%%", get_fancy_level(loglevel))
       .subs("%%FILE%%", fn)
-      .subs("%%LINE%%", TOOLS::str(line))
+      .subs("%%LINE%%", MM_NAMESPACE()::str(line))
       .subs("%%FUNC%%", func);
 }
 

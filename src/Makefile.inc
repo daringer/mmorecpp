@@ -1,7 +1,7 @@
 
 # bins
 CPP=clang++
-AR=ar ruv
+AR=ar rv
 RANLIB=ranlib
 RM=rm -f
 

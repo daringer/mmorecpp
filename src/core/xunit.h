@@ -10,7 +10,7 @@
 
 #include "xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 typedef enum {
   SI_ATTO = -18,

@@ -17,7 +17,7 @@
 #include "../core/exception.h"
 #include "../core/xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 namespace FS {
 
 DEFINE_EXCEPTION(PathException, BaseException)

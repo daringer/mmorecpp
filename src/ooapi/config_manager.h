@@ -17,7 +17,7 @@
 #include "../core/exception.h"
 #include "../core/xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 class ConfigGroup;
 class ConfigOption;

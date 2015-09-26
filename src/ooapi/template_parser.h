@@ -12,7 +12,7 @@
 #include "../core/converter.h"
 #include "../core/xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 DEFINE_EXCEPTION(SaveFilenameAmbigous, BaseException);
 DEFINE_EXCEPTION(NoTemplateProvided, BaseException);

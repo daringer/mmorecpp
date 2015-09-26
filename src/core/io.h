@@ -19,7 +19,7 @@
 #include "general.h"
 #include "exception.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 namespace IO {
 
 DEFINE_EXCEPTION(IOException, BaseException)

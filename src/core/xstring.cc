@@ -1,7 +1,7 @@
 #include "xstring.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 /**
  * @brief empty constructor

@@ -1,7 +1,7 @@
 #include "fs.h"
 
 using namespace std;
-using namespace TOOLS::FS;
+using namespace MM_NAMESPACE()::FS;
 
 /**
  * @brief Path constructor from a std::string
@@ -153,11 +153,11 @@ bool Path::move(const string& to) {
  * @param the path the workdir should be changed to
  * @return true on success
  */
-bool TOOLS::FS::change_dir(const string& path) {
+bool MM_NAMESPACE()::FS::change_dir(const string& path) {
   return (chdir(path.c_str()) == 0);
 }
 
-string TOOLS::FS::current_dir() {
+string MM_NAMESPACE()::FS::current_dir() {
   char buf[1024];
   char* dir = getcwd((char*)&buf, 1024);
   string out;
@@ -165,7 +165,7 @@ string TOOLS::FS::current_dir() {
   return out;
 }
 
-Path TOOLS::FS::Path::join(const std::string& what) {
+Path MM_NAMESPACE()::FS::Path::join(const std::string& what) {
   Path out(*this);
   if(what.substr(0, 1) == "/")
     out.path = what;
@@ -176,10 +176,10 @@ Path TOOLS::FS::Path::join(const std::string& what) {
   return out;
 }
 
-Path TOOLS::FS::operator+(const char* lhs, Path& rhs) {
+Path MM_NAMESPACE()::FS::operator+(const char* lhs, Path& rhs) {
   return Path(lhs) + rhs;
 }
-/*Path TOOLS::FS::operator+(const std::string& lhs, Path& rhs) {
+/*Path MM_NAMESPACE()::FS::operator+(const std::string& lhs, Path& rhs) {
   return Path(rhs).join(lhs);
 }*/
 

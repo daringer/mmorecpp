@@ -10,7 +10,7 @@
 #include "general.h"
 #include "exception.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 /* A string class fully compatible with std::string.
  * Featuring some often used methods, to bring a little comfort into string

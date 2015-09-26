@@ -5,7 +5,7 @@
 #include <xunit.h>
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 std::map<int, std::string> 
 XUnit::scale2unit = std::map<int, std::string>
@@ -82,7 +82,8 @@ std::string XUnit::format() {
   return cache;
 }
 
-std::ostream& TOOLS::operator<<(std::ostream& os, const TOOLS::XUnit& x) {
+std::ostream& MM_NAMESPACE()::operator<<(std::ostream& os, \
+    const MM_NAMESPACE()::XUnit& x) {
   return (os << x.get());
 }
 

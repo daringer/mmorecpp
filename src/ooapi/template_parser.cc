@@ -2,7 +2,7 @@
 #include "template_parser.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 /**
  * @brief default constructor for the tree node

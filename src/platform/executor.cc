@@ -14,7 +14,7 @@
 #include "executor.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
 
 Executor::Executor(const string& cmd, bool use_path)
     : pid(-1),

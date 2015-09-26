@@ -23,11 +23,11 @@
 
 // This is the main #DEFINE - do not change!
 #define LOG(lvl, LOGID)                                                 \
-  if (TOOLS::XLogger::check_loglevel(lvl, LOGID))                       \
-  TOOLS::LogStream(TOOLS::XLogger::get(LOGID), lvl, __LINE__, __FILE__, \
+  if (MM_NAMESPACE()::XLogger::check_loglevel(lvl, LOGID))                       \
+  MM_NAMESPACE()::LogStream(MM_NAMESPACE()::XLogger::get(LOGID), lvl, __LINE__, __FILE__, \
                    __FUNCTION__)
 
-#define FAKELOG() TOOLS::FakeLogStream()
+#define FAKELOG() MM_NAMESPACE()::FakeLogStream()
 
 // Some ready-to-use examples for special loggers
 // all can be used like this:
@@ -36,7 +36,7 @@
 
 #if XLOG_MIN_LOG_LVL <= 1
 #define MAX_LOG LOG(1, LOGID)
-#define IS_MAX_LOG true && TOOLS::XLogger::check_loglevel(1, LOGID)
+#define IS_MAX_LOG true && MM_NAMESPACE()::XLogger::check_loglevel(1, LOGID)
 #else
 #define MAX_LOG if(false) FAKELOG() 
 #define IS_MAX_LOG false
@@ -44,7 +44,7 @@
 
 #if XLOG_MIN_LOG_LVL <= 2
 #define MORE_DEBUG LOG(2, LOGID)
-#define IS_MORE_DEBUG true && TOOLS::XLogger::check_loglevel(2, LOGID)
+#define IS_MORE_DEBUG true && MM_NAMESPACE()::XLogger::check_loglevel(2, LOGID)
 #else
 #define MORE_DEBUG if(false) FAKELOG()
 #define IS_MORE_DEBUG false
@@ -52,7 +52,7 @@
 
 #if XLOG_MIN_LOG_LVL <= 3
 #define DEBUG LOG(3, LOGID)
-#define IS_DEBUG true && TOOLS::XLogger::check_loglevel(3, LOGID)
+#define IS_DEBUG true && MM_NAMESPACE()::XLogger::check_loglevel(3, LOGID)
 #else
 #define DEBUG if(false) FAKELOG()
 #define IS_DEBUG false
@@ -60,7 +60,7 @@
 
 #if XLOG_MIN_LOG_LVL <= 5
 #define INFO LOG(5, LOGID)
-#define IS_INFO true && TOOLS::XLogger::check_loglevel(4, LOGID)
+#define IS_INFO true && MM_NAMESPACE()::XLogger::check_loglevel(4, LOGID)
 #else
 #define INFO if(false) FAKELOG()
 #define IS_INFO false
@@ -68,7 +68,7 @@
 
 #if XLOG_MIN_LOG_LVL <= 7
 #define WARN LOG(7, LOGID)
-#define IS_WARN true && TOOLS::XLogger::check_loglevel(7, LOGID)
+#define IS_WARN true && MM_NAMESPACE()::XLogger::check_loglevel(7, LOGID)
 #else
 #define WARN if(false) FAKELOG()
 #define IS_WARN false
@@ -76,13 +76,13 @@
 
 #if XLOG_MIN_LOG_LVL <= 10
 #define ERROR LOG(10, LOGID)
-#define IS_ERROR true && TOOLS::XLogger::check_loglevel(10, LOGID)
+#define IS_ERROR true && MM_NAMESPACE()::XLogger::check_loglevel(10, LOGID)
 #else
 #define ERROR if(false) FAKELOG()
 #define IS_ERROR false
 #endif
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 DEFINE_EXCEPTION(BackendFailedToWrite, BaseException)
 DEFINE_EXCEPTION(NoSuchXLoggerAvailable, BaseException)

@@ -4,7 +4,9 @@
 #include "exception.h"
 
 using namespace std;
-using namespace TOOLS;
+using namespace MM_NAMESPACE();
+
+#define MAX_STACK_TRACE_SIZE 100
 
 // fallback system() with output 
 std::string _exec(const string& cmd) {
@@ -24,7 +26,7 @@ std::string _exec(const string& cmd) {
     return out;
 }
 
-void TOOLS::tools_lib_exception_handler() {
+void MM_NAMESPACE()::tools_lib_exception_handler() {
   cerr << endl << "[EXC] An uncaught exception occurred!" << endl;
   try {
     print_stacktrace();
@@ -32,7 +34,7 @@ void TOOLS::tools_lib_exception_handler() {
     rethrow_exception(exc);
   }
   catch (BaseException& e) {
-    cerr << "[EXC] " << e.exception_name << " base:(TOOLS::BaseException)"
+    cerr << "[EXC] " << e.exception_name << " base:(MM_NAMESPACE()::BaseException)"
          << endl;
     cerr << "[EXC] " << e.what() << endl;
   }
@@ -44,7 +46,7 @@ void TOOLS::tools_lib_exception_handler() {
   exit(1);
 }
 
-void TOOLS::signal_handler(int sig) {
+void MM_NAMESPACE()::signal_handler(int sig) {
   cout << "DAAAAAAAAAAAAAAAMNNNNN SEGFAUUUUULT!!!!" << endl;
   print_stacktrace();
   exit(1);
@@ -105,7 +107,7 @@ void BaseException::set_message(const string& msg = "") {
  * @param max_frames maximum depth of the trace
  */
 void print_stacktrace(uint max_frames) {
-  void* addrlist[max_frames + 1];
+  void* addrlist[MAX_STACK_TRACE_SIZE];
   int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
 
   if (addrlen == 0) {

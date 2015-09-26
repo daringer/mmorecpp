@@ -2,10 +2,10 @@
 
 #include <iomanip>
 
-#include "../core/exception.h"
-#include "../core/general.h"
+#include "exception.h"
+#include "general.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 DEFINE_EXCEPTION(ConvertValueError, BaseException)
 

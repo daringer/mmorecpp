@@ -15,7 +15,7 @@
 
 #include "../core/exception.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 
 DEFINE_EXCEPTION(NoSuchColumnFound, BaseException);
 DEFINE_EXCEPTION(SQLiteError, BaseException);
@@ -180,6 +180,6 @@ class XSQLite {
   tStringList columns;
 };
 
-}  // end namspace TOOLS
+}  // end namspace MM_NAMESPACE()
 
 #endif

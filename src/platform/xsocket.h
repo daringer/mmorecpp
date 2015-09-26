@@ -17,7 +17,7 @@
 #include "../core/general.h"
 #include "../core/xstring.h"
 
-namespace TOOLS {
+namespace MM_NAMESPACE() {
 namespace NET {
 
 DEFINE_EXCEPTION(SocketException, BaseException)
