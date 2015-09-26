@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#ifndef XLOG_MIN_LOG_LVL
 #define XLOG_MIN_LOG_LVL 3
+#endif 
 
 #include "tools.h"
 
