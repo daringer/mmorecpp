@@ -1,6 +1,7 @@
 language: cpp
 install: true
 script: make
+after_script: make test
 
 env:
   global:
@@ -22,7 +23,7 @@ addons:
     project:
       name: "daringer/mmorecpp"
       #version: 1.0
-      description: "MMoreCPP versataile, OO, comfortable, drop-in C++ library"
+      description: "MMoreCPP versatile, OO, comfortable, drop-in C++ library"
 
     # Where email notification of build analysis results will be sent
     notification_email: coder@safemailbox.de
