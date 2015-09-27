@@ -11,5 +11,5 @@ $(TARGET): $(OBJS)
 
 # objects
 $(OBJS): $(SRC)
-	$(CPP) -c $(CCFLAGS) $(@:%.o=%.cc) -o $@
+	$(CPP) -c $(CCFLAGS) $(@:%.o=%.cc) -o $(OBJ_TARGET_DIR)/$@
 

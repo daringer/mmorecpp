@@ -15,30 +15,36 @@ PLAT_SRC=xlogger.cc executor.cc fs.cc threading.cc xsocket.cc
 EXPERIM_SRC=xncurses.cc
 OOAPI_SRC=config_manager.cc template_parser.cc testing_suite.cc \
 	  xregex.cc xsqlite.cc
-MATH_SRC=funcs.cc
+MATH_SRC=basic.cc moving_avg.cc
 
 PARTS_A=$(CORE_A) $(PLATFORM_A) $(OOAPI_A) $(MATH_A) #$(EXPERIM_A)
 
 OBJ_FILES=$(shell find . -name "*.o" | xargs)
 
+$(TOPTARGET): MYOBJDIR=core/$(OBJ_TARGET_DIR)
 $(TOPTARGET): $(PARTS_A)
-	$(AR) $(TOPTARGET) $(OBJ_FILES) #$(shell find . -name "*.o" | xargs)
+	$(AR) $(TOPTARGET) $(OBJ_FILES)
 	$(RANLIB) $(TOPTARGET)
 
 $(PLATFORM_A): $(addprefix platform/, $(PLAT_SRC))
+	[[ -e "$(MYOBJDIR)" ]] || mkdir -p  $(MYOBJDIR)
 	+make -C $(shell dirname $@) CCFLAGS='$(CCFLAGS)'
 
 $(CORE_A): $(addprefix core/, $(CORE_SRC))
+	[[ -e "$(MYOBJDIR)" ]] || mkdir -p  $(MYOBJDIR)
 	+make -C $(shell dirname $@) CCFLAGS='$(CCFLAGS)'
 
 $(OOAPI_A): $(addprefix ooapi/, $(OOAPI_SRC))
+	[[ -e "$(MYOBJDIR)" ]] || mkdir -p  $(MYOBJDIR)
 	+make -C $(shell dirname $@) CCFLAGS='$(CCFLAGS)'
 
 $(MATH_A): $(addprefix math/, $(MATH_SRC))
+	[[ -e "$(MYOBJDIR)" ]] || mkdir -p  $(MYOBJDIR)
 	+make -C $(shell dirname $@) CCFLAGS='$(CCFLAGS)'
 
-#$(EXPERIM_A): $(addprefix experimental/, $(EXPERIM_SRC))
-#	make -C $(shell dirname $@) CCFLAGS=$(CCFLAGS)
+$(EXPERIM_A): $(addprefix experimental/, $(EXPERIM_SRC))
+	[[ -e "$(MYOBJDIR)" ]] || mkdir -p  $(MYOBJDIR)
+	make -C $(shell dirname $@) CCFLAGS=$(CCFLAGS)
 
 # generate cldoc reference documentation
 cldoc:

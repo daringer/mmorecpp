@@ -22,4 +22,5 @@
 #include "platform/xlogger.h"
 #include "platform/xsocket.h"
 
-#include "math/funcs.h"
+#include "math/basic.h"
+#include "math/moving_avg.h"

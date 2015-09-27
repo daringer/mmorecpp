@@ -25,3 +25,5 @@ SHARED_CCFLAGS = -fPIC $(DEV_CCFLAGS)
 LDLIBS = -pthread -lncurses -lc
 LDFLAGS = $(LIBS) -rdynamic
 
+# obj-files dir 
+OBJ_TARGET_DIR=../objs
