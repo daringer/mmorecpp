@@ -61,7 +61,7 @@ class CTest {
 
 
 void setup() {
-  precision = 0.001f;
+  precision = 0.00001f;
 }
 
 void tear_down() {}

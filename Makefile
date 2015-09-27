@@ -1,6 +1,6 @@
 all: src/libtools.a
 	
-check: src/libtools.a
+test: src/libtools.a
 	$(MAKE) -C tests tests
 
 src/libtools.a:

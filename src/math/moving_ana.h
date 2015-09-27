@@ -1,9 +1,11 @@
 #pragma once
 
+#include <unistd.h>
+
 #include "../core/general.h"
+#include "../core/exception.h"
 
 #include "basic.h"
-#include "../core/exception.h"
 
 #include <vector>
 #include <algorithm>
@@ -12,80 +14,96 @@
 namespace MM_NAMESPACE() {
   namespace MATH {
 
-DEFINE_EXCEPTION(AnalysisWindowIllegalError, BaseException)
-DEFINE_EXCEPTION(NoValueToInterpolateError, BaseException)
+DEFINE_EXCEPTION(AnalysisWindowIllegalError, TOOLS::BaseException)
+DEFINE_EXCEPTION(NoValueToInterpolateError, TOOLS::BaseException)
 
-// TODO, FIXME: WHY WHY WHY IS THIS NOT POSSIBLE IN A BETTER WAY (without c++11)
-#define GET_TYPE_ANALYZER_HISTORY(item_type) std::vector<item_type>
 
-template<typename T>
+template<typename T, typename C = std::vector<T> >
 class BaseMovingAnalyzer {
-  protected:
-  public:
+ public:
+  // typical STL-stuff
+  typedef T value_type;
+  typedef value_type& reference;
+  typedef const value_type& const_reference;
+  typedef C cont_type;
+
+ private:
+  // this is me
+  typedef BaseMovingAnalyzer<T, C> class_type;
+
+ public:
     int max_size;
-    T next;
-    GET_TYPE_ANALYZER_HISTORY(T) hist;
+    value_type next;
+    cont_type hist;
 
-    BaseMovingAnalyzer(const int& window_size=10) ;
+    BaseMovingAnalyzer(const int& window_size=10);
 
-    virtual void set_window_size(const int& window_size) ;
+    virtual void set_window_size(const int& window_size);
     
-    virtual const T& analyze() = 0;
+    virtual const_reference analyze() = 0;
 
-    virtual const T& get_next(const T& val);
-    virtual const T& get_next_interpolated();
-    virtual const T& get_current();
+    virtual const_reference get_next(const_reference val);
+    virtual const_reference get_next_interpolated() const;
+    virtual const_reference get_current() const;
 };
 
-template<typename T>
-BaseMovingAnalyzer<T>::BaseMovingAnalyzer(const int& window_size)  { 
+
+template<typename T, typename C>
+BaseMovingAnalyzer<T, C>::BaseMovingAnalyzer(const int& window_size) { 
   set_window_size(window_size); 
 }
 
-template<typename T>
-const T& BaseMovingAnalyzer<T>::get_current() {
+template<typename T, typename C>
+const T& BaseMovingAnalyzer<T, C>::get_current() const {
   return next;
 }
 
-template<typename T>
-void BaseMovingAnalyzer<T>::set_window_size(const int& window_size)  {
+template<typename T, typename C>
+void BaseMovingAnalyzer<T, C>::set_window_size(const int& window_size) {
     if (window_size < 1)
       throw AnalysisWindowIllegalError(window_size);
     max_size = window_size;
 }
-template<typename T>
-const T& BaseMovingAnalyzer<T>::get_next(const T& val) {
+template<typename T, typename C>
+const T& BaseMovingAnalyzer<T, C>::get_next(const_reference val) {
   hist.push_back(val);
   if (hist.size() > max_size)
     hist.erase(hist.begin());
   return analyze();
 }
 
-template<typename T>
-const T& BaseMovingAnalyzer<T>::get_next_interpolated()  {
+template<typename T, typename C>
+const T& BaseMovingAnalyzer<T, C>::get_next_interpolated() const {
   if (hist.empty())
     throw NoValueToInterpolateError();
-  next = hist.back();
   return next;
 }
 
-template<typename T>
-class MovingAverage : public BaseMovingAnalyzer<T> {
+template<typename T, typename C=std::vector<T> >
+class MovingAverage : public BaseMovingAnalyzer<T, C> {
   public:
-    MovingAverage(const int& window_size) : BaseMovingAnalyzer<T>(window_size) {}
-    const T& analyze() {
-      BaseMovingAnalyzer<T>::next = MM_NAMESPACE()::MATH::mean(BaseMovingAnalyzer<T>::hist);
-      return BaseMovingAnalyzer<T>::next;
+    typedef T value_type;
+    typedef const value_type& const_reference;
+    typedef BaseMovingAnalyzer<T, C> base_type;
+
+    MovingAverage(const int& window_size) : base_type(window_size) {}
+    const_reference analyze() {
+      base_type::next = MM_NAMESPACE()::MATH::mean(base_type::hist);
+      return base_type::next;
     }
 };
 
-template<typename T>
-class MovingMedian : public BaseMovingAnalyzer<T> {
+template<typename T, typename C=std::vector<T> >
+class MovingMedian : public BaseMovingAnalyzer<T, C> {
   public:
-    MovingMedian(const int& window_size) : BaseMovingAnalyzer<T>(window_size) {}
-    const T& analyze() {
-      BaseMovingAnalyzer<T>::next = MM_NAMESPACE()::MATH::median(BaseMovingAnalyzer<T>::hist);
-      return BaseMovingAnalyzer<T>::next;
+    typedef T value_type;
+    typedef const value_type& const_reference;
+    typedef BaseMovingAnalyzer<T, C> base_type;
+
+    MovingMedian(const int& window_size) : base_type(window_size) {}
+    const_reference analyze() {
+      base_type::next = MM_NAMESPACE()::MATH::median(base_type::hist);
+      return base_type::next;
     }
 };
 
