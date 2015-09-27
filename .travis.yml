@@ -14,9 +14,9 @@ addons:
     # GitHub project metadata
     # ** specific to your project **
     project:
-      name: daringer/mmorecpp
-      version: 1.0
-      description: MMoreCPP versataile, OO, comfortable,  drop-in C++ library
+      name: "daringer/mmorecpp"
+      #version: 1.0
+      description: "MMoreCPP versataile, OO, comfortable, drop-in C++ library"
 
     # Where email notification of build analysis results will be sent
     notification_email: coder@safemailbox.de

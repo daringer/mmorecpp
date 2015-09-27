@@ -6,9 +6,14 @@
 #include <algorithm>
 
 #include "../core/general.h"
+#include "../core/exception.h"
+
+
 
 namespace MM_NAMESPACE() {
   namespace MATH {
+
+DEFINE_EXCEPTION(EmptyDataContainerError, TOOLS::BaseException)
 
 /*
 // use this to infere template param based on class-constructor
@@ -57,6 +62,9 @@ class wrapped_mean {
 
 template<typename T>
 typename T::value_type mean(const T& box) {
+    if (box.empty())
+      throw EmptyDataContainerError();
+
     typename T::const_iterator it = box.begin();
     typename T::value_type num = typename T::value_type(1);
     typename T::value_type out = *it;
@@ -69,13 +77,24 @@ typename T::value_type mean(const T& box) {
 
 template<typename T>
 typename T::value_type median(const T& box) {
-    T target(box.begin(), box.end());
+    if (box.empty())
+      throw EmptyDataContainerError();
+
+    T target;
+    typename T::const_iterator it = box.begin();
+    for(typename T::value_type x : box) {
+      target.push_back(*it);
+      ++it;
+    }
     std::sort(target.begin(), target.end());
     return target.at(target.size() / 2);
 };
 
 template<typename T>
 typename T::value_type variance(const T& box) {
+    if (box.empty())
+      throw EmptyDataContainerError();
+
     typename T::value_type avg = mean(box);
     typename T::const_iterator it = box.begin();
     typename T::value_type x = *it;
@@ -91,6 +110,9 @@ typename T::value_type variance(const T& box) {
 
 template<typename T>
 typename T::value_type sigma(const T& box) {
+    if (box.empty())
+      throw EmptyDataContainerError();
+
     return typename T::value_type(std::sqrt(variance(box)));
 };
 

@@ -10,7 +10,7 @@ EXPERIM_A=experimental/libtools_experimental.a
 OOAPI_A=ooapi/libtools_ooapi.a
 MATH_A=math/libtools_math.a
 
-CORE_SRC=converter.cc xstring.cc xunit.cc xtime.cc exception.cc
+CORE_SRC=converter.cc xstring.cc xunit.cc xtime.cc exception.cc io.cc
 PLAT_SRC=xlogger.cc executor.cc fs.cc threading.cc xsocket.cc 
 EXPERIM_SRC=xncurses.cc
 OOAPI_SRC=config_manager.cc template_parser.cc testing_suite.cc \

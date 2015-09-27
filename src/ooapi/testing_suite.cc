@@ -21,21 +21,26 @@ void TestSuite::add_check(bool expr, int line) {
   active_test->res.result &= expr;
   active_test->lineno = line;
   check_count++;
-
   if (show_good_details || !expr) {
-    const string lineinfo = (expr) ? " [good]" : " [bad]";
-    if (XString(active_test->res.details).startswith("Line(s):"))
-      active_test->res.details.append(", " + str(line) + lineinfo);
-    else
-      active_test->res.details.append("Line(s): " + str(line) + lineinfo);
-  }
+      if (!active_test->res.details.empty())
+          active_test->res.details.append("\n[i]    ");
+      const string lineinfo = (expr) ? " [good] " : " [bad] ";
+        active_test->res.details.append("Line: " + str(line) + lineinfo);
+    }
 }
 
-void TestSuite::add_exc_check(bool res, const std::string& excname, int line) {
+void TestSuite::add_details(const std::string& details) {
+   active_test->res.details.append(details);
+}
+
+void TestSuite::add_exc_check(bool res, string e_name, int line) {
   add_check(res, line);
-  if (!res)
-    active_test->res.details.append("[exc: " + excname + " line: " + str(line) +
-                                    "] ");
+  if (!res) {
+    if (!active_test->res.details.empty())
+        active_test->res.details.append("\n[i] ");
+    active_test->res.details.append( \
+       "[exc: " + e_name + "Line: " + str(line) + "] ");
+  }
 }
 
 void TestSuite::add_iter_check(bool res, int iters, tIntList errs, int line) {
@@ -60,6 +65,12 @@ void TestSuite::after_setup() {
 
 void TestSuite::after_tear_down() {
   // active_test->details.append("TearDown finished!");
+}
+
+template<typename T>
+void TestSuite::handle_exception(T* e, Test* thetest, TestResult* res) {
+    res->details.append(string("[E] test failed - exception caught: ") + \
+        e->what() + " - ");
 }
 
 void TestSuite::execute_tests(const string& suite_name, const string& only_test,
@@ -95,16 +106,16 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
         (i->second.object->*i->second.method)(true, return_on_fail);
 
       // catch (more-expressive) MM_NAMESPACE() exception
-      } catch (MM_NAMESPACE()::BaseException& e) {
-        cur_res.details.append("[E] test failed - exception caught: " +
-                               e.output + " - ");
-        cur_res.result = false;
+      } catch (const MM_NAMESPACE()::BaseException& e) {
+        handle_exception(&e, active_test, &cur_res);
 
       // catch generic C++ exception
-      } catch (exception& e) {
-        cur_res.details.append("[E] test failed - std::exception caught: " +
-                               str(e.what()) + " - ");
-        cur_res.result = false;
+      } catch (const std::exception& e) {
+        handle_exception(&e, active_test, &cur_res);
+
+      } catch (...) {
+        std::exception e;
+        handle_exception(&e, active_test, &cur_res);
       }
 
       cur_res.timer.stop();

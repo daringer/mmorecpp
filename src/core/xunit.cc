@@ -23,7 +23,7 @@ void XUnit::si_scale() {
   if (c_data == 0 || c_data == 0.0 || c_data == 0.0f)
     return;
 
-  double last_c_data = c_data;
+  //double last_c_data = c_data;
   if (c_data > upper) {
     while (c_data > upper) {
       c_data /= upper;

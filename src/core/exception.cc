@@ -52,6 +52,7 @@ void MM_NAMESPACE()::signal_handler(int sig) {
   cout << "DAAAAAAAAAAAAAAAMNNNNN SEGFAUUUUULT!!!!" << endl;
 #if MM_PLATFORM == linux
   print_stacktrace();
+  cerr << "RECIVED SIGNAL: " << sig << endl;
 #endif 
   exit(1);
 }

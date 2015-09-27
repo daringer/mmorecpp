@@ -23,4 +23,4 @@
 //#include "platform/xsocket.h"
 
 #include "math/basic.h"
-#include "math/moving_avg.h"
+#include "math/moving_ana.h"

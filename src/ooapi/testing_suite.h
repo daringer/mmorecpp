@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <exception>
 
 #include <iostream>
 #include <map>
@@ -35,36 +36,52 @@ typedef tTestMap::iterator tTestIter;
 typedef tTestResultMap::iterator tTestResultIter;
 typedef tTestSuiteMap::iterator tTestSuiteIter;
 
-#define CHECK(expr)                                            \
+#define CHECK(__expr)                                          \
   if (do_checks)                                               \
-    add_check(expr, __LINE__);                                 \
-  if (!(expr) && return_on_fail)                               \
+    add_check(__expr, __LINE__);                               \
+  if (!(__expr))                                               \
+     add_details(#__expr);                                     \
+  if (!(__expr) && return_on_fail)                             \
     return;
 
-#define CHECK_EQ(val1, val2)                                   \
+#define CHECK_EQ(__val1, __val2)                               \
   if (do_checks)                                               \
-    add_check((val1 == val2), __LINE__);                       \
-  if (val1 != val2 && return_on_fail)                          \
+    add_check((__val1 == __val2), __LINE__);                   \
+  if(__val1 != __val2)                                         \
+      add_details(#__val1  " != "  #__val2);                   \
+  if ((__val1 != __val2) && return_on_fail)                    \
     return;
 
-#define CHECK_APPROX(val1, val2, eps)                          \
-  if (do_checks)                                               \
-    add_check((std::abs(val1-val2) < eps), __LINE__);          \
-  if (!(std::abs(val1-val2) < eps) && return_on_fail)          \
-    return;
+#define CHECK_APPROX(__val1, __val2, __eps)                    \
+  do {                                                         \
+  if (!do_checks)                                              \
+    break;                                                     \
+  auto __val = __val1 - __val2;                                \
+  bool __res = (__val < __eps && __val > -__eps);              \
+    add_check(__res, __LINE__);                                \
+  if (!__res)                                                  \
+    add_details("-eps < " #__val1 "-" #__val2                  \
+        " < eps - diff: " + str(__val));                       \
+  if (!__res && return_on_fail)                                \
+    return;                                                    \
+  } while (0)
 
 #define CHECK_EXC(exc, func)                                   \
   do {                                                         \
     if (!do_checks)                                            \
       break;                                                   \
-    bool _res = false;                                         \
+    bool _res = true;                                          \
     try {                                                      \
       func;                                                    \
-    }                                                          \
-    catch (exc e) {                                            \
+    } catch (exc& e) {                                         \
+    add_exc_check(true, #exc, __LINE__);                       \
       _res = true;                                             \
+    } catch (...) {                                            \
+    add_exc_check(false, #exc, __LINE__);                      \
+      _res = false;                                            \
+      if(return_on_fail)                                       \
+         return;                                               \
     }                                                          \
-    add_exc_check(_res, #exc, __LINE__);                       \
   } while (0)
 
 #define CHECK_DUAL_ITER(iter, lbox, rbox, expr)                \
@@ -136,6 +153,7 @@ class Test {
   tMethod method;
   TestSuite* object;
   TestResult res;
+  std::string exc_name;
 
   Test();
   Test(const std::string& name, tMethod meth, TestSuite* object);
@@ -158,11 +176,15 @@ class TestSuite {
   void execute_tests(const std::string& suite_name, const std::string& only_test,
                      const bool& return_on_fail, const int& repeat_times);
 
+  template<typename T>
+  void handle_exception(T* e, Test* thetest, TestResult* res);
+
  protected:
   Test* active_test;
 
-  void add_check(bool expr, int lineno);
-  void add_exc_check(bool res, const std::string& excname, int lineno);
+  void add_details(const std::string& details);
+  void add_check(bool expr, int line);
+  void add_exc_check(bool res, std::string e_name, int lineno);
   void add_iter_check(bool res, int iters, tIntList errs, int lineno);
 
   template <class T>
