@@ -12,7 +12,7 @@ SOURCES = $(SOURCES.cc) $(LIBOBJ)
 PROGRAM = run_tests
 
 INCS = -I../src -I. -I/usr/include/libdwarf -I/usr/include/elfutils 
-LIBS = -L../src -ltools -lm -pthread -lncurses -L../src/libtools.a 
+LIBS = -L../src -ltools $(LDLIBS) -L../src/libtools.a 
 #LIBS = ../libtools.lin64.a -ldwarf -ldw -lm -lelf -pthread 
 
 $(PROGRAM): $(SOURCES.cc) 
