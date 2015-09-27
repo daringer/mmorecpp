@@ -41,20 +41,22 @@
 #define MMMap(item_type) std::map<item_type, DEF_ALLOCATOR(item_type)>
 #define MMSet(item_type) std::set<item_type, DEF_ALLOCATOR(item_type)>
 
-/** if we need default-arguments for preprocessor macros: */
-// varargs handling macros
+/** both as utilities for default argument handling on macros */
+// var-args handling macros
 #define VARGS_(_10, _9, _8, _7, _6, _5, _4, _3, _2, _1, N, ...) N
 #define VARGS(...) VARGS_(__VA_ARGS__, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0)
 // concatenation
 #define CONCAT_(a, b) a##b
 #define CONCAT(a, b) CONCAT_(a, b)
+
+/** example of default argument handling in macros */
 // finally called macro
-#define MACRO_2(a, b) my_fancy_function(a, b)
+//#define FANCY_2(a, b) my_fancy_function(a, b)
 // provide default argument
-#define MACRO_1(a) MACRO_2(a, "my fancy default")
+//#define FANCY_1(a) FANCY_2(a, "my fancy default")
 // put (concat) all together (only macro used by the user!)
-#define MACRO(...) CONCAT(MACRO_, VARGS(__VA_ARGS__))(__VA_ARGS__)
-/** working uglyness */
+//#define FANCY(...) CONCAT(FANCY_, VARGS(__VA_ARGS__))(__VA_ARGS__)
+/** working uglyness :D */
 
 namespace MM_NAMESPACE() {
 

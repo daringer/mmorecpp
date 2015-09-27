@@ -7,6 +7,8 @@
 
 #include "../src/math/basic.h"
 #include "../src/math/moving_ana.h"
+#include "../src/math/pose_matrix.h"
+#include "../src/math/vector3d.h"
 
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
@@ -22,6 +24,10 @@ START_SUITE(MathToolsTestSuite) {
   REG_TEST(sigma_simple)
   REG_TEST(custom_val_type_class)
   REG_TEST(moving_ana_simple)
+  REG_TEST(vector_dot)
+  REG_TEST(vector_bootstrap)
+  REG_TEST(vector_cross)
+  REG_TEST(vector_scalar)
 }
 
 float precision;
@@ -139,14 +145,89 @@ MAKE_TEST(moving_ana_simple) {
   CHECK_EXC(NoValueToInterpolateError, foo1.get_next_interpolated());
   CHECK_EXC(NoValueToInterpolateError, foo2.get_next_interpolated());
 
-  std::vector<float> res1{123.0f, 217.5f, 145.33333333f, 105.0f,
-                          2.0f,   3.0f,   4.0f};
-  std::vector<float> res2{123.0f, 312.0f, 123.0f, 2.0f, 2.0f, 3.0f, 4.0f};
+  std::vector<float> res1 {123.0f, 217.5f, 145.33333333f, 105.0f,
+                             2.0f,   3.0f,   4.0f};
+  std::vector<float> res2 {123.0f, 312.0f, 123.0f, 2.0f, 2.0f, 3.0f, 4.0f};
 
-  for (uint i = 0; i < t1.size(); ++i) {
+  for (uint i=0; i < t1.size(); ++i) {
     CHECK_APPROX(foo1.get_next(t1.at(i)), res1.at(i), precision);
     CHECK_APPROX(foo2.get_next(t1.at(i)), res2.at(i), precision);
   }
 }
+
+MAKE_TEST(vector_dot) {
+  Vector3D v1(32.5f, 13.4f, 45.5f);
+  Vector3D v2(55.3f, 4.99f, -12.552f);
+  Vector3D::value_type x = v1.dot(v2);
+  CHECK_APPROX(x, 1293.0f, 1.e-2);
+}
+
+MAKE_TEST(vector_bootstrap) {
+  tVector3D<float> v1(1.f, 2.f, 4.f);
+  tVector3D<float> v11(v1);
+  CHECK_EQ(v1, v11);
+
+  tVector3D<int> v2(1, 2, 4);
+  tVector3D<int> v22(v2);
+  CHECK_EQ(v2, v22);
+  
+  tVector3D<double> v3(1.0, 2.0, 4.0);
+  tVector3D<double> v33(v3);
+  CHECK_EQ(v3, v33);
+
+  tVector3D<short> v4(1, 2, 4);
+  tVector3D<short> v44(v4);
+  CHECK_EQ(v4, v44);
+}
+
+MAKE_TEST(vector_cross) {
+  Vector3D v1(1.5f, 3.5f, 6.6f);
+  Vector3D v2(16.5f, 66.5f, 16.6f);
+  Vector3D v3 = v1.cross(v2);
+  CHECK_APPROX(v3.x, -380.8f, 1.e-2);
+  CHECK_APPROX(v3.y,   84.0f, 1.e-2);
+  CHECK_APPROX(v3.z,   42.0f, 1.e-2);
+}
+
+MAKE_TEST(vector_scalar) {
+  Vector3D v1(1.3f, 48.3f, 9.0f);
+  Vector3D::value_type sc = 10.0f;
+  Vector3D v2 = v1 * sc;
+  CHECK_APPROX(v2.x, 13.0f, 1.e-2);
+  CHECK_APPROX(v2.y, 483.0f, 1.e-2);
+  CHECK_APPROX(v2.z, 90.0f, 1.e-2);
+
+  sc = 5.f;
+  Vector3D v3 = v2 + sc;
+  Vector3D v4 = v3 - sc;
+
+  sc = 10.0f;
+  Vector3D v5 = v4 / sc;
+  CHECK_APPROX(v5.x, v1.x, 1.e-2);
+  CHECK_APPROX(v5.y, v1.y, 1.e-2);
+  CHECK_APPROX(v5.z, v1.z, 1.e-2);
+}
+
+MAKE_TEST(matrix_vector_mult) {
+  PoseMatrix m;
+  m.set_row(0,  32.5f,   23.3f, 12.4f,  2.4f);
+  m.set_row(1, -13.4f, -221.4f, 23.4f,  5.5f);
+  m.set_row(2,  45.5f,   54.3f, 22.4f, -4.5f);
+
+  Vector3D v(1.5f, 5.5f, 52.5f);
+
+  Vector3D trans_p = m.pos_trans(v);
+  Vector3D trans_d = m.dir_trans(v);
+
+  CHECK_APPROX(trans_p.x, 2363.8f, 1.e-2);
+  CHECK_APPROX(trans_p.y, 1668.0f, 1.e-2);
+  CHECK_APPROX(trans_p.z, 1323.3f, 1.e-2);
+
+  CHECK_APPROX(trans_d.x, 2363.8f, 1.e-2);
+  CHECK_APPROX(trans_d.y, 1668.0f, 1.e-2);
+  CHECK_APPROX(trans_d.z, 1323.3f, 1.e-2);
+}
+
+
 
 END_SUITE()

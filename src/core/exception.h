@@ -77,10 +77,13 @@ void print_stacktrace(uint max_frames = 63);
  * usage:
  *
  * DEFINE_EXCEPTION(MyNewException, MM_NAMESPACE()::BaseException);
- * this defines a new exception, which allows one or no
- * argument for construction
+ *   OR
+ * DEFINE_EXCEPTION(MyNewException); // <- BaseException is the default
+ *
+ * also defines a new exception, which allows one (string) or no
+ * arguments during construction
 **/
-#define DEFINE_EXCEPTION(CLASS, PARENT)                                  \
+#define DEFINE_EXCEPTION_2(CLASS, PARENT)                                \
   class CLASS : public PARENT {                                          \
    public:                                                               \
     CLASS() : PARENT(#CLASS) {}                                          \
@@ -92,3 +95,10 @@ void print_stacktrace(uint max_frames = 63);
         : PARENT(exc, msg) {}                                            \
     CLASS(const CLASS& obj) : PARENT(obj.exception_name, obj.message) {} \
   };
+
+#define DEFINE_EXCEPTION_1(CLASS) \
+  DEFINE_EXCEPTION_2(CLASS, MM_NAMESPACE()::BaseException)
+
+#define DEFINE_EXCEPTION(...) \
+  CONCAT(DEFINE_EXCEPTION_, VARGS(__VA_ARGS__))(__VA_ARGS__)
+

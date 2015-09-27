@@ -8,10 +8,22 @@
 #include "../core/general.h"
 #include "../core/exception.h"
 
+/** not by default everywhere? */
+#ifndef M_PI_F
+#define M_PI_F (3.14159265358979323846f)
+#endif
+
+/** deg <-> rad conversions */
+#define TO_RAD_F (M_PI_F / 180.0f)
+#define TO_DEG_F (1.0f / TO_RAD_F) 
+#define TO_RAD   (M_PI / 180.0f)
+#define TO_DEG   (1.0f / TO_RAD)
+
+
 namespace MM_NAMESPACE() {
   namespace MATH {
 
-  DEFINE_EXCEPTION(EmptyDataContainerError, TOOLS::BaseException)
+  DEFINE_EXCEPTION(EmptyDataContainerError)
 
   /*
   // use this to infere template param based on class-constructor

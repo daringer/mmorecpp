@@ -14,8 +14,8 @@
 namespace MM_NAMESPACE() {
   namespace MATH {
 
-  DEFINE_EXCEPTION(AnalysisWindowIllegalError, TOOLS::BaseException)
-  DEFINE_EXCEPTION(NoValueToInterpolateError, TOOLS::BaseException)
+  DEFINE_EXCEPTION(AnalysisWindowIllegalError)
+  DEFINE_EXCEPTION(NoValueToInterpolateError)
 
   template <typename T, typename C = std::vector<T> >
   class BaseMovingAnalyzer {
@@ -62,6 +62,7 @@ namespace MM_NAMESPACE() {
       throw AnalysisWindowIllegalError(window_size);
     max_size = window_size;
   }
+
   template <typename T, typename C>
   const T& BaseMovingAnalyzer<T, C>::get_next(const_reference val) {
     hist.push_back(val);
@@ -77,6 +78,7 @@ namespace MM_NAMESPACE() {
     return next;
   }
 
+  /** deriving MovingAverage */
   template <typename T, typename C = std::vector<T> >
   class MovingAverage : public BaseMovingAnalyzer<T, C> {
    public:
@@ -91,6 +93,7 @@ namespace MM_NAMESPACE() {
     }
   };
 
+  /** deriving MovingMedian */
   template <typename T, typename C = std::vector<T> >
   class MovingMedian : public BaseMovingAnalyzer<T, C> {
    public:
@@ -104,5 +107,6 @@ namespace MM_NAMESPACE() {
       return base_type::next;
     }
   };
+
   }
 }
