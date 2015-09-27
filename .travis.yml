@@ -2,6 +2,12 @@ language: cpp
 install: true
 script: make
 
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "aKMNrTQC9rH+juu/O+S2Rz57Cdc3SOmlVuoHJyxSKdsIkRCNyLehC0S+YVhdEwbsaJwR7aB9pwORGuMEMbS7AjIbeOZXI6cpRg6E7T/xYVQ++LBxuoS0Oe1aoQIw8xkFczOStJi5+ZrkO/cd1K4gatQCmB3zw1ca+CykxIHhVtefHQeHLEYoJLzkKU6zf6zmxPovBL95SigIdPj9shraZAs7Mp98VwQhw33D4d9oQqaL1OdFqgqkCR8oOjHEPXueBtF1Pb3oU+sa2LcclrvmHWui6dAlvTelfAGCjTZPATsKl+jS7nhUl57p+RUXrpnxgLkRLAjE2TgQ1QUEwRK+K418vAS8jsBiDbNhf62RC+bkWXqkaRP0GqqK35naeYJcB1xUHobK3dQPVxnuGuuijZifmfN20tNeduDZCecFELBEAYBa2lhWod44MiLTDH3b7kYl/e7eTqTaMcztvKBlAGJauW0xXld9J5fS+OnfT50KBL96DH90cEwzS3dEDUxf/SKqBUpbNYxgmXu6CIYf2BXND84k2yYEzp/EDma460zZoWZTNjCja4gQXQa57iyllKfRPSt/+vvxFfVLRVRTg9Hq0e4h/Kj7DyBimbhmm+Zl9CH19yHb4uqGmMoNc2K6jPpwqt5bPSJqw3WqEdvBDfJ8IEa4ZQcgyVxDS1ie4N8="
+
 
 branches:
   only:
