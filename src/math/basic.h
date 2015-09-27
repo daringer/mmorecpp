@@ -79,13 +79,10 @@ template<typename T>
 typename T::value_type median(const T& box) {
     if (box.empty())
       throw EmptyDataContainerError();
-
+    
     T target;
-    typename T::const_iterator it = box.begin();
-    for(typename T::value_type x : box) {
-      target.push_back(*it);
-      ++it;
-    }
+    for(typename T::value_type x : box) 
+      target.push_back(x);
     std::sort(target.begin(), target.end());
     return target.at(target.size() / 2);
 };

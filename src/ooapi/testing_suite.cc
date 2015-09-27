@@ -113,6 +113,7 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
       } catch (const std::exception& e) {
         handle_exception(&e, active_test, &cur_res);
 
+      // last chance catch...
       } catch (...) {
         std::exception e;
         handle_exception(&e, active_test, &cur_res);
@@ -158,23 +159,26 @@ void TestResult::show(bool show_details) {
   cout << "[" << icon << "] " << left << setw(45) << id << setw(20) << right
        << rating;
 
-  // total accumulated test runtimes (sum of all runtimes)
-  tMicroTime diff = timer.diff_us();
-  double mean = static_cast<double>((diff/ 1e6) / runtimes.size()) ;
   // calc avg variance, simple squared dist to avg, additionally keep max/min
   double max_val = std::numeric_limits<double>::min();
   double min_val = std::numeric_limits<double>::max();
+  double sum_val = 0.0;
   for (const tMicroTime& mt : runtimes) {
+    sum_val += mt;
     max_val = std::max(max_val, static_cast<double>(mt));
     min_val = std::min(min_val, static_cast<double>(mt));
   }
 
+  double mean_val = static_cast<double>(
+      static_cast<double>(sum_val) / static_cast<double>(runtimes.size()));
+  mean_val /= 1.e6;
+
   // show (total) measured time
-  cout << " ->" << XUnit(diff, "s", 1, false, -6).lpad(12);
+  cout << " ->" << XUnit(sum_val, "s", 1, false, -6).lpad(12);
 
   // if repeated multiple times, provide avg-time (and variance) for test 
   if(timer.cycles > 1) {
-    cout << " [ Ø: " <<  XUnit(mean, "s", 1, false).lpad(10) 
+    cout << " [ Ø: " <<  XUnit(mean_val, "s", 1, false).lpad(10) 
          << " | min: " << XUnit(min_val, "s", 1, false, -6).lpad(8)
          << " | max: " << XUnit(max_val, "s", 1, false, -6).lpad(8) 
          << " ]"; 
