@@ -2,7 +2,6 @@ include ../Makefile.inc
 
 TARGET = ../libtools.a
 
-PARTS = template_parser config_manager xsqlite testing_suite xregex
 SRC = $(addsuffix .cc, $(PARTS))
 OBJS = $(addsuffix .o, $(PARTS))
 INCS = $(addsuffix .h, $(PARTS))

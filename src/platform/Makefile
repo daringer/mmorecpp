@@ -2,7 +2,6 @@ include ../Makefile.inc
 
 TARGET = ../libtools.a
 
-PARTS = threading executor fs xlogger xsocket
 SRC = $(addsuffix .cc, $(PARTS))
 OBJS = $(addsuffix .o, $(PARTS))
 INCS = $(addsuffix .h, $(PARTS))

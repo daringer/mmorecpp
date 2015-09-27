@@ -2,7 +2,6 @@ include ../Makefile.inc
 
 TARGET = ../libtools.a
 
-PARTS = basic moving_avg
 SRC = $(addsuffix .cc, $(PARTS))
 OBJS = $(addsuffix .o, $(PARTS))
 INCS = $(addsuffix .h, $(PARTS))
