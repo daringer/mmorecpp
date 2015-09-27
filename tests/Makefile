@@ -23,6 +23,10 @@ $(PROGRAM): $(DEPSRC)
 clean:
 	$(RM) $(PROGRAM)
 
+# build with optimization CCFLAGS 
+optimize: CCFLAGS=$(FAST_CCFLAGS)
+optimize: $(PROGRAM)
+
 # run all tests
 tests: $(PROGRAM)
 	./run_tests 

@@ -55,6 +55,9 @@ $(EXPERIM_A): $(addprefix experimental/, $(EXPERIM_SRC))
 	mkdir -p  $(MYOBJDIR)
 	make -C $(shell dirname $@) CCFLAGS='$(CCFLAGS)' PARTS='$(MYPARTS)'
 
+# build with optimization CCFLAGS 
+optimize: CCFLAGS=$(FAST_CCFLAGS)
+optimize: $(TOPTARGET)
 
 # generate cldoc reference documentation
 cldoc:

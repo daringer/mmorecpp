@@ -39,6 +39,10 @@ from subprocess import check_output as ex
 flags = [
 '-Wall',
 '-pedantic',
+"-isystem", "/lib/modules/{}/build/include".format(ex("uname -r", shell=True).strip()),
+'-isystem', '/usr/bin/../lib/clang/3.6.2/include',
+'-isystem', '/usr/include/c++/5.2.0',
+'-isystem', '/usr/include',
 '-I.',
 '-I../src/core',
 '-I../src/ooapi',
@@ -50,10 +54,6 @@ flags = [
 '-w',
 '-g',
 '-c',
-"-isystem", "/lib/modules/{}/build/include".format(ex("uname -r", shell=True).strip()),
-'-isystem','-I/usr/bin/../lib/clang/3.6.2/include',
-'-isystem', '/usr/include/c++/5.2.0',
-'-isystem', '/usr/include',
 'c++'
 ]
 

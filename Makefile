@@ -1,6 +1,12 @@
 all: src/libtools.a
 	
-test: src/libtools.a
+test: src/libtools.a 
+	$(MAKE) -C tests tests
+
+# build with full optimization
+optimize:
+	$(MAKE) -C src optimize
+	$(MAKE) -C tests optimize
 	$(MAKE) -C tests tests
 
 src/libtools.a:
