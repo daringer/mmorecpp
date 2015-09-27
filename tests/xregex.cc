@@ -2,7 +2,6 @@
 
 #include "tools.h"
 
-
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace std;

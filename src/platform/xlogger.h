@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <string>
 #include <fstream>
@@ -22,10 +22,10 @@
 #endif
 
 // This is the main #DEFINE - do not change!
-#define LOG(lvl, LOGID)                                                 \
-  if (MM_NAMESPACE()::XLogger::check_loglevel(lvl, LOGID))                       \
-  MM_NAMESPACE()::LogStream(MM_NAMESPACE()::XLogger::get(LOGID), lvl, __LINE__, __FILE__, \
-                   __FUNCTION__)
+#define LOG(lvl, LOGID)                                                         \
+  if (MM_NAMESPACE()::XLogger::check_loglevel(lvl, LOGID))                      \
+  MM_NAMESPACE()::LogStream(MM_NAMESPACE()::XLogger::get(LOGID), lvl, __LINE__, \
+                            __FILE__, __FUNCTION__)
 
 #define FAKELOG() MM_NAMESPACE()::FakeLogStream()
 
@@ -38,7 +38,9 @@
 #define MAX_LOG LOG(1, LOGID)
 #define IS_MAX_LOG true && MM_NAMESPACE()::XLogger::check_loglevel(1, LOGID)
 #else
-#define MAX_LOG if(false) FAKELOG() 
+#define MAX_LOG \
+  if (false)    \
+  FAKELOG()
 #define IS_MAX_LOG false
 #endif
 
@@ -46,7 +48,9 @@
 #define MORE_DEBUG LOG(2, LOGID)
 #define IS_MORE_DEBUG true && MM_NAMESPACE()::XLogger::check_loglevel(2, LOGID)
 #else
-#define MORE_DEBUG if(false) FAKELOG()
+#define MORE_DEBUG \
+  if (false)       \
+  FAKELOG()
 #define IS_MORE_DEBUG false
 #endif
 
@@ -54,7 +58,9 @@
 #define DEBUG LOG(3, LOGID)
 #define IS_DEBUG true && MM_NAMESPACE()::XLogger::check_loglevel(3, LOGID)
 #else
-#define DEBUG if(false) FAKELOG()
+#define DEBUG \
+  if (false)  \
+  FAKELOG()
 #define IS_DEBUG false
 #endif
 
@@ -62,7 +68,9 @@
 #define INFO LOG(5, LOGID)
 #define IS_INFO true && MM_NAMESPACE()::XLogger::check_loglevel(4, LOGID)
 #else
-#define INFO if(false) FAKELOG()
+#define INFO \
+  if (false) \
+  FAKELOG()
 #define IS_INFO false
 #endif
 
@@ -70,7 +78,9 @@
 #define WARN LOG(7, LOGID)
 #define IS_WARN true && MM_NAMESPACE()::XLogger::check_loglevel(7, LOGID)
 #else
-#define WARN if(false) FAKELOG()
+#define WARN \
+  if (false) \
+  FAKELOG()
 #define IS_WARN false
 #endif
 
@@ -78,237 +88,234 @@
 #define ERROR LOG(10, LOGID)
 #define IS_ERROR true && MM_NAMESPACE()::XLogger::check_loglevel(10, LOGID)
 #else
-#define ERROR if(false) FAKELOG()
+#define ERROR \
+  if (false)  \
+  FAKELOG()
 #define IS_ERROR false
 #endif
 
 namespace MM_NAMESPACE() {
 
-DEFINE_EXCEPTION(BackendFailedToWrite, BaseException)
-DEFINE_EXCEPTION(NoSuchXLoggerAvailable, BaseException)
-DEFINE_EXCEPTION(NoSuchBackendAvailable, BaseException)
-DEFINE_EXCEPTION(NoMessageProvided, BaseException)
-DEFINE_EXCEPTION(LoggerIDAlreadyRegistered, BaseException)
+  DEFINE_EXCEPTION(BackendFailedToWrite, BaseException)
+  DEFINE_EXCEPTION(NoSuchXLoggerAvailable, BaseException)
+  DEFINE_EXCEPTION(NoSuchBackendAvailable, BaseException)
+  DEFINE_EXCEPTION(NoMessageProvided, BaseException)
+  DEFINE_EXCEPTION(LoggerIDAlreadyRegistered, BaseException)
 
-class XLogger;
+  class XLogger;
 
-typedef std::map<std::string, XLogger*> tXLoggerMap;
+  typedef std::map<std::string, XLogger*> tXLoggerMap;
 
-class BaseLoggerBackend {
- public:
-  std::string id;
-  std::string name;
+  class BaseLoggerBackend {
+   public:
+    std::string id;
+    std::string name;
 
-  BaseLoggerBackend(const std::string& my_id, const std::string& my_name);
-  virtual ~BaseLoggerBackend();
+    BaseLoggerBackend(const std::string& my_id, const std::string& my_name);
+    virtual ~BaseLoggerBackend();
 
-  virtual void write(const std::string& text) = 0;
-  virtual void init();
-  virtual void cleanup();
-};
+    virtual void write(const std::string& text) = 0;
+    virtual void init();
+    virtual void cleanup();
+  };
 
-// append log data to a file named 'fn'
-// re-open it for every write
-class FileBackend : public BaseLoggerBackend {
- public:
-  FileBackend(const std::string& my_id, const std::string& fn,
-              const std::string& my_name = "file-append");
-  virtual ~FileBackend();
+  // append log data to a file named 'fn'
+  // re-open it for every write
+  class FileBackend : public BaseLoggerBackend {
+   public:
+    FileBackend(const std::string& my_id, const std::string& fn,
+                const std::string& my_name = "file-append");
+    virtual ~FileBackend();
 
-  void write(const std::string& msg);
- 
- protected:
-  virtual void write_to_fstream(std::ofstream& fd, const std::string& msg);
+    void write(const std::string& msg);
 
-  std::string filename;
-};
+   protected:
+    virtual void write_to_fstream(std::ofstream& fd, const std::string& msg);
 
-// the only difference to FileBackend: keep open file-descriptor!
-class PersistentFileBackend : public FileBackend {
- public:
-  PersistentFileBackend(const std::string& my_id, const std::string& fn,
-                        const std::string& my_name = "persistent-file-append");
-   virtual ~PersistentFileBackend();
+    std::string filename;
+  };
 
-   void write(const std::string& msg);
- 
- protected:
-   void init();
-   void cleanup();
+  // the only difference to FileBackend: keep open file-descriptor!
+  class PersistentFileBackend : public FileBackend {
+   public:
+    PersistentFileBackend(const std::string& my_id, const std::string& fn,
+                          const std::string& my_name = "persistent-file-append");
+    virtual ~PersistentFileBackend();
 
-   std::ofstream fd;
-};
+    void write(const std::string& msg);
 
-// Persistant _AND_ Buffered (likely the best performing log-file-backend)
-class BufferedFileBackend : public PersistentFileBackend {
- public:
-  BufferedFileBackend(const std::string& my_id, const std::string& fn,
-                      const int& buf_size, 
-                      const std::string& my_name = "buffered-pers-file-append");
-  virtual ~BufferedFileBackend();
+   protected:
+    void init();
+    void cleanup();
 
-  void write(const std::string& msg);
-  
-  // (force) flush buffer and write it to file!
-  void flush();
+    std::ofstream fd;
+  };
 
- protected:
-  // flush with cleanup!
-  void cleanup();
+  // Persistant _AND_ Buffered (likely the best performing log-file-backend)
+  class BufferedFileBackend : public PersistentFileBackend {
+   public:
+    BufferedFileBackend(
+          const std::string& my_id, const std::string& fn, const int& buf_size,
+          const std::string& my_name = "buffered-pers-file-append");
+    virtual ~BufferedFileBackend();
 
-  std::string _buf;
-  int _buffer_size;
-};
+    void write(const std::string& msg);
 
-// class MutexedFileBackend
-// class UDP/TCPServerBackend
+    // (force) flush buffer and write it to file!
+    void flush();
 
-class ConsoleBackend : public BaseLoggerBackend {
- public:
-  ConsoleBackend(const std::string& my_id);
-  void write(const std::string& msg);
-};
+   protected:
+    // flush with cleanup!
+    void cleanup();
 
-class MemoryBackend : public BaseLoggerBackend {
- public:
-  tStringList log_msgs;
+    std::string _buf;
+    int _buffer_size;
+  };
 
-  MemoryBackend(const std::string& my_id);
-  void write(const std::string& msg);
-};
+  // class MutexedFileBackend
+  // class UDP/TCPServerBackend
 
-class XLogger {
- public:
-  typedef std::vector<BaseLoggerBackend*> tBackendList;
-  typedef tBackendList::iterator tBackendIter;
-  typedef void (*tLogActionPtr)(void);
-  typedef std::map<int, tLogActionPtr> tLevelActionMap;
-  typedef std::map<int, std::string> tLevelDescMap;
-  typedef std::map<BaseLoggerBackend*, std::string> tBackendTemplateMap;
+  class ConsoleBackend : public BaseLoggerBackend {
+   public:
+    ConsoleBackend(const std::string& my_id);
+    void write(const std::string& msg);
+  };
 
-  XLogger(const std::string& id);
-  ~XLogger();
+  class MemoryBackend : public BaseLoggerBackend {
+   public:
+    tStringList log_msgs;
 
-  static tXLoggerMap log_map;
-  static XLogger* get(const std::string& id) throw(NoSuchXLoggerAvailable);
-  static bool check_loglevel(const int& lvl, const std::string& id) throw(
-      NoSuchXLoggerAvailable);
-  
-  // quick init logger (e.g., for testing)
-  static void quick_init(const std::string& newlogid, 
-      const std::string& console_format = "[%%FANCYLVL%%] %%MSG%%\n",
-      const int& minloglvl=3, bool strip=false);
+    MemoryBackend(const std::string& my_id);
+    void write(const std::string& msg);
+  };
 
-  void add_backend(BaseLoggerBackend* back, const std::string& tmpl = "");
+  class XLogger {
+   public:
+    typedef std::vector<BaseLoggerBackend*> tBackendList;
+    typedef tBackendList::iterator tBackendIter;
+    typedef void (*tLogActionPtr)(void);
+    typedef std::map<int, tLogActionPtr> tLevelActionMap;
+    typedef std::map<int, std::string> tLevelDescMap;
+    typedef std::map<BaseLoggerBackend*, std::string> tBackendTemplateMap;
 
-  void set_logging_template(BaseLoggerBackend* back, const std::string& tmpl);
-  void set_time_format(const std::string& format);
-  void set_loglvl_action(int loglvl, tLogActionPtr func);
-  void set_loglvl_desc(int loglvl, const std::string& desc);
+    XLogger(const std::string& id);
+    ~XLogger();
 
-  void add_filename_filter(const std::string& fn);
-  void remove_filename_filter(const std::string& fn);
+    static tXLoggerMap log_map;
+    static XLogger* get(const std::string& id) throw(NoSuchXLoggerAvailable);
+    static bool check_loglevel(const int& lvl, const std::string& id) throw(
+          NoSuchXLoggerAvailable);
 
-  void set_min_loglvl(int loglvl);
+    // quick init logger (e.g., for testing)
+    static void quick_init(
+          const std::string& newlogid,
+          const std::string& console_format = "[%%FANCYLVL%%] %%MSG%%\n",
+          const int& minloglvl = 3, bool strip = false);
 
-  void log_msg(const std::string data, int loglevel, int line,
-               const std::string fn, const std::string func);
-  void log_msg(const std::string data);
+    void add_backend(BaseLoggerBackend* back, const std::string& tmpl = "");
 
-  void set_msg_stripping(const bool& strip_msg);
-  void set_msg_stripping(const bool& strip_msg, const tStringList& trims);
+    void set_logging_template(BaseLoggerBackend* back, const std::string& tmpl);
+    void set_time_format(const std::string& format);
+    void set_loglvl_action(int loglvl, tLogActionPtr func);
+    void set_loglvl_desc(int loglvl, const std::string& desc);
 
- private:
-  tBackendList backends;
-  tLevelActionMap lvl2action;
-  tLevelDescMap lvl2desc;
-  tBackendTemplateMap back2tmpl;
-  std::string id;
-  std::string time_format;
-  int min_loglvl;
+    void add_filename_filter(const std::string& fn);
+    void remove_filename_filter(const std::string& fn);
 
-  bool strip_msg;
-  tStringList to_strip;
+    void set_min_loglvl(int loglvl);
 
-  std::set<std::string> fn_filter;
+    void log_msg(const std::string data, int loglevel, int line,
+                 const std::string fn, const std::string func);
+    void log_msg(const std::string data);
 
-  std::string render_msg(BaseLoggerBackend* back, const std::string& data,
-                         int loglevel, int line, const std::string& fn,
-                         const std::string& func);
-  std::string get_fancy_level(int lvl);
-};
+    void set_msg_stripping(const bool& strip_msg);
+    void set_msg_stripping(const bool& strip_msg, const tStringList& trims);
 
-class LogStream {
- private:
-  XLogger* obj;
-  int loglvl;
-  int line;
-  std::string fn;
-  std::string func;
-  std::stringstream msg;
+   private:
+    tBackendList backends;
+    tLevelActionMap lvl2action;
+    tLevelDescMap lvl2desc;
+    tBackendTemplateMap back2tmpl;
+    std::string id;
+    std::string time_format;
+    int min_loglvl;
 
- public:
-  typedef std::basic_ostream<char, std::char_traits<char> > tCout;
-  typedef tCout& (*tEndl)(tCout&);
+    bool strip_msg;
+    tStringList to_strip;
 
-  LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn,
-            const std::string& func);
-  ~LogStream();
+    std::set<std::string> fn_filter;
 
-  LogStream& operator<<(tEndl fnc);
+    std::string render_msg(BaseLoggerBackend* back, const std::string& data,
+                           int loglevel, int line, const std::string& fn,
+                           const std::string& func);
+    std::string get_fancy_level(int lvl);
+  };
+
+  class LogStream {
+   private:
+    XLogger* obj;
+    int loglvl;
+    int line;
+    std::string fn;
+    std::string func;
+    std::stringstream msg;
+
+   public:
+    typedef std::basic_ostream<char, std::char_traits<char> > tCout;
+    typedef tCout& (*tEndl)(tCout&);
+
+    LogStream(XLogger* logobj, int loglvl, int line, const std::string& fn,
+              const std::string& func);
+    ~LogStream();
+
+    LogStream& operator<<(tEndl fnc);
+
+    template <class T>
+    LogStream& operator<<(const T& obj) {
+      msg << obj;
+      return *this;
+    }
+  };
+
+  class FakeLogStream {
+   public:
+    template <class T>
+    FakeLogStream& operator<<(const T& obj) {
+      return *this;
+    }
+  };
 
   template <class T>
-  LogStream& operator<<(const T& obj) {
-    msg << obj;
-    return *this;
+  LogStream& operator<<(LogStream & out, const std::set<T>& v) {
+    for (const T& item : v)
+      out << item << " ";
+    return out;
   }
-};
 
-class FakeLogStream {
- public:
   template <class T>
-  FakeLogStream& operator<<(const T& obj) {
-    return *this;
+  LogStream& operator<<(LogStream & out, const std::vector<T>& v) {
+    for (const T& item : v)
+      out << item << "  ";
+    return out;
   }
-};
 
-template <class T>
-LogStream& operator<<(LogStream& out, const std::set<T>& v) {
-  for (const T& item : v)
-    out << item << " ";
-  return out;
+  template <class K, class V>
+  LogStream& operator<<(LogStream & out, const std::map<K, V>& m) {
+    for (const auto& item : m)
+      out << item.first << ": " << item.second << " ";
+    return out;
+  }
+
+  template <class K, class V>
+  LogStream& operator<<(LogStream & out, const std::unordered_map<K, V>& m) {
+    for (const auto& item : m)
+      out << item.first << ": " << item.second << " ";
+    return out;
+  }
+
+  template <class K, class V>
+  LogStream& operator<<(LogStream & out, const std::pair<K, V>& p) {
+    out << "key: " << p.first << " val: " << p.second;
+    return out;
+  }
 }
-
-template <class T>
-LogStream& operator<<(LogStream& out, const std::vector<T>& v) {
-  for (const T& item : v)
-    out << item << "  ";
-  return out;
-}
-
-template <class K, class V>
-LogStream& operator<<(LogStream& out, const std::map<K, V>& m) {
-  for (const auto& item : m)
-    out << item.first << ": " << item.second << " ";
-  return out;
-}
-
-template <class K, class V>
-LogStream& operator<<(LogStream& out, const std::unordered_map<K, V>& m) {
-  for (const auto& item : m)
-    out << item.first << ": " << item.second << " ";
-  return out;
-}
-
-template <class K, class V>
-LogStream& operator<<(LogStream& out, const std::pair<K, V>& p) {
-  out << "key: " << p.first << " val: " << p.second;
-  return out;
-}
-
-
-
-
-
-}
-

@@ -14,10 +14,7 @@ tXLoggerMap XLogger::log_map;
 // Logger main class
 // Make sure you place a instance of this logger inside the heap! No STACK use!
 XLogger::XLogger(const string& id)
-    : id(id),
-      time_format("%d.%m - %T"),
-      min_loglvl(0),
-      strip_msg(true),
+    : id(id), time_format("%d.%m - %T"), min_loglvl(0), strip_msg(true),
       to_strip({"\n", "\t", " ", "\r"}) {
 
   if (log_map.find(id) != log_map.end())
@@ -38,11 +35,11 @@ XLogger::~XLogger() {
   log_map.erase(id);
 }
 
-void XLogger::quick_init(
-      const std::string& newlogid, const std::string& console_format, 
-      const int& minloglvl, bool strip) {
-  
-  XLogger *xlog = new XLogger(newlogid);
+void XLogger::quick_init(const std::string& newlogid,
+                         const std::string& console_format, const int& minloglvl,
+                         bool strip) {
+
+  XLogger* xlog = new XLogger(newlogid);
   ConsoleBackend* xlog_console = new ConsoleBackend(newlogid);
   xlog->add_backend(xlog_console, console_format);
 
@@ -56,16 +53,17 @@ void XLogger::quick_init(
   xlog->set_msg_stripping(strip);
 }
 
-
 void XLogger::add_filename_filter(const string& fn) {
-  fn_filter.insert(fn);  
+  fn_filter.insert(fn);
 }
 
 void XLogger::remove_filename_filter(const string& fn) {
   fn_filter.erase(fn_filter.find(fn));
 }
 
-void XLogger::set_msg_stripping(const bool& yesno) { strip_msg = yesno; }
+void XLogger::set_msg_stripping(const bool& yesno) {
+  strip_msg = yesno;
+}
 
 void XLogger::set_msg_stripping(const bool& yesno, const tStringList& trims) {
   set_msg_stripping(yesno);
@@ -76,8 +74,8 @@ void XLogger::set_msg_stripping(const bool& yesno, const tStringList& trims) {
 void XLogger::add_backend(BaseLoggerBackend* back, const string& tmpl) {
   if (tmpl == "")
     back2tmpl[back] =
-        "[%%FANCYLVL%%] %%TIME%% (%%FILE%%:%%LINE%% call: %%FUNC%%) || "
-        "%%MSG%%\n";
+          "[%%FANCYLVL%%] %%TIME%% (%%FILE%%:%%LINE%% call: %%FUNC%%) || "
+          "%%MSG%%\n";
   else
     back2tmpl[back] = tmpl;
 
@@ -102,13 +100,14 @@ bool XLogger::check_loglevel(const int& lvl,
 
 // accept %%MSG%% , %%TIME%%, %%FANCYLVL%%, %%LOGLVL%%, %%FILE%% , %%FUNC%% ,
 // %%LINE%%
-void XLogger::set_logging_template(BaseLoggerBackend* back,
-                                   const string& tmpl) {
+void XLogger::set_logging_template(BaseLoggerBackend* back, const string& tmpl) {
   back2tmpl[back] = tmpl;
 }
 
 // %%TIME%% is formated according to set_time_format() and strftime()
-void XLogger::set_time_format(const string& format) { time_format = format; }
+void XLogger::set_time_format(const string& format) {
+  time_format = format;
+}
 
 // set action for loglvl == 10
 void XLogger::set_loglvl_action(int loglvl, tLogActionPtr func) {
@@ -127,7 +126,9 @@ string XLogger::get_fancy_level(int lvl) {
   return lvl2desc[lvl];
 }
 
-void XLogger::set_min_loglvl(int loglvl) { XLogger::min_loglvl = loglvl; }
+void XLogger::set_min_loglvl(int loglvl) {
+  XLogger::min_loglvl = loglvl;
+}
 
 // render the message
 string XLogger::render_msg(BaseLoggerBackend* back, const string& data,
@@ -142,20 +143,20 @@ string XLogger::render_msg(BaseLoggerBackend* back, const string& data,
   }
 
   return msg.subs("%%MSG%%", mymsg)
-      .subs("%%TIME%%", XDateTime(time_format).format())
-      .subs("%%LOGLVL%%", MM_NAMESPACE()::str(loglevel))
-      .subs("%%FANCYLVL%%", get_fancy_level(loglevel))
-      .subs("%%FILE%%", fn)
-      .subs("%%LINE%%", MM_NAMESPACE()::str(line))
-      .subs("%%FUNC%%", func);
+        .subs("%%TIME%%", XDateTime(time_format).format())
+        .subs("%%LOGLVL%%", MM_NAMESPACE()::str(loglevel))
+        .subs("%%FANCYLVL%%", get_fancy_level(loglevel))
+        .subs("%%FILE%%", fn)
+        .subs("%%LINE%%", MM_NAMESPACE()::str(line))
+        .subs("%%FUNC%%", func);
 }
 
 // log message (including meta data)
-void XLogger::log_msg(const string data, int loglevel, int line,
-                      const string fn, const string func) {
+void XLogger::log_msg(const string data, int loglevel, int line, const string fn,
+                      const string func) {
 
   // if not fn_filter.empty() show only msg from given files
-  if(!fn_filter.empty() && fn_filter.find(fn) == fn_filter.end())
+  if (!fn_filter.empty() && fn_filter.find(fn) == fn_filter.end())
     return;
 
   // if loglvl below min_loglvl, discard!
@@ -201,7 +202,7 @@ LogStream& LogStream::operator<<(tEndl fnc) {
 // BaseLoggerBackend abstract class
 BaseLoggerBackend::BaseLoggerBackend(const string& my_id, const string& my_name)
     : id(my_id), name(my_name) {
-  init();    
+  init();
 }
 
 BaseLoggerBackend::~BaseLoggerBackend() {
@@ -219,7 +220,7 @@ FileBackend::FileBackend(const string& my_id, const string& fn,
                          const string& my_name)
     : BaseLoggerBackend(my_id, my_name), filename(fn) {}
 
-FileBackend::~FileBackend() { }
+FileBackend::~FileBackend() {}
 
 // writing to file: opening - appending message - closing
 void FileBackend::write(const string& msg) {
@@ -237,10 +238,9 @@ void FileBackend::write_to_fstream(ofstream& fd, const string& msg) {
 PersistentFileBackend::PersistentFileBackend(const string& my_id,
                                              const string& fn,
                                              const string& my_name)
-    : FileBackend(my_id, fn, my_name) {
-}
+    : FileBackend(my_id, fn, my_name) {}
 
-PersistentFileBackend::~PersistentFileBackend() { }
+PersistentFileBackend::~PersistentFileBackend() {}
 
 // write directly to file
 void PersistentFileBackend::write(const string& msg) {
@@ -259,14 +259,12 @@ void PersistentFileBackend::cleanup() {
 }
 
 // BufferedFileBackend
-BufferedFileBackend::BufferedFileBackend(const string& my_id, 
-                                         const string& fn,
-                                         const int& buf_size, 
+BufferedFileBackend::BufferedFileBackend(const string& my_id, const string& fn,
+                                         const int& buf_size,
                                          const string& my_name)
-    : PersistentFileBackend(my_id, fn, my_name), _buffer_size(buf_size) {
-}
+    : PersistentFileBackend(my_id, fn, my_name), _buffer_size(buf_size) {}
 
-BufferedFileBackend::~BufferedFileBackend() { }
+BufferedFileBackend::~BufferedFileBackend() {}
 
 // first copy data to buffer, once it overflows, flush into file!
 void BufferedFileBackend::write(const string& msg) {
@@ -281,7 +279,6 @@ void BufferedFileBackend::flush() {
   write_to_fstream(fd, _buf);
   fd.flush();
   _buf.clear();
-
 }
 
 void BufferedFileBackend::cleanup() {
@@ -293,7 +290,9 @@ ConsoleBackend::ConsoleBackend(const string& my_id)
     : BaseLoggerBackend(my_id, "stdout") {}
 
 // write to stdout through "cout"
-void ConsoleBackend::write(const string& msg) { cout << msg; }
+void ConsoleBackend::write(const string& msg) {
+  cout << msg;
+}
 
 // MemoryBackend
 MemoryBackend::MemoryBackend(const string& my_id)
@@ -302,7 +301,6 @@ MemoryBackend::MemoryBackend(const string& my_id)
 }
 
 // save data to logger vector
-void MemoryBackend::write(const string& msg) { log_msgs.push_back(msg); }
-
-
-
+void MemoryBackend::write(const string& msg) {
+  log_msgs.push_back(msg);
+}

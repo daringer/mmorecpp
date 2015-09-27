@@ -12,11 +12,17 @@ SocketStream::SocketStream(int fd) : fd(fd) {}
 
 SocketStream::SocketStream(const SocketStream& obj) : fd(obj.fd) {}
 
-SocketStream::~SocketStream() { close(fd); }
+SocketStream::~SocketStream() {
+  close(fd);
+}
 
-void SocketStream::operator<<(const std::string& data) { send(data); }
+void SocketStream::operator<<(const std::string& data) {
+  send(data);
+}
 
-void SocketStream::send(const std::string& data) { send(data, data.length()); }
+void SocketStream::send(const std::string& data) {
+  send(data, data.length());
+}
 
 void SocketStream::send(const std::string& data, int len) {
   int n = write(fd, data.c_str(), len);
@@ -34,7 +40,9 @@ const std::string SocketStream::get(int len) {
   return buf;
 }
 
-const std::string SocketStream::operator>>(int len) { return get(len); }
+const std::string SocketStream::operator>>(int len) {
+  return get(len);
+}
 
 Socket::Socket(SOCKET_TYPE type, int port)
     : fd(0), port(port), type(type), stream(0) {
@@ -80,14 +88,13 @@ SocketStream* ServerSocket::listen() {
   ::listen(fd, MAX_LISTEN_QUEUE);
 
   int client_fd =
-      accept(fd, (struct sockaddr*)&client_addr, (socklen_t*)&client_addr_len);
+        accept(fd, (struct sockaddr*)&client_addr, (socklen_t*)&client_addr_len);
   if (client_fd < 0)
     throw SocketException("Error during accaptance of remote client");
   return new SocketStream(client_fd);
 }
 
-ClientSocket::ClientSocket(SOCKET_TYPE type, int port,
-                           const std::string& target)
+ClientSocket::ClientSocket(SOCKET_TYPE type, int port, const std::string& target)
     : Socket(type, port) {
   addr.sin_port = htons((unsigned short int)port);
   addr.sin_family = AF_INET;
@@ -112,7 +119,9 @@ void StreamSelecter::remove_stream(SocketStream* stream) {
   std::remove(streams.begin(), streams.end(), stream);
 }
 
-SocketStream* StreamSelecter::select() { return this->select(250000); }
+SocketStream* StreamSelecter::select() {
+  return this->select(250000);
+}
 
 SocketStream* StreamSelecter::select(unsigned int usecs) {
   FD_ZERO(&socks);
@@ -126,7 +135,7 @@ SocketStream* StreamSelecter::select(unsigned int usecs) {
   timeout.tv_usec = usecs;
 
   int readsocks =
-      ::select(sizeof(socks) * 8, &socks, (fd_set*)0, (fd_set*)0, &timeout);
+        ::select(sizeof(socks) * 8, &socks, (fd_set*)0, (fd_set*)0, &timeout);
 
   if (readsocks == 0)
     return NULL;

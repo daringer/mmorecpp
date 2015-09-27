@@ -1,6 +1,5 @@
 #define XLOG_MIN_LOG_LVL 1
 
-
 #define EXPERIMENTAL
 #define OOAPI
 #define PLATFORM

@@ -28,7 +28,7 @@ class CircularBuffer {
 
  public:
   // create CircularBuffer directly with its max slot count
-  CircularBuffer() : max_items(max_slots) { }
+  CircularBuffer() : max_items(max_slots) {}
 
   // is empty ?
   bool empty() const {
@@ -50,24 +50,24 @@ class CircularBuffer {
   const_reference front() const {
     return items.front();
   }
-  
-  // pop and throw away front item 
+
+  // pop and throw away front item
   void pop() {
     if (!empty())
       items.erase(items.begin());
   }
-  
-  // back item inspect 
+
+  // back item inspect
   reference back() {
     return items.back();
   }
   const_reference back() const {
-    return items.back(); 
+    return items.back();
   }
 
-  // push new item at back and maintain circular property 
+  // push new item at back and maintain circular property
   void push(const value_type& item) {
-    if(items.size() == max_items)
+    if (items.size() == max_items)
       pop();
     items.push_back(item);
   }

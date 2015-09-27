@@ -17,14 +17,8 @@ using namespace std;
 using namespace MM_NAMESPACE();
 
 Executor::Executor(const string& cmd, bool use_path)
-    : pid(-1),
-      result(-1),
-      verbose(false),
-      use_path(use_path),
-      cargs(NULL),
-      BUF_SIZE(16384),
-      buffer(NULL),
-      init_done(false) {
+    : pid(-1), result(-1), verbose(false), use_path(use_path), cargs(NULL),
+      BUF_SIZE(16384), buffer(NULL), init_done(false) {
 
   set_buffer_size(BUF_SIZE);
 
@@ -204,4 +198,6 @@ int Executor::check_for_exit(bool blocking) {
     return WEXITSTATUS(result);
 }
 
-Executor::~Executor() { delete[] buffer; }
+Executor::~Executor() {
+  delete[] buffer;
+}

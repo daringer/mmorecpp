@@ -27,8 +27,7 @@ ASTNode::ASTNode(const string& type, ASTNode* parent, const string& content)
  * @brief a destructor is necassary as the child-nodes live on the heap
  */
 ASTNode::~ASTNode() {
-  for (vector<ASTNode*>::iterator i = children.begin(); i != children.end();
-       ++i)
+  for (vector<ASTNode*>::iterator i = children.begin(); i != children.end(); ++i)
     delete *i;
 }
 /**
@@ -38,7 +37,7 @@ ASTNode::~ASTNode() {
  */
 void TemplateParser::read_template(istream& stream) {
   content =
-      string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
+        string((istreambuf_iterator<char>(stream)), istreambuf_iterator<char>());
   output = "";
   is_rendered = false;
 }
@@ -47,9 +46,7 @@ void TemplateParser::read_template(istream& stream) {
  * @param template_path the path to the template file to be used
  */
 TemplateParser::TemplateParser(const string& template_path)
-    : is_rendered(false),
-      no_cleanup(false),
-      root_node(nullptr),
+    : is_rendered(false), no_cleanup(false), root_node(nullptr),
       tmpl_filename(template_path) {
 
   ifstream stream(template_path.c_str());
@@ -61,9 +58,7 @@ TemplateParser::TemplateParser(const string& template_path)
  * @param stream the input-stream, which should be read to get the template
  */
 TemplateParser::TemplateParser(istream& stream)
-    : is_rendered(false),
-      no_cleanup(false),
-      root_node(nullptr),
+    : is_rendered(false), no_cleanup(false), root_node(nullptr),
       tmpl_filename("") {
 
   read_template(stream);
@@ -75,24 +70,16 @@ TemplateParser::TemplateParser(istream& stream)
  * ...
  */
 TemplateParser::TemplateParser(ASTNode* root_node)
-    : is_rendered(false),
-      no_cleanup(true),
-      root_node(root_node),
+    : is_rendered(false), no_cleanup(true), root_node(root_node),
       tmpl_filename("") {}
 
 /** Copy constructor */
 TemplateParser::TemplateParser(const TemplateParser& cobj)
-    : content(cobj.content),
-      output(cobj.output),
-      is_rendered(cobj.is_rendered),
-      no_cleanup(cobj.no_cleanup),
-      string_vars(cobj.string_vars),
-      vector_vars(cobj.vector_vars),
-      iter_vars(cobj.iter_vars),
-      first_loop(cobj.first_loop),
-      last_loop(cobj.last_loop),
-      subtemplates(cobj.subtemplates),
-      root_node(cobj.root_node),
+    : content(cobj.content), output(cobj.output), is_rendered(cobj.is_rendered),
+      no_cleanup(cobj.no_cleanup), string_vars(cobj.string_vars),
+      vector_vars(cobj.vector_vars), iter_vars(cobj.iter_vars),
+      first_loop(cobj.first_loop), last_loop(cobj.last_loop),
+      subtemplates(cobj.subtemplates), root_node(cobj.root_node),
       tmpl_filename(cobj.tmpl_filename) {}
 
 /**
@@ -176,8 +163,7 @@ string TemplateParser::get_val(const string& name) {
   // integer will be returned directly, as they are
   try {
     return str(integer(name));
-  }
-  catch (ConvertValueError e) {
+  } catch (ConvertValueError e) {
   }
 
   tStringList name_tokens = XString(name).split(".");
@@ -186,7 +172,7 @@ string TemplateParser::get_val(const string& name) {
     if (vector_vars.count(name_tokens[0]) == 1 &&
         iter_vars.count(name_tokens[1]) == 1 &&
         vector_vars[name_tokens[0]].size() >
-            (string::size_type)iter_vars[name_tokens[1]])
+              (string::size_type)iter_vars[name_tokens[1]])
       return vector_vars[name_tokens[0]][iter_vars[name_tokens[1]]];
     else if (name_tokens[1] == "first_loop" &&
              first_loop.count(name_tokens[0]) == 1)
@@ -248,7 +234,7 @@ void TemplateParser::generate_ast() {
     if (pos - offset > 0) {
       size = pos - offset;
       active_node->children.push_back(
-          new ASTNode("text", active_node, content.substr(offset, size)));
+            new ASTNode("text", active_node, content.substr(offset, size)));
       offset += size;
       continue;
     }
@@ -259,7 +245,7 @@ void TemplateParser::generate_ast() {
     tStringList tokens = cmd.split(" ");
     if (tokens[0] == "subtemplate") {
       active_node->children.push_back(
-          new ASTNode("subtemplate", active_node, cmd));
+            new ASTNode("subtemplate", active_node, cmd));
       active_node = active_node->children.back();
 
       // do actual SubTemplating directly duringt AST generation - a little
@@ -267,7 +253,7 @@ void TemplateParser::generate_ast() {
       vector<string> tokens = cmd.split(" ");
       assert(tokens.size() == 2);
       subtemplates[XString(tokens[1]).strip(" ")] =
-          new TemplateParser(active_node);
+            new TemplateParser(active_node);
     } else if (tokens[0] == "if") {
       active_node->children.push_back(new ASTNode("if", active_node, cmd));
       active_node = active_node->children.back();
@@ -292,7 +278,7 @@ void TemplateParser::generate_ast() {
   // end of file as text
   if (offset < content.size() - 1) {
     active_node->children.push_back(
-        new ASTNode("text", active_node, content.substr(offset)));
+          new ASTNode("text", active_node, content.substr(offset)));
   }
 }
 /**
@@ -308,7 +294,9 @@ void TemplateParser::parse_children(ASTNode* node) {
 /**
  * @brief show the abstract syntax tree in the console
  */
-void TemplateParser::show_ast() { show_ast(this->root_node, 0); }
+void TemplateParser::show_ast() {
+  show_ast(this->root_node, 0);
+}
 /**
  * @brief actually generating the output for showing one specific node,
  *        including the depth inside the AST, then recursivly calling
@@ -385,8 +373,7 @@ void TemplateParser::parse(ASTNode* node) {
     try {
       start = (tokens.size() == 6) ? integer(tokens[5]) : 0;
       end = integer(get_val(tokens[3]));
-    }
-    catch (ConvertValueError e) {
+    } catch (ConvertValueError e) {
       cout << e.output << endl;
       exit(1);
     }
@@ -410,7 +397,7 @@ void TemplateParser::parse(ASTNode* node) {
     while ((var_pos = out.find("{{")) != string::npos) {
       string::size_type var_end_pos = out.find("}}");
       string var =
-          XString(out.substr(var_pos + 2, var_end_pos - var_pos - 2)).strip();
+            XString(out.substr(var_pos + 2, var_end_pos - var_pos - 2)).strip();
       out.replace(var_pos, var_end_pos - var_pos + 2, get_val(var));
     }
     output += out;
@@ -450,8 +437,8 @@ bool TemplateParser::save_to_file() {
   XString xs(tmpl_filename);
   if (!xs.endswith(".tmpl"))
     throw SaveFilenameAmbigous(
-        "got: " + tmpl_filename +
-        " need either .tmpl suffix or pass target file to save_to_file()");
+          "got: " + tmpl_filename +
+          " need either .tmpl suffix or pass target file to save_to_file()");
 
   return save_to_file(xs.subs(".tmpl", ""));
 }

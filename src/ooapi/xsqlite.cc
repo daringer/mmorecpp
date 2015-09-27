@@ -14,7 +14,7 @@ using namespace MM_NAMESPACE();
 SQLResult::SQLResult(sqlite3_stmt* used_stmt)
     : done(false), started(false), cur_row(0), stmt(used_stmt) {}
 
-SQLResult::~SQLResult() { }
+SQLResult::~SQLResult() {}
 
 bool SQLResult::next() {
   int ret = sqlite3_step(stmt);
@@ -52,9 +52,8 @@ double SQLResult::get_double(uint col) {
 }
 
 XSQLite::XSQLite(const std::string& db_fn)
-    : next_idx(0), last_insert_id(-1),
-      state(_ready), db_fn(db_fn), stmt(nullptr), 
-      db(load_db(db_fn)) { }
+    : next_idx(0), last_insert_id(-1), state(_ready), db_fn(db_fn),
+      stmt(nullptr), db(load_db(db_fn)) {}
 
 XSQLite::~XSQLite() {
   // i think this _may_ fail, but destruction never "fails" ;D
@@ -68,7 +67,7 @@ bool XSQLite::pragma(const std::string& key, const std::string& val) {
   const string sql = "PRAGMA " + key + " = " + val + "";
   last_query = sql;
   handle_err(init_raw_query(sql) == SQLITE_OK);
-  
+
   // do it!
   int ret = sqlite3_step(stmt);
 
@@ -80,26 +79,25 @@ bool XSQLite::pragma(const std::string& key, const std::string& val) {
   return true;
 }
 
-
 bool XSQLite::bind() {
   return handle_err(sqlite3_bind_null(stmt, next_idx++ + 1));
 }
 
-bool XSQLite::init_update(const std::string& table, 
-    const tStringList& cols, const std::string& where) {
+bool XSQLite::init_update(const std::string& table, const tStringList& cols,
+                          const std::string& where) {
   reset();
 
   tbl = table;
   columns = cols;
 
   string kv_pairs = "";
-  for(const string& col : cols) 
+  for (const string& col : cols)
     kv_pairs += col + " = ?, ";
   kv_pairs = kv_pairs.substr(0, kv_pairs.length() - 2);
   string sql = "UPDATE " + table + " SET " + kv_pairs;
-  if(!where.empty())
+  if (!where.empty())
     sql += (" WHERE " + where);
-  
+
   int ret = init_raw_query(sql);
   state = _inited;
   return ret;
@@ -121,7 +119,7 @@ bool XSQLite::update() {
 bool XSQLite::handle_err(int err_code) {
   if (err_code != SQLITE_OK) {
     const char* msg = sqlite3_errmsg(db);
-    if(last_query.empty())
+    if (last_query.empty())
       throw SQLiteError(msg);
     else
       throw SQLiteError(last_query + " err: " + msg);
@@ -168,7 +166,7 @@ bool XSQLite::init_insert(const std::string& table, const tStringList& cols) {
   tmp = tmp.substr(0, tmp.length() - 1);
   colstr = colstr.substr(0, colstr.length() - 1);
   const string sql =
-      "INSERT INTO " + table + "(" + colstr + ") VALUES (" + tmp + ")";
+        "INSERT INTO " + table + "(" + colstr + ") VALUES (" + tmp + ")";
 
   int ret = init_raw_query(sql);
   state = _inited;
@@ -217,7 +215,7 @@ void XSQLite::reset() {
 bool XSQLite::init_raw_query(const std::string& q) {
   last_query = q;
   int ret = handle_err(
-      sqlite3_prepare_v2(db, q.c_str(), q.length() + 1, &stmt, NULL));
+        sqlite3_prepare_v2(db, q.c_str(), q.length() + 1, &stmt, NULL));
   state = _inited;
   return ret;
 }
@@ -232,7 +230,7 @@ sqlite3* XSQLite::load_db(const std::string& fn) {
 bool XSQLite::save_db(const std::string& fn) {
   sqlite3* to_db = load_db(fn);
   sqlite3_backup* bak = sqlite3_backup_init(to_db, "main", db, "main");
-  if(bak) {
+  if (bak) {
     sqlite3_backup_step(bak, -1);
     sqlite3_backup_finish(bak);
   }
@@ -240,13 +238,12 @@ bool XSQLite::save_db(const std::string& fn) {
 }
 
 bool XSQLite::exec_sql_fn(const std::string& fn) {
-  //string q = get_file_contents("database_scheme.sql");
+  // string q = get_file_contents("database_scheme.sql");
   ifstream sql_fd(fn);
   string q((istreambuf_iterator<char>(sql_fd)), (istreambuf_iterator<char>()));
   int ret = sqlite3_exec(db, q.c_str(), NULL, NULL, NULL);
   return handle_err(ret);
 }
-
 
 /*
 int main() {

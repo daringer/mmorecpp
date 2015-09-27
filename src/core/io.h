@@ -20,12 +20,12 @@
 #include "exception.h"
 
 namespace MM_NAMESPACE() {
-namespace IO {
+  namespace IO {
 
-DEFINE_EXCEPTION(IOException, BaseException)
+  DEFINE_EXCEPTION(IOException, BaseException)
 
-std::string nextline(std::istream& inp);
-std::string readfile(const std::string& filename);
-}
+  std::string nextline(std::istream& inp);
+  std::string readfile(const std::string& filename);
+  }
 }
 #endif

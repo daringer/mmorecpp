@@ -14,57 +14,57 @@
 #include "general.h"
 
 namespace MM_NAMESPACE() {
-/** BaseException 
- * provides advanced exception handling, i.e., 
- * - derived exceptions should call BaseException("ExceptionName", msg)
- *   in their ctor
- * - by default provides a single string argument used for a description
- */
-class BaseException : public std::exception {
- public:
-  std::string output;
-  std::string exception_name;
-  std::string message;
+  /** BaseException
+   * provides advanced exception handling, i.e.,
+   * - derived exceptions should call BaseException("ExceptionName", msg)
+   *   in their ctor
+   * - by default provides a single string argument used for a description
+   */
+  class BaseException : public std::exception {
+   public:
+    std::string output;
+    std::string exception_name;
+    std::string message;
 
-  template <class T>
-  BaseException(const std::string& exc_name, const T& msg)
-      : exception(), exception_name(exc_name) {
+    template <class T>
+    BaseException(const std::string& exc_name, const T& msg)
+        : exception(), exception_name(exc_name) {
 
-    _ss.clear();
-    if (!(_ss << msg)) {
-      throw exception();
+      _ss.clear();
+      if (!(_ss << msg)) {
+        throw exception();
+      }
+      message = _ss.str();
+      init();
     }
-    message = _ss.str();
-    init();
-  }
 
-  BaseException(const std::string& exc_name);
-  BaseException(const BaseException& obj);
+    BaseException(const std::string& exc_name);
+    BaseException(const BaseException& obj);
 
-  virtual ~BaseException() throw();
+    virtual ~BaseException() throw();
 
-  // set message for exception
-  void set_message(const std::string& input);
+    // set message for exception
+    void set_message(const std::string& input);
 
-  // get_message
-  const std::string get_message() const;
+    // get_message
+    const std::string get_message() const;
 
-  // overload regular what()
-  const char* what() const noexcept;
+    // overload regular what()
+    const char* what() const noexcept;
 
-  // dump_message
-  void dump() const;
+    // dump_message
+    void dump() const;
 
- private:
-  std::stringstream _ss;
-  void init();
-};
+   private:
+    std::stringstream _ss;
+    void init();
+  };
 
-// better exception handler - feed this to set_terminate
-void tools_lib_exception_handler();
+  // better exception handler - feed this to set_terminate
+  void tools_lib_exception_handler();
 
-// better signal (SIGSEGV) handler, check tests for usage
-void signal_handler(int sig);
+  // better signal (SIGSEGV) handler, check tests for usage
+  void signal_handler(int sig);
 }
 
 #if MM_PLATFORM == linux

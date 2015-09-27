@@ -8,39 +8,38 @@ using namespace MM_NAMESPACE();
 
 #define MAX_STACK_TRACE_SIZE 100
 
-// fallback system() with output 
+// fallback system() with output
 std::string _exec(const string& cmd) {
-    FILE* pipe = popen(cmd.c_str(), "r");
-    if (!pipe) {
-      cerr << "could not open pipe in exec!" << endl;
-      exit(1);
-    }
-   
-    char buf[128];
-    std::string out = "";
-    while(!feof(pipe))
-      if(fgets(buf, 128, pipe) != NULL)
-        out += buf;
+  FILE* pipe = popen(cmd.c_str(), "r");
+  if (!pipe) {
+    cerr << "could not open pipe in exec!" << endl;
+    exit(1);
+  }
 
-    pclose(pipe);
-    return out;
+  char buf[128];
+  std::string out = "";
+  while (!feof(pipe))
+    if (fgets(buf, 128, pipe) != NULL)
+      out += buf;
+
+  pclose(pipe);
+  return out;
 }
 
 void MM_NAMESPACE()::tools_lib_exception_handler() {
-  cerr << endl << "[EXC] An uncaught exception occurred!" << endl;
+  cerr << endl
+       << "[EXC] An uncaught exception occurred!" << endl;
   try {
 #if MM_PLATFORM == linux
     print_stacktrace();
 #endif
     exception_ptr exc = current_exception();
     rethrow_exception(exc);
-  }
-  catch (BaseException& e) {
-    cerr << "[EXC] " << e.exception_name << " base:(MM_NAMESPACE()::BaseException)"
-         << endl;
+  } catch (BaseException& e) {
+    cerr << "[EXC] " << e.exception_name
+         << " base:(MM_NAMESPACE()::BaseException)" << endl;
     cerr << "[EXC] " << e.what() << endl;
-  }
-  catch (std::exception& e) {
+  } catch (std::exception& e) {
     cerr << "[EXC] Exception description following:" << endl;
     cerr << "[EXC] " << e.what() << endl;
   }
@@ -53,7 +52,7 @@ void MM_NAMESPACE()::signal_handler(int sig) {
 #if MM_PLATFORM == linux
   print_stacktrace();
   cerr << "RECIVED SIGNAL: " << sig << endl;
-#endif 
+#endif
   exit(1);
 }
 
@@ -83,19 +82,27 @@ BaseException::~BaseException() throw() {}
 /**
 * @brief show full message through stderr
 */
-const string BaseException::get_message() const { return output; }
+const string BaseException::get_message() const {
+  return output;
+}
 
-const char* BaseException::what() const noexcept { return output.c_str(); }
+const char* BaseException::what() const noexcept {
+  return output.c_str();
+}
 
 /**
 * @brief show full message through stderr (C++ wrapper method)
 */
-void BaseException::dump() const { cerr << output << endl; }
+void BaseException::dump() const {
+  cerr << output << endl;
+}
 
 /**
  * @brief actual initialization
  */
-void BaseException::init() { set_message(message); }
+void BaseException::init() {
+  set_message(message);
+}
 
 /**
 * @brief explicitly set the message
@@ -151,7 +158,7 @@ void print_stacktrace(uint max_frames) {
         begin_name = p;
       else if (*p == '+')
         begin_offset = p;
-      else if (*p == ')' && begin_offset) 
+      else if (*p == ')' && begin_offset)
         end_offset = p;
       else if (*p == '[')
         begin_addr = p + 1;
@@ -166,14 +173,14 @@ void print_stacktrace(uint max_frames) {
       *begin_name++ = '\0';
       *begin_offset++ = '\0';
       *end_offset++ = '\0';
-  
+
       string addr;
       string loc;
-      if(begin_addr) {
+      if (begin_addr) {
         //*end_addr = '\0';
         addr = string(begin_addr);
         loc = _exec("addr2line " + addr + " -e /tmp/myexe -p -s");
-        loc = loc.substr(0, loc.length()-1);
+        loc = loc.substr(0, loc.length() - 1);
       }
 
       // mangled name is now in [begin_name, begin_offset) and caller
@@ -182,7 +189,7 @@ void print_stacktrace(uint max_frames) {
 
       int status = -1;
       char* ret =
-          abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
+            abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
       // use possibly realloc()-ed string
       if (status == 0) {
         funcname = ret;

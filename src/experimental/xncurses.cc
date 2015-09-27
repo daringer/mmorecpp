@@ -14,9 +14,7 @@ tCoords MM_NAMESPACE()::make_coords(const uint& x, const uint& y) {
 }
 
 XNCBaseWindow::XNCBaseWindow(const tCoords& pos, const tCoords& size)
-    : pos(pos),
-      size(size),
-      _win(newwin(size.y, size.x, pos.y, pos.x)),
+    : pos(pos), size(size), _win(newwin(size.y, size.x, pos.y, pos.x)),
       layout(nullptr) {
 
   layout = new tCharList({'|', '|', '-', '-', '+', '+', '+', '+'});
@@ -41,7 +39,9 @@ void XNCBaseWindow::set_layout() {  // const tCharList& cl) {
    */
 }
 
-void XNCBaseWindow::clear() { wclear(_win); }
+void XNCBaseWindow::clear() {
+  wclear(_win);
+}
 
 void XNCBaseWindow::set_formatting(attr_t attrs) {
   // then here the color and attr shit
@@ -69,9 +69,13 @@ void XNCBaseWindow::change_size(const tCoords& new_pos,
   update();
 }
 
-const tCoords& XNCBaseWindow::get_pos() { return pos; }
+const tCoords& XNCBaseWindow::get_pos() {
+  return pos;
+}
 
-const tCoords& XNCBaseWindow::get_size() { return size; }
+const tCoords& XNCBaseWindow::get_size() {
+  return size;
+}
 
 XNCHeadline::XNCHeadline(const string& text)
     : XNCBaseWindow(make_coords(0, 0), make_coords(COLS, 3)),
@@ -101,13 +105,17 @@ XNCTable::XNCTable(const uint& cols, const tCoords& pos, const tCoords& size)
 
 XNCTable::~XNCTable() {}
 
-void XNCTable::set_headers(const tStringList& sl) { head = sl; }
+void XNCTable::set_headers(const tStringList& sl) {
+  head = sl;
+}
 
 void XNCTable::set_data(const uint& idx, const tStringList& sl) {
   data.insert(data.begin() + idx, sl);
 }
 
-void XNCTable::set_data(const tStringStringList& ssl) { data = ssl; }
+void XNCTable::set_data(const tStringStringList& ssl) {
+  data = ssl;
+}
 
 void XNCTable::push_data(const tStringList& sl) {
   if (sl.size() == content_cols)
@@ -161,7 +169,7 @@ void XNCStatusBar::update() {
   // right and left is aligned
   uint left_col = data[0].length() + 3;
   uint right_col = size.x - data.back().length() - 3;
-  //uint middel_space = size.x - left_col - right_col;
+  // uint middel_space = size.x - left_col - right_col;
   uint colwidth = size.x / (content_cols - 2);
 
   mvwaddstr(_win, 0, 2, data[0].c_str());
@@ -231,7 +239,9 @@ void XNC::add_window(const std::string& id, XNCBaseWindow* obj) {
   name2window[id] = obj;
 }
 
-XNC::~XNC() { endwin(); }
+XNC::~XNC() {
+  endwin();
+}
 
 void XNC::update() {
   for (auto& n2w : name2window)

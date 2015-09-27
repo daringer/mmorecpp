@@ -22,24 +22,24 @@ void TestSuite::add_check(bool expr, int line) {
   active_test->lineno = line;
   check_count++;
   if (show_good_details || !expr) {
-      if (!active_test->res.details.empty())
-          active_test->res.details.append("\n[i]    ");
-      const string lineinfo = (expr) ? " [good] " : " [bad] ";
-        active_test->res.details.append("Line: " + str(line) + lineinfo);
-    }
+    if (!active_test->res.details.empty())
+      active_test->res.details.append("\n[i]    ");
+    const string lineinfo = (expr) ? " [good] " : " [bad] ";
+    active_test->res.details.append("Line: " + str(line) + lineinfo);
+  }
 }
 
 void TestSuite::add_details(const std::string& details) {
-   active_test->res.details.append(details);
+  active_test->res.details.append(details);
 }
 
 void TestSuite::add_exc_check(bool res, string e_name, int line) {
   add_check(res, line);
   if (!res) {
     if (!active_test->res.details.empty())
-        active_test->res.details.append("\n[i] ");
-    active_test->res.details.append( \
-       "[exc: " + e_name + "Line: " + str(line) + "] ");
+      active_test->res.details.append("\n[i] ");
+    active_test->res.details.append("[exc: " + e_name + "Line: " + str(line) +
+                                    "] ");
   }
 }
 
@@ -67,10 +67,10 @@ void TestSuite::after_tear_down() {
   // active_test->details.append("TearDown finished!");
 }
 
-template<typename T>
+template <typename T>
 void TestSuite::handle_exception(T* e, Test* thetest, TestResult* res) {
-    res->details.append(string("[E] test failed - exception caught: ") + \
-        e->what() + " - ");
+  res->details.append(string("[E] test failed - exception caught: ") +
+                      e->what() + " - ");
 }
 
 void TestSuite::execute_tests(const string& suite_name, const string& only_test,
@@ -105,15 +105,15 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
         // actual test-method call/execution
         (i->second.object->*i->second.method)(true, return_on_fail);
 
-      // catch (more-expressive) MM_NAMESPACE() exception
-      } catch (const MM_NAMESPACE()::BaseException& e) {
+        // catch (more-expressive) MM_NAMESPACE() exception
+      } catch (const MM_NAMESPACE()::BaseException & e) {
         handle_exception(&e, active_test, &cur_res);
 
-      // catch generic C++ exception
+        // catch generic C++ exception
       } catch (const std::exception& e) {
         handle_exception(&e, active_test, &cur_res);
 
-      // last chance catch...
+        // last chance catch...
       } catch (...) {
         std::exception e;
         handle_exception(&e, active_test, &cur_res);
@@ -127,11 +127,11 @@ void TestSuite::execute_tests(const string& suite_name, const string& only_test,
       active_test = NULL;
 
       // save this specific time taken (instead of the overall duration)
-      if(cur_res.runtimes.empty())
+      if (cur_res.runtimes.empty())
         cur_res.runtimes.push_back(cur_res.timer.diff_us());
       else
-        cur_res.runtimes.push_back(cur_res.timer.diff_us() - 
-            cur_res.runtimes.back());
+        cur_res.runtimes.push_back(cur_res.timer.diff_us() -
+                                   cur_res.runtimes.back());
 
       // show results, but only on last 'repeat_times' round
       if (run == 1)
@@ -169,23 +169,22 @@ void TestResult::show(bool show_details) {
     min_val = std::min(min_val, static_cast<double>(mt));
   }
 
-  double mean_val = static_cast<double>(
-      static_cast<double>(sum_val) / static_cast<double>(runtimes.size()));
+  double mean_val = static_cast<double>(static_cast<double>(sum_val) /
+                                        static_cast<double>(runtimes.size()));
   mean_val /= 1.e6;
 
   // show (total) measured time
   cout << " ->" << XUnit(sum_val, "s", 1, false, -6).lpad(12);
 
-  // if repeated multiple times, provide avg-time (and variance) for test 
-  if(timer.cycles > 1) {
-    cout << " [ Ø: " <<  XUnit(mean_val, "s", 1, false).lpad(10) 
+  // if repeated multiple times, provide avg-time (and variance) for test
+  if (timer.cycles > 1) {
+    cout << " [ Ø: " << XUnit(mean_val, "s", 1, false).lpad(10)
          << " | min: " << XUnit(min_val, "s", 1, false, -6).lpad(8)
-         << " | max: " << XUnit(max_val, "s", 1, false, -6).lpad(8) 
-         << " ]"; 
+         << " | max: " << XUnit(max_val, "s", 1, false, -6).lpad(8) << " ]";
   }
-  cout << endl; 
+  cout << endl;
 
-  // details shown here, if wanted.... 
+  // details shown here, if wanted....
   if (details != "" && ((!show_details && !result) || show_details))
     cout << "[i]    " << details << endl;
 }
@@ -197,13 +196,13 @@ TestFramework::TestFramework(int argc, char* argv[]) {
   grp.new_option<bool>("debug", "Show test details", "d").set_default(false);
 
   grp.new_option<string>("execute-test", "Execute test(s) by name", "t")
-      .set_default("");
+        .set_default("");
 
   grp.new_option<bool>("stay-on-fail", "Stay in test on fail", "r")
-      .set_default(false);
+        .set_default(false);
 
   grp.new_option<int>("repeat-times", "Repeat the tests X times", "x")
-      .set_default(1);
+        .set_default(1);
 
   // ConfigManager init finished, start parsing file, then cmdline
   try {
@@ -259,8 +258,8 @@ void TestFramework::show_result_overview() {
   else
     cout << " and NO bad ones!" << endl;
 
-  if(repeat_times > 1)
+  if (repeat_times > 1)
     cout << "[i] - repeated " << repeat_times << " times" << endl;
-  if(!execute_test.empty())
+  if (!execute_test.empty())
     cout << "[i] - filtered tests by: '" << execute_test << "'" << endl;
 }

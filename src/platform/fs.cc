@@ -57,7 +57,7 @@ vector<Path> Path::listdir(bool recursive) {
     out.push_back(Path(d_name));
     if (recursive && filepath.is_dir()) {
       vector<Path> contents = filepath.listdir(recursive);
-      for(Path& p : contents)
+      for (Path& p : contents)
         out.push_back(out.back() + p);
     }
   }
@@ -82,14 +82,15 @@ Path& Path::operator=(const string& obj) {
   return *this;
 }
 
-//Path::operator string() { return path; }
+// Path::operator string() { return path; }
 
 bool Path::operator!=(const Path& obj) {
-  return (! (*this == obj));
+  return (!(*this == obj));
 }
 
-
-bool Path::operator==(const Path& obj) { return path == obj.path; }
+bool Path::operator==(const Path& obj) {
+  return path == obj.path;
+}
 /**
  * @brief Does this Path instance represent a directory?
  * @return bool true or false
@@ -135,7 +136,9 @@ bool Path::exists() {
  * @param the path of the directory to be created
  * @return true on success
  */
-bool Path::create_dir() { return (::mkdir(path.c_str(), 0777) == 0); }
+bool Path::create_dir() {
+  return (::mkdir(path.c_str(), 0777) == 0);
+}
 /**
  * @brief move a given path to another path
  * @param from the path that should be moved
@@ -167,9 +170,9 @@ string MM_NAMESPACE()::FS::current_dir() {
 
 Path MM_NAMESPACE()::FS::Path::join(const std::string& what) {
   Path out(*this);
-  if(what.substr(0, 1) == "/")
+  if (what.substr(0, 1) == "/")
     out.path = what;
-  else if(out.path.substr(out.path.size() - 1) == "/")
+  else if (out.path.substr(out.path.size() - 1) == "/")
     out.path = out.path + what;
   else
     out.path = out.path + "/" + what;
@@ -182,4 +185,3 @@ Path MM_NAMESPACE()::FS::operator+(const char* lhs, Path& rhs) {
 /*Path MM_NAMESPACE()::FS::operator+(const std::string& lhs, Path& rhs) {
   return Path(rhs).join(lhs);
 }*/
-

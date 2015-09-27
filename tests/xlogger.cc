@@ -3,7 +3,7 @@
 
 #ifndef XLOG_MIN_LOG_LVL
 #define XLOG_MIN_LOG_LVL 3
-#endif 
+#endif
 
 #include "tools.h"
 
@@ -40,10 +40,10 @@ virtual void setup() {
   log_fn = "/tmp/logger_test_file.log";
 }
 
-virtual void tear_down() { 
+virtual void tear_down() {
   unlink(log_fn.c_str());
   if (xlog != nullptr)
-    delete xlog; 
+    delete xlog;
 }
 
 MAKE_TEST(simple) {
@@ -69,8 +69,7 @@ MAKE_TEST(endline) {
 }
 
 MAKE_TEST(persistent_file) {
-  PersistentFileBackend* pfb = \
-    new PersistentFileBackend(LOGID, log_fn);
+  PersistentFileBackend* pfb = new PersistentFileBackend(LOGID, log_fn);
 
   xlog->add_backend(pfb);
 
@@ -108,16 +107,16 @@ MAKE_TEST(buffered_file) {
 
   // write 2 entries, should not be written to file yet!
   XString log_out = "1234567890";
-  for(size_t i=0; i<2; ++i)
+  for (size_t i = 0; i < 2; ++i)
     INFO << log_out;
-  
+
   XString out = TOOLS::IO::readfile(log_fn);
 
   // still empty
   CHECK(out.length() == 0);
 
   // now adding a lot, in the meantime the file should have been flushed
-  for(size_t i=0; i<20; ++i)
+  for (size_t i = 0; i < 20; ++i)
     INFO << log_out;
 
   // give it the FS some time to actually flush and write!

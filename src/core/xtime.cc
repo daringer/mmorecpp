@@ -27,7 +27,7 @@ void XTime::stop() {
   active = false;
 
   // update cache (passed_us) accordingly - attention: '.tv_usec' is % 1e6
-  passed_us += (raw_end.tv_usec - raw_start.tv_usec) + \
+  passed_us += (raw_end.tv_usec - raw_start.tv_usec) +
                (raw_end.tv_sec - raw_start.tv_sec) * us2s_factor;
   cycles++;
 }
@@ -54,8 +54,7 @@ tMicroTime XTime::diff_us() const {
 }
 
 XDateTime::XDateTime(const XDateTime& obj)
-    : rawtime(obj.rawtime),
-      timeinfo(obj.timeinfo),
+    : rawtime(obj.rawtime), timeinfo(obj.timeinfo),
       fmt_template(obj.fmt_template) {
   render();
 }
@@ -76,7 +75,9 @@ void XDateTime::render() {
   ::strftime(buf, BUFSIZE, fmt_template.c_str(), timeinfo);
 }
 
-string XDateTime::format() const { return string(buf); }
+string XDateTime::format() const {
+  return string(buf);
+}
 
 void XDateTime::set_format(const string& fmt) {
   fmt_template = fmt;

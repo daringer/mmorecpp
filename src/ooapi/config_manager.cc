@@ -63,16 +63,12 @@ string ConfigDataKeeper::verbose_data(void* raw_data) const {
 
 ConfigOption::ConfigOption(const std::string& id, const std::string& desc,
                            const std::string& tinfo, const std::string& scmd)
-    : data(tinfo),
-      default_data(tinfo),
-      id(id),
-      cmd_short(scmd),
-      desc(desc),
-      was_set(false),
-      has_default(false),
-      parent(NULL) {}
+    : data(tinfo), default_data(tinfo), id(id), cmd_short(scmd), desc(desc),
+      was_set(false), has_default(false), parent(NULL) {}
 
-string ConfigOption::verbose_type() const { return data.verbose_type(); }
+string ConfigOption::verbose_type() const {
+  return data.verbose_type();
+}
 
 string ConfigOption::verbose_data() const {
   if (was_set)
@@ -92,15 +88,21 @@ string ConfigOption::verbose_default() const {
 ConfigGroup::ConfigGroup(const std::string& name, ConfigManager* par)
     : name(name), parent(par) {}
 
-ConfigGroup::iterator ConfigGroup::begin() { return members.begin(); }
+ConfigGroup::iterator ConfigGroup::begin() {
+  return members.begin();
+}
 
 ConfigGroup::const_iterator ConfigGroup::begin() const {
   return members.begin();
 }
 
-ConfigGroup::iterator ConfigGroup::end() { return members.end(); }
+ConfigGroup::iterator ConfigGroup::end() {
+  return members.end();
+}
 
-ConfigGroup::const_iterator ConfigGroup::end() const { return members.end(); }
+ConfigGroup::const_iterator ConfigGroup::end() const {
+  return members.end();
+}
 
 ConfigOption& ConfigGroup::get_option(const std::string& id) {
   tOptionIter it = members.find(id);
@@ -132,13 +134,17 @@ ConfigOption& ConfigManager::get_option(const std::string& id) {
   return *(it->second);
 }
 
-ConfigManager::iterator ConfigManager::begin() { return groups.begin(); }
+ConfigManager::iterator ConfigManager::begin() {
+  return groups.begin();
+}
 
 ConfigManager::const_iterator ConfigManager::begin() const {
   return groups.begin();
 }
 
-ConfigManager::iterator ConfigManager::end() { return groups.end(); }
+ConfigManager::iterator ConfigManager::end() {
+  return groups.end();
+}
 
 ConfigManager::const_iterator ConfigManager::end() const {
   return groups.end();
@@ -199,8 +205,7 @@ void ConfigManager::parse(tStringList* args) {
       args->erase(args->begin(), args->begin() + 2);
       return;
     }
-  }
-  catch (ConvertValueError e) {
+  } catch (ConvertValueError e) {
     throw IncompatibleDataTypes("data: " + tmp->verbose_type() + " passed: " +
                                 arg);
   }
@@ -316,22 +321,21 @@ void ConfigManager::parse_config_file(const string& fn) {
   try {
     while (tokens.size() > 0)
       parse(&tokens);
-  }
-  catch (IncompatibleDataTypes& e) {
+  } catch (IncompatibleDataTypes& e) {
     e.message += " (inside configfile)";
     throw e;
   }
 }
 
 bool ConfigManager::is_group_active(const std::string& name) {
-  if(groups.find(name) == groups.end())
+  if (groups.find(name) == groups.end())
     throw GroupNotFound(name);
 
   tOptionMap& opts = groups.at(name)->members;
-  //for (tOptionIter i = opts.begin(); i != opts.end(); ++i)
-  for(auto&& kv : opts)
+  // for (tOptionIter i = opts.begin(); i != opts.end(); ++i)
+  for (auto&& kv : opts)
     if (kv.second->was_set)
-    //if (i->second->was_set)
+      // if (i->second->was_set)
       return true;
   return false;
 }
@@ -341,7 +345,8 @@ bool ConfigManager::is_option_set(const std::string& id) {
 }
 
 void ConfigManager::show_config(ostream& ss) {
-  ss << "Showing all ConfigManager settings:" << endl << endl;
+  ss << "Showing all ConfigManager settings:" << endl
+     << endl;
   for (tGroupPair& grp : groups) {
     ss << "[Group] -> " << grp.first << endl;
     for (tOptionPair& opt : grp.second->members) {
@@ -353,7 +358,8 @@ void ConfigManager::show_config(ostream& ss) {
 
 void ConfigManager::usage(ostream& ss) {
   ss << "Usage: " << command << " <options>" << endl;
-  ss << endl << "Options:" << endl;
+  ss << endl
+     << "Options:" << endl;
 
   string::size_type id_len = 0, scmd_len = 0, desc_len = 0;
   for (tStringMapIter i = cmdmap.begin(); i != cmdmap.end(); ++i) {
@@ -367,7 +373,8 @@ void ConfigManager::usage(ostream& ss) {
 
   for (tGroupIter g = groups.begin(); g != groups.end(); ++g) {
     ConfigGroup* grp = g->second;
-    ss << endl << "--- Group: " << grp->name << endl;
+    ss << endl
+       << "--- Group: " << grp->name << endl;
     for (tOptionIter i = grp->members.begin(); i != grp->members.end(); ++i) {
       ConfigOption* opt = grp->members[i->first];
 

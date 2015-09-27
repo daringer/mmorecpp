@@ -46,7 +46,9 @@ bool BaseThread::try_join() {
   return (pthread_tryjoin_np(thread, &retdata) == 0) ? true : false;
 }
 
-void BaseThread::kill() { throw std::exception(); }
+void BaseThread::kill() {
+  throw std::exception();
+}
 
 BaseProcess::BaseProcess() : BaseParallel() {}
 
@@ -109,7 +111,9 @@ void BaseProcess::kill() {
   system((string("killall -9 ") + str(pid)).c_str());
 }
 
-Mutex::Mutex() { pthread_mutex_init(&mutex, NULL); }
+Mutex::Mutex() {
+  pthread_mutex_init(&mutex, NULL);
+}
 
 Mutex::~Mutex() {
   lock();
@@ -117,9 +121,13 @@ Mutex::~Mutex() {
   pthread_mutex_destroy(&mutex);
 }
 
-void Mutex::lock() { pthread_mutex_lock(&mutex); }
+void Mutex::lock() {
+  pthread_mutex_lock(&mutex);
+}
 
-void Mutex::unlock() { pthread_mutex_unlock(&mutex); }
+void Mutex::unlock() {
+  pthread_mutex_unlock(&mutex);
+}
 
 MessageQueue::MessageQueue(const std::string& id, uint maxsize)
     : name(id), buffer(new char[maxsize + 1]), maxsize(maxsize) {}
@@ -134,7 +142,7 @@ MessageQueueServer::MessageQueueServer(const string& id, uint maxsize,
   attr.mq_curmsgs = 0;
 
   mq = mq_open(id.c_str(), O_CREAT | O_RDONLY, 0644, &attr);
-  if ((mqd_t) - 1 == mq) {
+  if ((mqd_t)-1 == mq) {
     cerr << "Could not init MessageQueue: " << id << endl;
     perror("err: ");
     exit(1);
@@ -171,7 +179,7 @@ MessageQueueClient::MessageQueueClient(const string& id, uint maxsize)
     : MessageQueue(id, maxsize) {
 
   mq = mq_open(id.c_str(), O_WRONLY);
-  if ((mqd_t) - 1 != mq) {
+  if ((mqd_t)-1 != mq) {
     cerr << "Could not open MessageQueue: " << id << endl;
     perror("err: ");
     exit(1);
