@@ -8,7 +8,7 @@
 #include "../core/general.h"
 #include "../core/exception.h"
 
-/** not by default everywhere? */
+/** not by default available? */
 #ifndef M_PI_F
 #define M_PI_F (3.14159265358979323846f)
 #endif
@@ -18,7 +18,6 @@
 #define TO_DEG_F (1.0f / TO_RAD_F) 
 #define TO_RAD   (M_PI / 180.0f)
 #define TO_DEG   (1.0f / TO_RAD)
-
 
 namespace MM_NAMESPACE() {
   namespace MATH {
@@ -76,10 +75,12 @@ namespace MM_NAMESPACE() {
       throw EmptyDataContainerError();
 
     typename T::const_iterator it = box.begin();
+    // init with first item in 'box'
     typename T::value_type num = typename T::value_type(1);
     typename T::value_type out = *it;
     ++it;
 
+    // straight-forward avg/mean calculation - avoid magic
     for (; it != box.end(); ++it, ++num)
       out += *it;
     return out / num;

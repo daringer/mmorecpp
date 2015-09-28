@@ -34,15 +34,15 @@ namespace MM_NAMESPACE() {
     
     // index types
     typedef IDX idx_type;
-    typedef IDX& idx_ref;
+    //typedef IDX& idx_ref;
     typedef const IDX& idx_cref;
    private:
     // me!
     typedef tPoseMatrix<T> class_type;
    
    protected:
-    inline idx_cref idx2slot(idx_cref row, idx_cref col) const {
-      return 3*col + row;
+    inline idx_type idx2slot(idx_cref row, idx_cref col) const {
+      return (3*col + row);
     }
 
    public:
