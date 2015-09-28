@@ -24,3 +24,9 @@
 
 #include "math/basic.h"
 #include "math/moving_ana.h"
+#include "math/pose_matrix.h"
+#include "math/vector3d.h"
+#include "math/kmeans.h"
+#include "math/pose3d.h"
+
+
