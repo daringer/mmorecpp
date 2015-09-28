@@ -9,7 +9,7 @@ RANLIB=ranlib
 RM=rm -f
 
 # cflags
-COMMON_CCFLAGS = -I. -std=c++11 -pedantic -Wall
+COMMON_CCFLAGS = -I. -I./ooapi/ -I./experimental/ -I./core/ -I./platform/ -I./math/ -std=c++11 -pedantic -Wall
 DEV_CCFLAGS = $(COMMON_CCFLAGS) -ggdb
 
 OPT_CCFLAGS = $(COMMON_CCFLAGS) -O3
