@@ -3,7 +3,14 @@
 #include <vector>
 #include <iterator>
 
-template <typename T, int max_slots, typename C = std::vector<T>>
+#include "general.h"
+
+
+namespace MM_NAMESPACE() {
+
+template <typename T, 
+          int max_slots, 
+          typename C = std::vector<T> >
 class CircularBuffer {
  public:
   // typical (value centric) STL-aliases
@@ -72,3 +79,5 @@ class CircularBuffer {
     items.push_back(item);
   }
 };
+
+}
