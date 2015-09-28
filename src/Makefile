@@ -18,7 +18,8 @@ EXPERIM_SRC=xncurses.cc
 OOAPI_SRC=config_manager.cc template_parser.cc testing_suite.cc \
 	  xregex.cc xsqlite.cc
 
-# only .h inside math atm (basic.h, moving_ana.h, vector3d.h, pose_matrix.h)
+# only highly template-based headers inside math atm:
+# basic.h, moving_ana.h, vector3d.h, pose_matrix.h, kmeans.h
 MATH_SRC=
 
 PARTS_A=$(CORE_A) $(PLATFORM_A) $(OOAPI_A) $(MATH_A) #$(EXPERIM_A)

@@ -3,7 +3,7 @@
 #include <vector>
 #include <iterator>
 
-#include "general.h"
+#include "../core/general.h"
 
 
 namespace MM_NAMESPACE() {
