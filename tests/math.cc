@@ -9,6 +9,7 @@
 #include "../src/math/moving_ana.h"
 #include "../src/math/pose_matrix.h"
 #include "../src/math/vector3d.h"
+#include "../src/math/kmeans.h"
 
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
@@ -28,6 +29,7 @@ START_SUITE(MathToolsTestSuite) {
   REG_TEST(vector_bootstrap)
   REG_TEST(vector_cross)
   REG_TEST(vector_scalar)
+  REG_TEST(kmeans_bootstrap)
 }
 
 float precision;
@@ -228,6 +230,9 @@ MAKE_TEST(matrix_vector_mult) {
   CHECK_APPROX(trans_d.z, 1323.3f, 1.e-2);
 }
 
+MAKE_TEST(kmeans_bootstrap) {
 
+
+}
 
 END_SUITE()
