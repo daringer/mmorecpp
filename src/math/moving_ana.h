@@ -16,6 +16,7 @@ namespace MM_NAMESPACE() {
 
   DEFINE_EXCEPTION(AnalysisWindowIllegalError)
   DEFINE_EXCEPTION(NoValueToInterpolateError)
+  DEFINE_EXCEPTION(NoWindowSizeApplicableError)
 
   template <typename T, typename C = std::vector<T> >
   class BaseMovingAnalyzer {
@@ -46,16 +47,19 @@ namespace MM_NAMESPACE() {
     virtual const_reference get_current() const;
   };
 
+  /* To be called from derived classes */
   template <typename T, typename C>
   BaseMovingAnalyzer<T, C>::BaseMovingAnalyzer(const int& window_size) {
     set_window_size(window_size);
   }
 
+  /* Get the most recent (filtered) value */
   template <typename T, typename C>
   const T& BaseMovingAnalyzer<T, C>::get_current() const {
     return next;
   }
 
+  /* (Re-)adjust the window size to a specified width */
   template <typename T, typename C>
   void BaseMovingAnalyzer<T, C>::set_window_size(const int& window_size) {
     if (window_size < 1)
@@ -63,6 +67,7 @@ namespace MM_NAMESPACE() {
     max_size = window_size;
   }
 
+  /* Provide and get the next data sample */
   template <typename T, typename C>
   const T& BaseMovingAnalyzer<T, C>::get_next(const_reference val) {
     hist.push_back(val);
@@ -71,6 +76,7 @@ namespace MM_NAMESPACE() {
     return analyze();
   }
 
+  /* Current interpretation of interpolation => return the last value */
   template <typename T, typename C>
   const T& BaseMovingAnalyzer<T, C>::get_next_interpolated() const {
     if (hist.empty())
@@ -78,7 +84,7 @@ namespace MM_NAMESPACE() {
     return next;
   }
 
-  /** deriving MovingAverage */
+  /* Moving average */
   template <typename T, typename C = std::vector<T> >
   class MovingAverage : public BaseMovingAnalyzer<T, C> {
    public:
@@ -93,7 +99,7 @@ namespace MM_NAMESPACE() {
     }
   };
 
-  /** deriving MovingMedian */
+  /* Moving median */
   template <typename T, typename C = std::vector<T> >
   class MovingMedian : public BaseMovingAnalyzer<T, C> {
    public:
@@ -108,5 +114,26 @@ namespace MM_NAMESPACE() {
     }
   };
 
+  /* Exponential moving average (e(w)ma) */
+  template <typename T, typename C = std::vector<T> >
+  class ExponentialMovingAverage : public BaseMovingAnalyzer<T, C> {
+   public:
+    typedef T value_type;
+    typedef const value_type& const_reference;
+    typedef BaseMovingAnalyzer<T, C> base_type;
+    value_type alpha;
+
+    /* (Re-)adjust the window size to a specified width */
+    void set_window_size(const int& window_size) {
+      throw NoWindowSizeApplicableError();
+    }
+
+     ExponentialMovingAverage() : base_type(2), alpha(0.2f) {}
+      const_reference analyze() {
+      base_type::next = (base_type::hist.back() * alpha) +
+                        ((1.0f - alpha) * base_type::next);
+      return base_type::next;
+    }
+  };
   }
 }
