@@ -1,10 +1,14 @@
-#pragma
+#pragma once
 
 #include "../core/general.h"
 
 #include "vector3d.h"
 
-template<typename T=float. typename C=Vector3D<T> >
+
+namespace MM_NAMESPACE() {
+  namespace MATH {
+
+template<typename T = float, typename C=tVector3D<T> >
 class tPose3D {
 public:
   // STL-ize
