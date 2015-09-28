@@ -17,11 +17,14 @@ namespace MM_NAMESPACE() {
  * Inspired by Lloyd's 'Web-Scale K-Means Clustering' and of course LLoyd's,
  * k-means++ initial centering and finally re-interpret random sample drawing
  * to streaming ...
+ * - at some point a num_members[] may overrun -> bad, zero-division!
+ *   -  maybe apply some 'relaxation' reducing all proportionally? (TODO)
+ * - 
  */
   template <typename T = float, 
             typename L = std::vector<T>,
             typename I = std::vector<size_t> >
-  class StreamingKMeans {
+  class tStreamingKMeans {
    public:
     // data representation
     typedef T value_type;
@@ -38,7 +41,7 @@ namespace MM_NAMESPACE() {
     typedef typename I::const_iterator idx_list_citer;
 
    private:
-    typedef StreamingKMeans<T, L, I> class_type;
+    typedef tStreamingKMeans<T, L, I> class_type;
     // keep number of 'members' for each center
     idx_list_type num_members;
     // keeps the center-points
@@ -52,33 +55,41 @@ namespace MM_NAMESPACE() {
     /* all 'config' items in public -> don't touch without reset() */
     // number of centers to be found -> 'k'
     idx_type num_centers;
-    // minimal size the updating batch has to reach before updating, never < k
+    // min/max size for updating, never len(batch) < k
     idx_type min_batch_size;
-    // if true, never apply update with len(batch) < min_batch_size,
-    // if 'first_run', always wait until len(batch) > min_batch_size
+    idx_type max_batch_size;  // <---- TODO!
+    // fully fill batch before applying updated
     bool always_fill_batch;
     // number of update-iterations 
     idx_type num_iters;
+    // number of initial seeding tries 
+    idx_type num_inits;       // <---- TODO!
 
-    /** Only 'k' is strictly required.  */
-    StreamingKMeans<T, L, I>(idx_cref k) : first_run(true), num_centers(k), \
-        min_batch_size(k), always_fill_batch(true), num_iters(3) {
+    /* 'k' denotes the number of clusters...  */
+    tStreamingKMeans<T, L, I>(idx_cref k) : first_run(true), num_centers(k), \
+        min_batch_size(k), max_batch_size(k*10), always_fill_batch(true), 
+        num_iters(4), num_inits(10) {
       reset();
     }
     
-    /* resetting object */
+    /* resetting object, config-vars remain untouched! */
     void reset() {
       num_members.clear();
       centers.clear();
       batch.clear();
 
       assert (num_centers > 0);
-      assert (num_centers<=min_batch_size);
+      assert (num_centers <= min_batch_size);
       assert (num_iters > 0);
       
       num_members.resize(num_centers, 0);
       centers.resize(num_centers, 0);
       first_run = true;
+    }
+
+    /* get centeroid values */
+    list_cref get_centroids() const {
+       return centers;
     }
 
     /* add single data-point */
@@ -93,6 +104,7 @@ namespace MM_NAMESPACE() {
        batch.insert(batch.end(), data.begin(), data.end()); 
        update();
     }
+
 
     /* Updates the centroids in order to optimize towards 'k'-means */
     void update() {
@@ -132,8 +144,11 @@ namespace MM_NAMESPACE() {
           num_members[best_idx]++; 
           rate = (1.0f / static_cast<value_type>(num_members.at(best_idx)));
           centers[best_idx] = (1.0f - rate) * centers.at(best_idx) \
-                              + rate * (*d_it);
+                            + (rate * (*d_it));
         } 
       } 
     }
  };
+
+
+}}
