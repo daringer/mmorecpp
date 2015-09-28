@@ -6,6 +6,8 @@
 #include <string>
 #include <ostream>
 
+#include "general.h"
+
 #define BUFSIZE 256
 
 namespace MM_NAMESPACE() {
