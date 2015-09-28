@@ -5,16 +5,19 @@
 
 #include "tools.h"
 
-#include "../src/math/basic.h"
-#include "../src/math/moving_ana.h"
-#include "../src/math/pose_matrix.h"
-#include "../src/math/vector3d.h"
-#include "../src/math/kmeans.h"
-
 using namespace TOOLS;
 using namespace TOOLS::UNIT_TEST;
 using namespace TOOLS::MATH;
 using namespace std;
+
+
+/* Someday, someone has to decide where they belong...
+ * Boost keeps them pre-configured inside their code-base, mmmh */
+typedef tStreamingKMeans<> StreamingKMeans;
+typedef tVector3D<> Vector3D;
+typedef tPose3D<> Pose3D; 
+typedef tPoseMatrix<> PoseMatrix;
+
 
 START_SUITE(MathToolsTestSuite) {
   REG_TEST(empty_container)
@@ -140,12 +143,15 @@ MAKE_TEST(moving_ana_simple) {
   std::vector<float> t1{123.f, 312.f, 1.f, 2.f, 3.f, 4.f, 5.f};
   MovingAverage<float> foo1(3);
   MovingMedian<float> foo2(3);
+  ExponentialMovingAverage<float> foo3;
 
   CHECK_EXC(AnalysisWindowIllegalError, foo2.set_window_size(0));
   CHECK_EXC(AnalysisWindowIllegalError, foo1.set_window_size(-5));
+  CHECK_EXC(NoWindowSizeApplicableError, foo3.set_window_size(-5));
 
   CHECK_EXC(NoValueToInterpolateError, foo1.get_next_interpolated());
   CHECK_EXC(NoValueToInterpolateError, foo2.get_next_interpolated());
+  CHECK_EXC(NoValueToInterpolateError, foo3.get_next_interpolated());
 
   std::vector<float> res1 {123.0f, 217.5f, 145.33333333f, 105.0f,
                              2.0f,   3.0f,   4.0f};
@@ -231,8 +237,43 @@ MAKE_TEST(matrix_vector_mult) {
 }
 
 MAKE_TEST(kmeans_bootstrap) {
+  /*--test_data/kmeans_test_data_1.txt: 
+   * - python-sklearn -> [ 0.175, 0.637, 1.300 ]
+   *     max_no_imp=10, n_init=3, max_iter=100, reassign_ratio=0.01, batch=100
+   * - StreamingKMeans -> [0.12664 0.0667672 0.03125 ] 
+   *     no_convergence_chk, no init search, max_iter=100, no dist caching,
+   * -----> still some stuff to be done!
+   *  
+   *--test_data/kmeans_test_data_2.txt:  
+   * ooops, using data will will be in the one cluster the first 1/3, then
+   * inside the second 1/3 and inside the third at the end, rough test data.
+   * shuffling it once, already lead to (same conditions as above):
+   * - python-sklearb ->  [ 0.1646345, 1.33934378, 0.60907686 ]
+   * - StreamingKMeans -> [ 0.154886,  1.27896,    0.554659 ]
+   *
+   * ====> YES, more than just acceptable for a from scratch implementation
+   *
+   *
+   */
+  StreamingKMeans km(3);
+  km.min_batch_size = 10;
+  km.always_fill_batch = true;
+  km.num_iters = 10;
 
+  FS::Path fn("test_data/kmeans_test_data_2.txt");
+  CHECK(fn.exists());
 
+  XString s(TOOLS::IO::readfile(fn.path));
+  tStringList sl = s.split();
+
+  vector<float> raw_data;
+  for(auto&& x : sl)
+    raw_data.push_back(static_cast<float>(real(x)));
+
+  km.add_data(raw_data);
+
+  for(auto&& x : km.get_centroids())
+      cout << x << endl;
 }
 
 END_SUITE()
