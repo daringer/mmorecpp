@@ -35,15 +35,7 @@ private:
     tVector3D(const_reference x, const_reference y, const_reference z)
         : x(x), y(y), z(z) {}
 
-    /** distinction whether we see us as pos (w=1.0) or as dir (w=0.0) */
-    /*Vector3D trans_pos(const PoseMatrix<value_type>& mat) const {
-        return mat.dot(*this, static_cast<value_type>(1.0));
-    }
-    Vector3D trans_dir(const PoseMatrix<value_type>& mat) const {
-        return mat.dot(*this, static_cast<value_type>(0.0));
-    }*/
-
-    /** angle to another Vector3D */
+    /* angle to another Vector3D - TODO: NEON!*/
     value_type angle_to(const class_type& other) const {
       return Vector3D(acos(x*other.x+y*other.y+z*other.z) /
           (sqrt(x*x + y*y + z*z) * 
@@ -53,20 +45,20 @@ private:
       return angle_to(other) * TO_DEG_F;
     }
 
-    /** cross/(outer)-product and... */
+    /* cross/(outer)-product and... */
     class_type cross(const class_type& other) const {
-      // TODO: mmh SSE ?
+      // TODO: mmh NEON! ?
       return class_type(
           y*other.z - z*other.y, 
           z*other.x - x*other.z,
           x*other.y - y*other.x);
     }
-    /** dot/(inner)-product - first vector */
+    /* dot/(inner)-product - first vector */
     value_type dot(const class_type& other) const {
       return x*other.x + y*other.y + z*other.z;
     }
 
-    /** will lead to problems with floatingpoints! */
+    /* will lead to problems with floatingpoints! */
     bool operator==(const class_type& other) const {
       return x==other.x && y==other.y && z==other.z;
     }
@@ -74,7 +66,7 @@ private:
       return (!(*this == other));
     }
 
-    /** arithmetrical stuff (scalar and Vector3D) */
+    /* arithmetrical stuff (scalar and Vector3D) */
     class_type operator+(const class_type& other) const {
       return class_type(x+other.x, y+other.y, z+other.z);
     }
@@ -95,6 +87,5 @@ private:
     }
 };
 
-typedef tVector3D<> Vector3D;
 
 }}

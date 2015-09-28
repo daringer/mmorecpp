@@ -2,6 +2,7 @@
 
 #include "../core/general.h"
 #include "vector3d.h"
+#include "pose3d.h"
 
 #include <vector>
 
@@ -34,11 +35,10 @@ namespace MM_NAMESPACE() {
     
     // index types
     typedef IDX idx_type;
-    //typedef IDX& idx_ref;
     typedef const IDX& idx_cref;
    private:
     // me!
-    typedef tPoseMatrix<T> class_type;
+    typedef tPoseMatrix<value_type> class_type;
    
    protected:
     inline idx_type idx2slot(idx_cref row, idx_cref col) const {
@@ -48,7 +48,7 @@ namespace MM_NAMESPACE() {
    public:
     // matrix container
     cont_type M;
-    // scaling (bottom right inside formal 4x4 matrix)
+    // scaling (bottom right inside formal 4x4 matrix (unused currently))
     value_type w;
 
     tPoseMatrix(const class_type& obj) : M(obj.M) {}
@@ -79,8 +79,10 @@ namespace MM_NAMESPACE() {
       return M[idx2slot(row, col)];
     }
 
-    tVector3D<value_type> dot(const tVector3D<value_type>& vec, const_reference w) {
-      // sse?
+    tVector3D<value_type> dot(const tVector3D<value_type>& vec, 
+        const_reference w) {
+
+      // TODO: NEON!!!!
       const tPoseMatrix<value_type>& m = *this;
       return tVector3D<value_type>(
           m(1,0)*vec.x + m(0,1)*vec.y + m(0,2)*vec.z + m(0,3)*w,
@@ -96,9 +98,13 @@ namespace MM_NAMESPACE() {
     tVector3D<value_type> dir_trans(const tVector3D<value_type>& vec) {
       return dot(vec, 0.0f);
     }
+
+    tPose3D<value_type> pose_trans(const tPose3D<value_type>& pose) {
+      return tPose3D<value_type>(dot(pose.pos, 1.0f), dot(pose.dir, 0.0f));
+    }
+
   };
 
-typedef tPoseMatrix<> PoseMatrix;
 
   }
 }
