@@ -61,7 +61,7 @@ optimize: $(TOPTARGET)
 
 # generate cldoc reference documentation
 cldoc:
-	cldoc $(CCFLAGS) -- --output ../doc --report */*.cc */*.h
+	cldoc generate $(CCFLAGS) -- --output /tmp --report */*.cc */*.h *.h
 
 # format sourcecode with clang-format
 format: 		

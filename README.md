@@ -18,7 +18,7 @@ Aiming for the following goals:**
 * extremly easy and smart interfaces
 * slim OO-interfaces for tedious plain C interfaces (e.g., sqlite3, popen,
   date/time, threading/forking, locking, sockets, ncurses)
-* .... or maybe you're just lookin' for some "inspiration" for you current
+* .... or maybe you're just lookin' for some "inspiration" for your current
   project, come in and (may)be get inspired ;)
 
 **Where is the documentation?**
