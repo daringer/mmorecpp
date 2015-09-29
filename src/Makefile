@@ -77,6 +77,9 @@ install:
 	install -m 664 -o root -g root $(NAME) /usr/lib 
 	ln -s /usr/lib/$(NAME) /usr/lib/$(LIBNAME)
 
+# generate ctags file
+tags:
+	ctags --fields=+l $(shell find . -name "*.h" -or -name "*.cc")
 
 # make shared lib (.so)
 shared: OLDCCFLAGS = $(CCFLAGS)

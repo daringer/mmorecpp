@@ -31,6 +31,11 @@ optimize: $(PROGRAM)
 tests: $(PROGRAM)
 	./run_tests 
 
+# generate ctags file
+tags:
+	ctags --fields=+l $(shell find . -name "*.h" -or -name "*.cc")
+
+
 # format sourcecode with clang-format
 format:
 	clang-format -i -style=file *.cc

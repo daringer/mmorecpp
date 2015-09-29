@@ -258,7 +258,7 @@ MAKE_TEST(kmeans_bootstrap) {
   StreamingKMeans km(3);
   km.min_batch_size = 10;
   km.always_fill_batch = true;
-  km.num_iters = 10;
+  km.num_iters = 15;
 
   FS::Path fn("test_data/kmeans_test_data_2.txt");
   CHECK(fn.exists());
@@ -270,7 +270,8 @@ MAKE_TEST(kmeans_bootstrap) {
   for(auto&& x : sl)
     raw_data.push_back(static_cast<float>(real(x)));
 
-  km.add_data(raw_data);
+  for(auto&& x : sl)
+    km.add_data(static_cast<float>(real(x)));
 
   for(auto&& x : km.get_centroids())
       cout << x << endl;

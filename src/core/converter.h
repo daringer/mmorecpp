@@ -7,7 +7,7 @@
 
 namespace MM_NAMESPACE() {
 
-  DEFINE_EXCEPTION(ConvertValueError, BaseException)
+  DEFINE_EXCEPTION(ConvertValueError)
 
   /* convert any given parameter to a string
    * @val any parameter, which has a string representation

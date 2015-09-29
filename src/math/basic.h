@@ -13,6 +13,7 @@
 #define M_PI_F (3.14159265358979323846f)
 #endif
 
+
 /** deg <-> rad conversions */
 #define TO_RAD_F (M_PI_F / 180.0f)
 #define TO_DEG_F (1.0f / TO_RAD_F) 
@@ -23,36 +24,6 @@ namespace MM_NAMESPACE() {
   namespace MATH {
 
   DEFINE_EXCEPTION(EmptyDataContainerError)
-
-  /*
-  // use this to infere template param based on class-constructor
-  template<typename T>
-  class wrapped_mean {
-    public:
-
-    typedef typename T::const_iterator tIter;
-    typedef typename T::value_type tValue;
-
-    const T& container;
-
-    wrapped_mean(const T& box) : container(box) {}
-    operator tValue() {
-      tIter it = container.begin();
-      tValue num = tValue(0);
-      tValue out = *it;
-      ++it;
-
-      for(; it!=container.end(); ++it, ++num)
-        out += *it;
-      return out / num;
-    }
-    // wrap through function:
-    //template<typename T>
-    //typename T::value_type foo(const T& box) {
-    //  return wrapped_mean<T>(box);
-    //}
-  };*/
-
   /**
    * The following functions provide basic numerical operations on arbitrary
    * numbers, i.e., containers of numbers! The realization is very flexible and

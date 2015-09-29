@@ -36,13 +36,23 @@ from subprocess import check_output as ex
 # compilation database set (by default, one is not set).
 # CHANGE THIS LIST OF FLAGS. YES, THIS IS THE DROID YOU HAVE BEEN LOOKING FOR.
 
+#clang_ver = ex("clang -v 2>&1 | head -n 1 | cut -d ' ' -f 3", shell=True).strip()
+#gcc_ver = ex("gcc -v 2>&1 | tail -n 1 | cut -d ' ' -f 3", shell=True).strip()
+#kernel_ver = ex("uname -r", shell=True).strip()
+#
+#clang_inc = "/usr/bin/../lib/clang/{}/include".format(clang_ver)
+#gcc_inc = "/usr/include/c++/{}".format(gcc_ver)
+#kernel_ver = "/lib/modules/{}/build/include".format(kernel_ver)
+#
+#with file("/tmp/ycm_flags_out.log", "w") as fd:
+#    fd.write(clang_inc + "\n")
+#    fd.write(gcc_inc + "\n")
+#    fd.write(kernel_inc + "\n")
+
+
 flags = [
 '-Wall',
 '-pedantic',
-"-isystem", "/lib/modules/{}/build/include".format(ex("uname -r", shell=True).strip()),
-'-isystem', '/usr/bin/../lib/clang/3.6.2/include',
-'-isystem', '/usr/include/c++/5.2.0',
-'-isystem', '/usr/include',
 '-I.',
 '-I../src/core',
 '-I../src/ooapi',
@@ -51,11 +61,17 @@ flags = [
 '-I../src/platform',
 '-std=c++11',
 '-Wall',
+"-isystem", "/usr/bin/../lib/clang/3.6.2/include",
+'-isystem', "/usr/include/c++/5.2.0",
+'-isystem', "/lib/modules/4.1.6-1-ARCH/build/include",
+'-isystem', "/usr/include",
 '-w',
 '-g',
 '-c',
 'c++'
 ]
+
+
 
 #'-isystem', '-I/usr/bin/../lib/gcc/x86_64-unknown-linux-gnu/4.9.0',
 #'-isystem', '-I/usr/bin/../lib64/gcc/x86_64-unknown-linux-gnu/4.9.0',
@@ -69,7 +85,7 @@ flags = [
 #
 # Most projects will NOT need to set this to anything; you can just change the
 # 'flags' list of compilation flags. Notice that YCM itself uses that approach.
-compilation_database_folder = ''
+compilation_database_folder = ''#'/home/dariball/dev/feats/mmorecpp/'
     
 
 if os.path.exists( compilation_database_folder ):

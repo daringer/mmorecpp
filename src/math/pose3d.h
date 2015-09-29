@@ -4,6 +4,7 @@
 
 #include "vector3d.h"
 
+
 namespace MM_NAMESPACE() {
   namespace MATH {
 

@@ -22,11 +22,7 @@ private:
   // me!
   typedef tVector3D<T> class_type;
   
-  // some used numbers
-  //const value_type zero;
-  //const value_type one;
-
-   public:
+  public:
     value_type x;
     value_type y;
     value_type z;
