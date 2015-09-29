@@ -116,9 +116,9 @@ XString& XString::upper() {
 }
 
 bool XString::startswith(const string& what) {
-  return (find(what) == 0);
+  return find(what) == 0;
 }
 
 bool XString::endswith(const string& what) {
-  return (rfind(what) == (length() - what.length()));
+  return rfind(what) == (length() - what.length());
 }
